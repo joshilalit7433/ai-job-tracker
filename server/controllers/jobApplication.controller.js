@@ -1,4 +1,5 @@
 import { JobApplication } from "../models/jobApplication.model.js";
+import { Applicant } from "../models/applicant.model.js";
 
 export const PostJobApplication = async (req, res) => {
   try {
@@ -213,3 +214,44 @@ export const DeleteJobApplication = async (req,res) => {
     
   }
 }
+
+
+export const GetJobApplicationForRecruiter = async (req, res) => {
+  try {
+    if (req.user.role !== "recruiter") {
+      return res.status(403).json({
+        message: "Access denied",
+        success: false,
+      });
+    }
+
+    const applicationsWithUsers = await Applicant.find()
+    .populate({
+      path: "job",
+      match: { user: req.user._id }, 
+    })
+    .populate("user", "_id fullname email mobilenumber");
+
+    const filteredApplications = applicationsWithUsers.filter(
+      (application) => application.job !== null
+    );
+
+    return res.status(200).json({
+       filteredApplications,
+      success: true,
+    });
+    
+
+    
+
+
+   
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Server error while fetching recruiter job applications",
+      success: false,
+    });
+  }
+};

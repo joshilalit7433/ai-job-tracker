@@ -5,6 +5,7 @@ import connectdb from "./utils/db.js";
 import dotenv from "dotenv";
 import userRoute from "../server/routes/user.route.js";
 import JobApplicationRoute from "../server/routes/jobApplication.route.js";
+import ApplicantRoute from "../server/routes/applicant.route.js";
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ connectdb();
 
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/job-application",JobApplicationRoute);
+app.use("/api/v1/applicant",ApplicantRoute);
 
 app.listen(PORT, () => {
   console.log("server running at port " + PORT);

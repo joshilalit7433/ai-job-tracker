@@ -13,7 +13,8 @@ const isAuthenticated = async (req, res, next) => {
     }
 
     const decoded = jwt.verify(token, process.env.SECRET_KEY);
-    const user = await User.findById(decoded.userid);
+    
+    const user = await User.findById(decoded.userid).select("_id fullname email mobilenumber role");
 
     if (!user) {
       return res.status(401).json({
@@ -22,7 +23,15 @@ const isAuthenticated = async (req, res, next) => {
       });
     }
 
-    req.user = user;
+
+    req.user = {
+      _id: user._id,
+      fullname: user.fullname,
+      email: user.email,
+      mobilenumber: user.mobilenumber,
+      role: user.role,
+    };
+
     next();
   } catch (error) {
     return res.status(500).json({
