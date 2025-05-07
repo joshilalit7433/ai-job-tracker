@@ -26,7 +26,7 @@ const PORT = process.env.PORT || 8000;
 connectdb();
 
 app.use("/api/v1/user", userRoute);
-app.use("/api/v1/jobapplication",JobApplicationRoute);
+app.use("/api/v1/job-application",JobApplicationRoute);
 
 app.listen(PORT, () => {
   console.log("server running at port " + PORT);

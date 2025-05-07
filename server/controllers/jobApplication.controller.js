@@ -146,3 +146,70 @@ export const UpdateJobApplication = async(req,res) => {
     console.log(error);
   }
 }
+
+export const GetJobApplication = async (req,res) => {
+  try {
+    const jobapplications= await JobApplication.find();
+    console.log(jobapplications);
+
+    if(jobapplications.length===0){
+      return res.status(400).json({
+        message:"no job applications found",
+        success:false
+      })
+    }
+
+    return res.status(200).json({
+      jobapplications,
+      success:true
+    })
+
+  } catch (error) {
+    console.error("error fetching job applications: ",error.message,error.stack);
+    return res.status(500).json({
+      message: "An error occurred while fetching job applications",
+      success: false,
+    })
+    
+  }
+}
+
+export const DeleteJobApplication = async (req,res) => {
+  try {
+    const jobapplicationId= req.params.id;
+
+    const jobapplication= await JobApplication.findById(jobapplicationId);
+
+
+
+    if(!jobapplication){
+      return res.status(400).json({
+        message:"job application not found",
+        success:false
+      })
+    }
+
+    if(jobapplication.user.toString() !== req.user._id.toString()){
+      return res.status(403).json({
+        message:"You are not authorized to delete this job application",
+        success:false
+      })
+    }
+
+    await jobapplication.deleteOne();
+
+    return res.status(200).json({
+      message:"Job Application Deleted Successfully",
+      success:true
+    })
+
+    
+  } catch (error) {
+    console.error("error deleting job application",error.message);
+    return res.status(500).json({
+      message:"Server error while deleting job application",
+      success:false
+    })
+    
+  }
+}
