@@ -30,6 +30,10 @@ app.use("/api/v1/user", userRoute);
 app.use("/api/v1/job-application",JobApplicationRoute);
 app.use("/api/v1/applicant",ApplicantRoute);
 
+
+app.use("/uploads", express.static("uploads"));
+
+
 app.listen(PORT, () => {
   console.log("server running at port " + PORT);
 });

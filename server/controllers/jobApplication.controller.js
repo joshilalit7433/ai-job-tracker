@@ -242,11 +242,6 @@ export const GetJobApplicationForRecruiter = async (req, res) => {
     });
     
 
-    
-
-
-   
-
   } catch (error) {
     console.error(error);
     return res.status(500).json({
@@ -255,3 +250,36 @@ export const GetJobApplicationForRecruiter = async (req, res) => {
     });
   }
 };
+
+
+
+export const GetUserAppliedJobApplication = async (req, res) => {
+  try {
+   
+    if (req.user.role !== "user") {
+      return res.status(403).json({
+        message: "Access denied",
+        success: false,
+      });
+    }
+
+  
+    const jobapplications = await Applicant.find({ user: req.user._id }).populate(
+      "job" 
+    );
+
+
+    return res.status(200).json({
+      appliedJobs: jobapplications,
+      success: true,
+    });
+  } catch (error) {
+    console.error("Error fetching user's applied jobs:", error.message);
+    return res.status(500).json({
+      message: "Server error while fetching applied jobs",
+      success: false,
+    });
+  }
+};
+
+

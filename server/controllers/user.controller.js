@@ -160,3 +160,33 @@ export const updateProfile = async (req, res) => {
     console.log(error);
   }
 };
+
+
+
+export const UploadResume = async (req, res) => {
+  try {
+    console.log("File received:", req.file);
+    console.log("User:", req.user);
+
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found", success: false });
+    }
+
+    user.resume = req.file.path;
+    await user.save();
+
+    return res.status(200).json({
+      message: "Resume uploaded successfully",
+      resume: user.resume,
+      success: true,
+    });
+  } catch (error) {
+    console.error("Error uploading resume:", error);
+    return res.status(500).json({
+      message: "Server error while uploading resume",
+      success: false,
+    });
+  }
+};
