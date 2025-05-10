@@ -1,9 +1,30 @@
 import mongoose from "mongoose";
 import { Applicant } from "../models/applicant.model.js";
 import { JobApplication } from "../models/jobApplication.model.js";
+import { User } from "../models/user.model.js";
 
 export const ApplyJobApplication = async (req, res) => {
     try {
+
+      const user= await User.findById(req.user._id);
+      if (!user) {
+        return res.status(404).json({
+          message:"user not found",
+          success:false
+        })
+      }
+
+      const {fullname, email, mobilenumber,resume} = req.user;
+      
+      console.log(fullname, email, mobilenumber,resume);
+
+      if(!fullname || !email || !mobilenumber || !resume){
+        return res.status(400).json({
+          message:"something is missing",
+          success:false
+        })
+      }
+
       const jobapplicationId = req.params.id;
   
     

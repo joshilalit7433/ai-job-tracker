@@ -70,7 +70,7 @@ export const login = async (req, res) => {
       });
     }
 
-    // check role is correct or not
+    
     if (role !== user.role) {
       return res.status(400).json({
         message: "Account doesn't exist with current role.",

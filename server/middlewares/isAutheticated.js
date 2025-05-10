@@ -14,7 +14,7 @@ const isAuthenticated = async (req, res, next) => {
 
     const decoded = jwt.verify(token, process.env.SECRET_KEY);
     
-    const user = await User.findById(decoded.userid).select("_id fullname email mobilenumber role");
+    const user = await User.findById(decoded.userid).select("_id fullname email mobilenumber role resume");
 
     if (!user) {
       return res.status(401).json({
@@ -30,6 +30,7 @@ const isAuthenticated = async (req, res, next) => {
       email: user.email,
       mobilenumber: user.mobilenumber,
       role: user.role,
+      resume: user.resume
     };
 
     next();
