@@ -12,4 +12,4 @@ router.route("/get-job-application-for-recruiter").get(isAuthenticated,GetJobApp
 router.route("/get-user-applied-job-application").get(isAuthenticated,GetUserAppliedJobApplication);
 
 
-export default router;
+export default router; 
