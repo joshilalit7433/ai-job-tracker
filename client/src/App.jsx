@@ -9,6 +9,9 @@ import Signup from "./routes/Signup";
 import { ToastContainer } from "react-toastify";
 import UserProfile from "./components/UserProfile";
 import UserAppliedJobApplication from "./components/UserAppliedJobApplication";
+import EditProfile from "./routes/EditProfile";
+import UploadResume from "./routes/UploadResume";
+
 
 
 
@@ -25,15 +28,13 @@ function App() {
     <Routes>
       <Route path="/" element={<Home/>}/>
       <Route path="job-applications" element={<JobApplications/>}/>
-      <Route path="job-application-form" element={<JobApplicationForm/>}/>
       <Route path="login" element={<Login/>}/>
       <Route path="signup" element={<Signup/>}/>
+      <Route path="job-application-form" element={<JobApplicationForm/>}/>
       <Route path="user-profile" element={<UserProfile/>}/>
       <Route path="get-user-applied-job-application" element={<UserAppliedJobApplication/>}/>
-
-
-
-
+      <Route path="edit-profile" element={<EditProfile/>}/>
+      <Route path="upload-resume" element={<UploadResume/>}/>
     </Routes>
     </div>
     </BrowserRouter>

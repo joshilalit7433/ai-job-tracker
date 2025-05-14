@@ -80,6 +80,7 @@ export const login = async (req, res) => {
 
     const tokendata = {
       userid: user._id,
+      role:user.role
     };
 
     const token = await jwt.sign(tokendata, process.env.SECRET_KEY, {
@@ -95,12 +96,14 @@ export const login = async (req, res) => {
       createdAt: user.createdAt
     };
 
+    console.log("user is", user);
     return res
       .status(200)
       .cookie("token", token, {
         maxAge: 1 * 24 * 60 * 60 * 1000,
         httpOnly: true,
-        sameSite: "Strict",
+        sameSite: "Lax",
+        secure:false
       })
       .json({
         message: `welcome back ${user.fullname} `,
@@ -151,6 +154,7 @@ export const updateProfile = async (req, res) => {
       fullname: user.fullname,
       email: user.email,
       mobilenumber: user.mobilenumber,
+       createdAt: user.createdAt
     };
 
     return res.status(200).json({
@@ -176,12 +180,15 @@ export const UploadResume = async (req, res) => {
       return res.status(404).json({ message: "User not found", success: false });
     }
 
-    user.resume = req.file.path;
+    const resumePath = req.file.path.replace(/\\/g, "/"); 
+
+    user.resume = resumePath;;
     await user.save();
 
     return res.status(200).json({
       message: "Resume uploaded successfully",
       resume: user.resume,
+      user,
       success: true,
     });
   } catch (error) {

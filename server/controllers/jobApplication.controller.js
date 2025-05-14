@@ -3,8 +3,18 @@ import { Applicant } from "../models/applicant.model.js";
 
 export const PostJobApplication = async (req, res) => {
   try {
+    
+    if (req.user.role !== "recruiter") {
+       console.log("User role is:", req.user.role);
+       console.log("req.user object is:", req.user);
+
+      return res.status(403).json({
+        message: "Only recruiters can post job applications",
+        success: false,
+      });
+    }
+
     const {
-      user,
       title,
       salary,
       location,
@@ -18,39 +28,28 @@ export const PostJobApplication = async (req, res) => {
       status,
     } = req.body;
 
-    if(req.user.role !== "recruiter"){
-        return res.status(400).json({
-            message:"only recruiters can post job applications",
-            success:false
-        })
-    }
-
-    console.log(
-      user,
-      title,
-      salary,
-      location,
-      company_name,
-      job_type,
-      benefits,
-      experience,
-      responsibilities,
-      skills,
-      qualification,
-      status
-    );
-
-    if ( !user ||  !title ||!salary ||!location ||!company_name || !job_type ||!benefits ||!experience || !responsibilities 
-      || !skills ||!qualification 
+    
+    if (
+      !title ||
+      !salary ||
+      !location ||
+      !company_name ||
+      !job_type ||
+      !benefits ||
+      !experience ||
+      !responsibilities ||
+      !skills ||
+      !qualification
     ) {
       return res.status(400).json({
-        message: "somnething is missing ",
+        message: "All fields are required",
         success: false,
       });
     }
 
-    const jobapplication= await JobApplication.create({
-      user:req.user._id,
+    
+    const jobApplication = await JobApplication.create({
+      user: req.user._id, 
       title,
       salary,
       location,
@@ -61,26 +60,23 @@ export const PostJobApplication = async (req, res) => {
       responsibilities,
       skills,
       qualification,
-      status
-
-    })
+      status: status || "open",
+    });
 
     return res.status(201).json({
-        message:"job application created successfully",
-        jobapplication,
-        success:true
-    })
-
-
-    
+      message: "Job application created successfully",
+      jobApplication,
+      success: true,
+    });
   } catch (error) {
-    console.log(error);
+    console.error("PostJobApplication Error:", error);
     return res.status(500).json({
-        message:"error in creating job application",
-        success:false
-    })
+      message: "Server error while posting job application",
+      success: false,
+    });
   }
 };
+
 
 
 export const UpdateJobApplication = async(req,res) => {

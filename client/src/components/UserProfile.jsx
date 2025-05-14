@@ -3,6 +3,9 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import dayjs from "dayjs";
+import { Pencil } from "lucide-react";
+import { Upload } from 'lucide-react';
+import { USER_API_END_POINT } from "../utils/constant";
 
 
 const UserProfile = () => {
@@ -17,7 +20,7 @@ const UserProfile = () => {
     const fetchJobs = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/api/v1/job-application/get-user-applied-job-application/${user?.id}`
+          `${USER_API_END_POINT}/get-user-applied-job-application/${user?.id}`
         );
         setjobs(response.data.jobs || []);
       } catch (err) {
@@ -35,7 +38,6 @@ const UserProfile = () => {
     <div className="mt-10 min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
         <div className="bg-white shadow-xl rounded-2xl overflow-hidden">
-        
           <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-8">
             <div className="flex flex-col items-center">
               <div className="w-28 h-28 bg-white text-blue-600 rounded-full flex items-center justify-center text-3xl font-bold shadow-lg border-4 border-white">
@@ -44,10 +46,27 @@ const UserProfile = () => {
               <h1 className="text-3xl font-bold text-white mt-4">
                 {user?.fullname || "Unknown User"}
               </h1>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 md:gap-x-4">
+                <Link
+                  to="/edit-profile"
+                  className="mt-2 flex items-center gap-2 border border-gray-300 bg-white text-gray-800 rounded-md md:w-[150px] px-4 py-2 text-base font-medium shadow hover:bg-gray-100 transition duration-200"
+                >
+                  <Pencil className="w-5 h-5 text-gray-600" />
+                  Edit Profile
+                </Link>
+
+                <Link
+                  to="/upload-resume"
+                  className="mt-2 flex items-center gap-2 border border-gray-300 bg-white text-gray-800 rounded-md px-4 py-2 text-base font-medium shadow hover:bg-gray-100 transition duration-200"
+                >
+                  <Upload className="w-5 h-5 text-gray-600" />
+                  Upload Resume
+                </Link>
+              </div>
             </div>
           </div>
 
-         
           <div className="p-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="bg-gray-50 p-6 rounded-xl">
@@ -103,7 +122,6 @@ const UserProfile = () => {
                   Account Details
                 </h2>
                 <div className="space-y-4">
-
                   <div>
                     <label className="text-sm text-gray-500">
                       Member Since
@@ -125,8 +143,7 @@ const UserProfile = () => {
               </div>
             </div>
 
-             <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-             
+            <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
               {user?.role !== "recruiter" && (
                 <Link
                   to="/get-user-applied-job-application"
@@ -148,19 +165,24 @@ const UserProfile = () => {
                   View applied jobs
                 </Link>
               )}
-
-             
+              {user?.resume && (
+                <a
+                  href={`http://localhost:8000/${user.resume.replace(
+                    /\\/g,
+                    "/"
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  View Uploaded Resume
+                </a>
+              )}
             </div>
-
-
-
-            
           </div>
         </div>
       </div>
     </div>
-    
-  )
+  );
 }
 
 export default UserProfile

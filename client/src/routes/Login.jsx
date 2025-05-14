@@ -36,18 +36,17 @@ const Login = () => {
     setsubmit(true);
   
 
-  // if(Object.keys(errors).length>0){
-  //   return;
-  // }
+
 
   try {
     const response = await axios.post(`${USER_API_END_POINT}/login`,formvalues,{
       headers:{ "Content-Type":"application/json"},
-      withCredentials:false,
+      withCredentials:true,
     });
 
     if(response.data.success){
       dispatch(setUser(response.data.user));
+      
 
       if(response.data.user.role==="recruiter"){
         navigate("/job-application-form");
