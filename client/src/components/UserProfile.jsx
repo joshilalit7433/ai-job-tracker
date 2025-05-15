@@ -1,41 +1,20 @@
-import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import axios from "axios";
 import { Link } from "react-router-dom";
 import dayjs from "dayjs";
 import { Pencil } from "lucide-react";
 import { Upload } from 'lucide-react';
-import { USER_API_END_POINT } from "../utils/constant";
+import { Eye } from 'lucide-react';
+
 
 
 const UserProfile = () => {
 
      const { user } = useSelector((store) => store.auth);
-     //eslint-disable-next-line
-  const [jobs, setjobs] = useState([]);
-//eslint-disable-next-line
-  const [error, setError] = useState("");
-
-   useEffect(() => {
-    const fetchJobs = async () => {
-      try {
-        const response = await axios.get(
-          `${USER_API_END_POINT}/get-user-applied-job-application/${user?.id}`
-        );
-        setjobs(response.data.jobs || []);
-      } catch (err) {
-        console.error("Error fetching jobs:", err.message);
-        setError("Failed to fetch jobs.");
-      } 
-    };
-
-    if (user?.id) {
-      fetchJobs();
-    }
-  }, [user]);
+   
+  
 
   return (
-    <div className="mt-10 min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="mt-10 min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 py-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
         <div className="bg-white shadow-xl rounded-2xl overflow-hidden">
           <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-8">
@@ -47,7 +26,7 @@ const UserProfile = () => {
                 {user?.fullname || "Unknown User"}
               </h1>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 md:gap-x-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 md:gap-x-4 ">
                 <Link
                   to="/edit-profile"
                   className="mt-2 flex items-center gap-2 border border-gray-300 bg-white text-gray-800 rounded-md md:w-[150px] px-4 py-2 text-base font-medium shadow hover:bg-gray-100 transition duration-200"
@@ -56,13 +35,23 @@ const UserProfile = () => {
                   Edit Profile
                 </Link>
 
-                <Link
-                  to="/upload-resume"
-                  className="mt-2 flex items-center gap-2 border border-gray-300 bg-white text-gray-800 rounded-md px-4 py-2 text-base font-medium shadow hover:bg-gray-100 transition duration-200"
-                >
-                  <Upload className="w-5 h-5 text-gray-600" />
-                  Upload Resume
-                </Link>
+                {user?.role !== "recruiter" ? (
+                  <Link
+                    to="/upload-resume"
+                    className="mt-2 flex items-center gap-2 border border-gray-300 bg-white text-gray-800 rounded-md px-4 py-2 text-base font-medium shadow hover:bg-gray-100 transition duration-200"
+                  >
+                    <Upload className="w-5 h-5 text-gray-600" />
+                    Upload Resume
+                  </Link>
+                ):(
+                  <Link
+                    to="/recruiter-posted-job-applications"
+                    className="mt-2 flex items-center gap-2 border border-gray-300 bg-white text-gray-800 rounded-md px-4 py-2 text-base font-medium shadow hover:bg-gray-100 transition duration-200"
+                  >
+                    <Eye className="w-5 h-5 text-gray-600" />
+                    View My Job Applications
+                  </Link>
+                )}
               </div>
             </div>
           </div>

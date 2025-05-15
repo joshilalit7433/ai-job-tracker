@@ -211,6 +211,46 @@ export const DeleteJobApplication = async (req,res) => {
   }
 }
 
+export const GetRecruiterPostedJobApplication = async (req,res) =>{
+  try {
+    if(!req.user || req.user.role !=="recruiter"){
+      return res.status(403).json({
+        message:"only recruiters can view their posted job applications",
+        success:false
+      })
+    }
+
+     const recruiterid=req.user._id;
+  
+
+    if(!recruiterid){
+      return res.status(400).json({
+        message: "Recruiter ID is required",
+        success: false,
+      });
+
+    }
+
+    const jobapplications=await JobApplication.find({user:recruiterid});
+    console.log("Logged-in user:", req.user);
+
+
+    return res.status(200).json({
+      jobapplications,
+      success:true
+    });
+    
+  } catch (error) {
+    console.error("Error fetching recruiter's posted job applications:", error.message);
+    console.log("Error :", error);
+    return res.status(500).json({
+      message: "Server error while fetching recruiter's posted job applications",
+      success: false,
+    });
+    
+  }
+}
+
 
 export const GetJobApplicationForRecruiter = async (req, res) => {
   try {
@@ -220,6 +260,8 @@ export const GetJobApplicationForRecruiter = async (req, res) => {
         success: false,
       });
     }
+
+   
 
     const applicationsWithUsers = await Applicant.find()
     .populate({

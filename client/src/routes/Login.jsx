@@ -49,7 +49,7 @@ const Login = () => {
       
 
       if(response.data.user.role==="recruiter"){
-        navigate("/job-application-form");
+        navigate("/user-profile");
       }
       else if(response.data.user.role==="user"){
         navigate("/");
