@@ -1,6 +1,13 @@
 import axios from 'axios';
 import { JOB_APPLICATION_API_END_POINT } from '../utils/constant';
 import { useEffect, useState } from 'react';
+import { BriefcaseBusiness} from 'lucide-react';
+import { Banknote } from 'lucide-react';
+import { Building2 } from 'lucide-react';
+import { MapPinned } from 'lucide-react';
+import { Clock } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { MoveRight } from 'lucide-react';
 
 
 const JobApplications = () => {
@@ -43,23 +50,24 @@ useEffect(() => {
     ) : jobApplications.length === 0 ? (
       <p className="text-center text-lg">No job applications found.</p>
     ) : (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 place-items-center md:grid-cols-2 lg:grid-cols-3 gap-6">
         {jobApplications.map((job) => (
           <div
             key={job._id}
-            className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition duration-300 cursor-pointer overflow-hidden p-4 space-y-2"
+            className="bg-white rounded-xl shadow-lg hover:shadow-2xl w-[350px] h-[250px] transition duration-300 cursor-pointer overflow-hidden p-4 space-y-2"
           >
-            <p className="text-black text-lg font-bold capitalize">Role: {job.title}</p>
-            <p><strong>Salary:</strong> {job.salary}</p>
-            <p><strong>Location:</strong> {job.location}</p>
-            <p><strong>Company:</strong> {job.company_name}</p>
-            <p><strong>Job Type:</strong> {job.job_type}</p>
-            <p><strong>Benefits:</strong> {job.benefits}</p>
-            <p><strong>Experience:</strong> {job.experience}</p>
-            <p><strong>Responsibilities:</strong> {job.responsibilities}</p>
-            <p><strong>Skills:</strong> {job.skills}</p>
-            <p><strong>Qualification:</strong> {job.qualification}</p>
-            <p><strong>Status:</strong> {job.status}</p>
+            <p className="text-black text-lg font-bold capitalize text-center">
+              <BriefcaseBusiness className="w-5 h-5 text-gray-600 inline-block" /> {job.title}</p>
+            <p >  <Building2 className="w-5 h-5 text-gray-600 inline-block" /> {job.company_name}</p>
+            <p>  <Banknote className="w-5 h-5 text-gray-600 inline-block" /> {job.salary}</p>
+            <p>  <MapPinned className="w-5 h-5 text-gray-600 inline-block"  /> {job.location}</p>
+            <p> <Clock  className="w-5 h-5 text-gray-600 inline-block"/> {job.job_type}</p>
+            <Link
+            to={`/job-application-details/${job._id}`}
+            className='text-blue-500 flex justify-end  '
+            >View Details
+            <MoveRight  className="w-5 h-5 text-blue-500 inline-block ml-2 pt-1.5"/></Link>
+
           </div>
         ))}
       </div>

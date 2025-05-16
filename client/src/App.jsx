@@ -12,6 +12,8 @@ import UserAppliedJobApplication from "./components/UserAppliedJobApplication";
 import EditProfile from "./routes/EditProfile";
 import UploadResume from "./routes/UploadResume";
 import RecruiterPostedJobApplication from "./components/RecruiterPostedJobApplication";
+import EditJobApplication from "./routes/EditJobApplication";
+import ViewJobApplication from "./components/ViewJobApplication";
 
 
 
@@ -24,6 +26,7 @@ function App() {
     
     <BrowserRouter>
     <Navbar/>
+    <div className="pt-20">
     <ToastContainer/>
     <Routes>
       <Route path="/" element={<Home/>}/>
@@ -36,8 +39,14 @@ function App() {
       <Route path="edit-profile" element={<EditProfile/>}/>
       <Route path="upload-resume" element={<UploadResume/>}/>
       <Route path="recruiter-posted-job-applications" element={<RecruiterPostedJobApplication/>}/>
+      <Route path="edit-job-applications/:id" element={<EditJobApplication/>}/>
+      <Route path="/job-application-details/:id" element={<ViewJobApplication/>}/>
+
+
+
 
     </Routes>
+    </div>
     </BrowserRouter>
 
      

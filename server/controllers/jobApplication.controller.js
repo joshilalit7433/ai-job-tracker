@@ -103,9 +103,9 @@ export const UpdateJobApplication = async(req,res) => {
       }
 
       const jobapplicationId=req.params.id;
-      console.log(jobapplicationId);
+      console.log("job application ",jobapplicationId);
       const jobapplication= await JobApplication.findById(jobapplicationId);
-      console.log(jobapplication);
+      console.log("job application ",jobapplication);
       
       if(!jobapplication){
         return res.status(400).json({
@@ -113,6 +113,13 @@ export const UpdateJobApplication = async(req,res) => {
           success:false
         })
       }
+
+      if(jobapplication.user.toString() !== req.user._id.toString()){
+        return res.status(403).json({
+          message:"You are not authorized to update this job application",
+          success:false
+        });
+           }
 
      if( title) jobapplication.title=title;
       if(salary) jobapplication.salary=salary;
@@ -163,6 +170,7 @@ export const GetJobApplication = async (req,res) => {
 
   } catch (error) {
     console.error("error fetching job applications: ",error.message,error.stack);
+    console.log("Error fetching job applications:", error);
     return res.status(500).json({
       message: "An error occurred while fetching job applications",
       success: false,
@@ -170,6 +178,39 @@ export const GetJobApplication = async (req,res) => {
     
   }
 }
+
+export const GetJobApplicationById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: "Job Application ID is required",
+      });
+    }
+
+    const jobapplication = await JobApplication.findById(id);
+
+    if (!jobapplication) {
+      return res.status(404).json({
+        success: false,
+        message: "job application  not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      jobapplication,
+    });
+  } catch (error) {
+    console.error("Error fetching job application:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch job application",
+    });
+  }
+};
 
 export const DeleteJobApplication = async (req,res) => {
   try {
