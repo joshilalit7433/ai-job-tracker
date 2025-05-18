@@ -11,6 +11,22 @@ const ApplicantSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
+  fullname: {
+    type: String,
+    required: true
+  },
+  email: {
+    type: String,
+    required: true
+  },
+  mobilenumber: {
+    type: Number,
+    required: true
+  },
+  resume: {
+    type: String,
+    required: true
+  },
   appliedAt: {
     type: Date,
     default: Date.now,
@@ -19,6 +35,10 @@ const ApplicantSchema = new mongoose.Schema({
     type: String,
     enum: ["pending", "interview", "rejected", "accepted"],
     default: "pending",
+  },
+  cover_letter: {
+    type: String,
+    required: true
   }
 });
 

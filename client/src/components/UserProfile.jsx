@@ -27,23 +27,26 @@ const UserProfile = () => {
               </h1>
 
               <div className="grid grid-cols-1 md:grid-cols-2 md:gap-x-4 ">
+
+                {user?.role !== "recruiter" && (
                 <Link
                   to="/edit-profile"
-                  className="mt-2 flex items-center gap-2 border border-gray-300 bg-white text-gray-800 rounded-md md:w-[150px] px-4 py-2 text-base font-medium shadow hover:bg-gray-100 transition duration-200"
+                  className="mt-2 justify-center flex  gap-2 border border-gray-300 bg-white text-gray-800 rounded-md md:w-[150px] px-4 py-2 text-base font-medium shadow hover:bg-gray-100 transition duration-200"
+                >
+                  <Pencil className="w-5 h-5 text-gray-600" />
+                  Edit Profile
+                </Link>)}
+
+                {user?.role !== "user" && (
+                  <span>
+                     <Link
+                  to="/edit-profile"
+                  className="mt-2 justify-center flex  gap-2 border border-gray-300 bg-white text-gray-800 rounded-md md:w-[150px] px-4 py-2 text-base font-medium shadow hover:bg-gray-100 transition duration-200"
                 >
                   <Pencil className="w-5 h-5 text-gray-600" />
                   Edit Profile
                 </Link>
 
-                {user?.role !== "recruiter" ? (
-                  <Link
-                    to="/upload-resume"
-                    className="mt-2 flex items-center gap-2 border border-gray-300 bg-white text-gray-800 rounded-md px-4 py-2 text-base font-medium shadow hover:bg-gray-100 transition duration-200"
-                  >
-                    <Upload className="w-5 h-5 text-gray-600" />
-                    Upload Resume
-                  </Link>
-                ):(
                   <Link
                     to="/recruiter-posted-job-applications"
                     className="mt-2 flex items-center gap-2 border border-gray-300 bg-white text-gray-800 rounded-md px-4 py-2 text-base font-medium shadow hover:bg-gray-100 transition duration-200"
@@ -51,6 +54,7 @@ const UserProfile = () => {
                     <Eye className="w-5 h-5 text-gray-600" />
                     View My Job Applications
                   </Link>
+                  </span>
                 )}
               </div>
             </div>
@@ -154,18 +158,7 @@ const UserProfile = () => {
                   View applied jobs
                 </Link>
               )}
-              {user?.resume && (
-                <a
-                  href={`http://localhost:8000/${user.resume.replace(
-                    /\\/g,
-                    "/"
-                  )}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  View Uploaded Resume
-                </a>
-              )}
+             
             </div>
           </div>
         </div>

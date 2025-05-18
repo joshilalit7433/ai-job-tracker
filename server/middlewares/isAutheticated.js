@@ -39,6 +39,7 @@ const isAuthenticated = async (req, res, next) => {
       mobilenumber: user.mobilenumber,
       role: user.role,
       resume: user.resume,
+      cover_letter: user.cover_letter,
     };
 
     next();

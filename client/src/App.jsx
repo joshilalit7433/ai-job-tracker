@@ -14,6 +14,7 @@ import UploadResume from "./routes/UploadResume";
 import RecruiterPostedJobApplication from "./components/RecruiterPostedJobApplication";
 import EditJobApplication from "./routes/EditJobApplication";
 import ViewJobApplication from "./components/ViewJobApplication";
+import ApplyJobApplication from "./routes/ApplyJobApplication";
 
 
 
@@ -41,6 +42,8 @@ function App() {
       <Route path="recruiter-posted-job-applications" element={<RecruiterPostedJobApplication/>}/>
       <Route path="edit-job-applications/:id" element={<EditJobApplication/>}/>
       <Route path="/job-application-details/:id" element={<ViewJobApplication/>}/>
+      <Route path="/apply-job-application/:id" element={<ApplyJobApplication/>}/>
+
 
 
 
