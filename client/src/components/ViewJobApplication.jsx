@@ -1,14 +1,18 @@
 import axios from 'axios';
 import { JOB_APPLICATION_API_END_POINT } from '../utils/constant';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { BriefcaseBusiness, Banknote, Building2, MapPinned, Clock } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
+
 
 const ViewJobApplication = () => {
   const [jobApplication, setJobApplication] = useState(null);
   const [loading, setLoading] = useState(true);
   const { id } = useParams();
+  const {user}=useSelector((store)=>store.auth);
+  const navigate=useNavigate();
 
   useEffect(() => {
     const fetchJobApplication = async () => {
@@ -38,6 +42,16 @@ const ViewJobApplication = () => {
   if (!jobApplication) {
     return <p className="text-center text-lg mt-10">Job application not found.</p>;
   }
+
+const allow = () => {
+  if (user === null) {
+    toast.error("You should login to apply");
+    navigate("/login", {state:{from:`/apply-job-application/${id}`}});
+  } else {
+    navigate(`/apply-job-application/${id}`);
+  }
+};
+
 
   return (
     <div className="max-w-4xl mx-auto mt-10 p-6 shadow-lg border rounded-lg mb-6 lg:mt-[100px] bg-white space-y-4">
@@ -92,12 +106,13 @@ const ViewJobApplication = () => {
           <strong>Qualification:</strong> {jobApplication.qualification}
         </p>
 
-         <Link
+         <button
         to={`/apply-job-application/${id}`}
         className=" h-[35px] inline-flex items-center justify-center px-6 py-3 bg-blue-500 text-white rounded-md hover:bg-blue-700 transition duration-200 shadow-lg hover:shadow-xl"
+        onClick={()=>allow()}
       >
         Apply Now
-      </Link> 
+      </button> 
 
       </div>
 

@@ -90,7 +90,7 @@ export const GetApplicantsForSpecificJob = async (req, res) => {
 
     if (req.user.role !== "recruiter") {
       return res.status(403).json({
-        message: "Access denied. Recruiter only.",
+        message: " Recruiters can only Access",
         success: false,
       });
     }

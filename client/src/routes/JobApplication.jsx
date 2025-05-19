@@ -72,7 +72,7 @@ const isSalaryInRange = (salary, range) => {
     ) : jobApplications.length === 0 ? (
       <p className="text-center text-lg">No job applications found.</p>
     ) : (
-      <div className="lg:ml-[210px] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="lg:ml-[210px] grid justify-self-center grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredJobApplications.map((job) => (
           <div
             key={job._id}

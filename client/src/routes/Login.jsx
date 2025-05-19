@@ -7,11 +7,15 @@ import { setUser } from "../redux/authSlice";
 import { Mail,Lock } from "lucide-react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useLocation } from "react-router-dom";
 
 
 const Login = () => {
   const navigate=useNavigate();
   const dispatch=useDispatch();
+  const location=useLocation();
+
+  const redirectPath=location.state?.from || "/";
 
    const initialvalues={
     email:"",
@@ -23,6 +27,9 @@ const Login = () => {
   const [formerrors,setformerrors]=useState({});
   //eslint-disable-next-line
   const [submit,setsubmit]=useState(false);
+
+
+  
 
   const handleChange = (e) =>{
     const {name,value} = e.target;
@@ -48,15 +55,7 @@ const Login = () => {
       dispatch(setUser(response.data.user));
       
 
-      if(response.data.user.role==="recruiter"){
-        navigate("/user-profile");
-      }
-      else if(response.data.user.role==="user"){
-        navigate("/");
-      }
-      else{
-        navigate("/admin-dashboard");
-      }
+     
 
       toast.success(response.data.message, {
           position: "top-center",
@@ -67,6 +66,8 @@ const Login = () => {
           draggable: true,
           theme: "dark",
         });
+
+        navigate(redirectPath);
 
     }
 
