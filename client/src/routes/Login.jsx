@@ -54,6 +54,9 @@ const Login = () => {
       else if(response.data.user.role==="user"){
         navigate("/");
       }
+      else{
+        navigate("/admin-dashboard");
+      }
 
       toast.success(response.data.message, {
           position: "top-center",

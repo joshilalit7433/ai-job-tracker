@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { JOB_APPLICATION_API_END_POINT } from "../utils/constant.js";
-import { Pencil } from "lucide-react";
+import { Pencil,MoveRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Trash2 } from 'lucide-react';
 import { toast } from "react-toastify";
+
 
 const RecruiterPostedJobApplication = () => {
   const { user } = useSelector((store) => store.auth);
@@ -132,6 +133,14 @@ const handleDelete = async (id) => {
                 <Trash2 className="w-5 h-5 text-gray-600" />
                 Delete Job Application
               </button>
+
+              <Link
+                to={`/view-applicant/${job._id}`}
+                className="text-blue-500 flex justify-end  "
+              >
+                View Applicant Details
+                <MoveRight className="w-5 h-5 text-blue-500 inline-block ml-2 pt-1.5" />
+              </Link>
             </div>
           ))}
         </div>

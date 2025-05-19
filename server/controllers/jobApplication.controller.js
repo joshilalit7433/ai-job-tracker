@@ -5,9 +5,6 @@ export const PostJobApplication = async (req, res) => {
   try {
     
     if (req.user.role !== "recruiter") {
-       console.log("User role is:", req.user.role);
-       console.log("req.user object is:", req.user);
-
       return res.status(403).json({
         message: "Only recruiters can post job applications",
         success: false,
@@ -273,7 +270,7 @@ export const GetRecruiterPostedJobApplication = async (req,res) =>{
     }
 
     const jobapplications=await JobApplication.find({user:recruiterid});
-    console.log("Logged-in user:", req.user);
+    
 
 
     return res.status(200).json({
@@ -292,43 +289,33 @@ export const GetRecruiterPostedJobApplication = async (req,res) =>{
   }
 }
 
-
 export const GetJobApplicationForRecruiter = async (req, res) => {
   try {
     if (req.user.role !== "recruiter") {
       return res.status(403).json({
-        message: "Access denied",
+        message: "Access denied. Recruiters only.",
         success: false,
       });
     }
 
-   
-
-    const applicationsWithUsers = await Applicant.find()
-    .populate({
-      path: "job",
-      match: { user: req.user._id }, 
-    })
-    .populate("user", "_id fullname email mobilenumber");
-
-    const filteredApplications = applicationsWithUsers.filter(
-      (application) => application.job !== null
-    );
+    
+    const recruiterJobs = await JobApplication.find({ user: req.user._id });
 
     return res.status(200).json({
-       filteredApplications,
+      jobApplications: recruiterJobs,
       success: true,
     });
-    
-
   } catch (error) {
-    console.error(error);
+    console.error("Error fetching recruiter's job applications:", error.message);
     return res.status(500).json({
       message: "Server error while fetching recruiter job applications",
       success: false,
     });
   }
 };
+
+
+
 
 
 
@@ -346,6 +333,7 @@ export const GetUserAppliedJobApplication = async (req, res) => {
     const jobapplications = await Applicant.find({ user: req.user._id }).populate(
       "job" 
     );
+  
 
 
     return res.status(200).json({
@@ -353,6 +341,7 @@ export const GetUserAppliedJobApplication = async (req, res) => {
       success: true,
     });
   } catch (error) {
+    console.log(error)
     console.error("Error fetching user's applied jobs:", error.message);
     return res.status(500).json({
       message: "Server error while fetching applied jobs",

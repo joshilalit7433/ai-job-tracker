@@ -83,3 +83,31 @@ export const ApplyJobApplication = async (req, res) => {
     });
   }
 };
+
+export const GetApplicantsForSpecificJob = async (req, res) => {
+  try {
+    const { jobId } = req.params;
+
+    if (req.user.role !== "recruiter") {
+      return res.status(403).json({
+        message: "Access denied. Recruiter only.",
+        success: false,
+      });
+    }
+
+   
+    const applicants = await Applicant.find({ job: jobId })
+      
+
+    return res.status(200).json({
+      applicants,
+      success: true,
+    });
+  } catch (error) {
+    console.error("Error in GetApplicantsForSpecificJob:", error.message);
+    return res.status(500).json({
+      message: "Server error while fetching applicants for job",
+      success: false,
+    });
+  }
+};

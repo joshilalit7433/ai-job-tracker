@@ -26,6 +26,7 @@ const UserAppliedJobApplication = () => {
           }
         );
         const fetchedjobs = Response.data.appliedJobs || [];
+        console.log(fetchedjobs);
         setjobs(fetchedjobs);
 
         

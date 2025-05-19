@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
-import { JOB_APPLICANT_END_POINT, USER_API_END_POINT } from '../utils/constant.js';
+import { JOB_APPLICANT_API_END_POINT, USER_API_END_POINT } from '../utils/constant.js';
 import { toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../redux/authSlice';
@@ -68,7 +68,7 @@ const ApplyJobForm = () => {
 
     try {
       const response = await axios.post(
-        `${JOB_APPLICANT_END_POINT}/apply/${id}`,
+        `${JOB_APPLICANT_API_END_POINT}/apply/${id}`,
         {
           cover_letter: formData.cover_letter,
           resume: uploadedResumeURL,

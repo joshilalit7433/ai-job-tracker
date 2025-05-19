@@ -1,12 +1,10 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { JOB_APPLICATION_API_END_POINT } from "../utils/constant";
 
 const JobApplicationForm = () => {
-  const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -22,17 +20,10 @@ const JobApplicationForm = () => {
     qualification: "",
   });
 
-  if (!user || user.role !== "recruiter") {
-    toast.error("Access denied. Only recruiters can post jobs.");
-    navigate("/");
-    return null;
-  }
 
   const handleChange = (e) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
+      const { name, value } = e.target;
+  setFormData({...formData,[name]:value});
   };
 
 const handleSubmit = async (e) => {
