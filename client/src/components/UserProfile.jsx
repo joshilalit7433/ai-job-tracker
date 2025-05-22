@@ -28,7 +28,7 @@ const UserProfile = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 md:gap-x-4 ">
 
-                {user?.role !== "recruiter" && (
+                { user && (
                 <Link
                   to="/edit-profile"
                   className="mt-2 justify-center flex  gap-2 border border-gray-300 bg-white text-gray-800 rounded-md md:w-[150px] px-4 py-2 text-base font-medium shadow hover:bg-gray-100 transition duration-200"
@@ -37,16 +37,8 @@ const UserProfile = () => {
                   Edit Profile
                 </Link>)}
 
-                {user?.role !== "user" && (
+                {user?.role === "recruiter" && (
                   <span>
-                     <Link
-                  to="/edit-profile"
-                  className="mt-2 justify-center flex  gap-2 border border-gray-300 bg-white text-gray-800 rounded-md md:w-[150px] px-4 py-2 text-base font-medium shadow hover:bg-gray-100 transition duration-200"
-                >
-                  <Pencil className="w-5 h-5 text-gray-600" />
-                  Edit Profile
-                </Link>
-
                   <Link
                     to="/recruiter-posted-job-applications"
                     className="mt-2 flex items-center gap-2 border border-gray-300 bg-white text-gray-800 rounded-md px-4 py-2 text-base font-medium shadow hover:bg-gray-100 transition duration-200"
@@ -137,7 +129,7 @@ const UserProfile = () => {
             </div>
 
             <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-              {user?.role !== "recruiter" && (
+              {user?.role === "user" && (
                 <Link
                   to="/get-user-applied-job-application"
                   className="inline-flex items-center justify-center px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition duration-200 shadow-lg hover:shadow-xl"

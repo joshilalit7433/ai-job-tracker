@@ -58,10 +58,11 @@ export const PostJobApplication = async (req, res) => {
       skills,
       qualification,
       status: status || "open",
+      isApproved:false
     });
 
     return res.status(201).json({
-      message: "Job application created successfully",
+      message: "Job application submitted. Awaiting admin approval.",
       jobApplication,
       success: true,
     });
@@ -349,5 +350,81 @@ export const GetUserAppliedJobApplication = async (req, res) => {
     });
   }
 };
+
+
+export const getPendingJobs = async (req, res) => {
+  try {
+    const jobs = await JobApplication.find({ isApproved: false });
+    res.status(200).json({ success: true, jobs });
+    
+  } catch (error) {
+    console.error("Error fetching pending jobs:", error.message);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+export const approveJob = async (req, res) => {
+  try {
+    if (req.user.role !== "admin") {
+      return res.status(403).json({
+        message: "Only admins can approve job applications",
+        success: false,
+      });
+    }
+
+    const jobId = req.params.id;
+    const job = await JobApplication.findById(jobId);
+
+    if (!job) {
+      return res.status(404).json({
+        message: "Job application not found",
+        success: false,
+      });
+    }
+
+    job.isApproved = true;
+    await job.save();
+
+    return res.status(200).json({
+      message: "Job application approved successfully",
+      success: true,
+      job,
+    });
+  } catch (error) {
+    console.error("Error approving job:", error.message);
+    return res.status(500).json({
+      message: "Server error while approving job",
+      success: false,
+    });
+  }
+};
+
+export const rejectJob = async (req, res) => {
+  try {
+    const jobId = req.params.id;
+    const job = await JobApplication.findById(jobId);
+
+    if (!job) {
+      return res.status(404).json({
+        message: "Job application not found",
+        success: false,
+      });
+    }
+
+    await JobApplication.findByIdAndDelete(jobId);
+
+    return res.status(200).json({
+      success: true,
+      message: "Job rejected and deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error rejecting job:", error.message);
+    return res.status(500).json({
+      success: false,
+      message: "Server error while rejecting job",
+    });
+  }
+};
+
 
 

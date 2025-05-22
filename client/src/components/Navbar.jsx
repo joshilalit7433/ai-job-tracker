@@ -1,4 +1,4 @@
-import  { useState,useEffect } from "react";
+import  { useState } from "react";
 
 import { Link,useLocation,useNavigate } from "react-router-dom";
 import { Menu, X, ChevronDown } from "lucide-react";
@@ -43,11 +43,7 @@ const Navbar = () => {
     });
   };
 
-  useEffect(() => {
-    if (user?.role === "recruiter" && location.pathname === "/") {
-      navigate("/job-application-form");
-    }
-  }, [user, location, navigate]);
+ 
 
 
      const userLinks = [
@@ -55,7 +51,15 @@ const Navbar = () => {
     { id: 2, name: "Job Applications", link: "/job-applications" },
   ];
 
-  const recruiterLinks = [{id:1, name:"Job Application Form", link:"/job-application-form"}];
+  const recruiterLinks = [
+    { id: 1, name: "Home", link: "/" },
+    {id:2, name:"Job Application Form", link:"/job-application-form"}
+  ];
+
+  const adminLinks=[
+    { id: 1, name: "Home", link: "/" },
+    {id:2,name:"Dashboard",link:"/admin-dashboard"}
+  ]
 
   return (
      <nav className="bg-blue-500 shadow-lg fixed top-0 left-0 right-0 z-50">
@@ -69,7 +73,7 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden sm:flex sm:items-center sm:space-x-8">
-            {user?.role !== "recruiter" &&
+            {   user?.role !=="recruiter" && user?.role !=="admin" &&
               userLinks.map((link) => (
                 <Link
                   key={link.id}
@@ -89,6 +93,18 @@ const Navbar = () => {
                   {link.name}
                 </Link>
               ))}
+              {
+                user?.role ==="admin" &&
+                adminLinks.map((link)=>(
+                  <Link
+                  key={link.id}
+                  to={link.link}
+                  className="text-white  hover:text-white px-3 py-2 rounded-md text-lg font-medium transition duration-150 ease-in-out"
+                  >
+                    {link.name}
+                  </Link>
+                ))
+              }
           </div>
 
           <div className="hidden sm:flex sm:items-center sm:space-x-4">

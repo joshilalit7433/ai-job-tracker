@@ -53,6 +53,7 @@ export const login = async (req, res) => {
     }
 
     let user = await User.findOne({ email });
+   
 
     if (!user) {
       return res.status(400).json({
@@ -131,7 +132,7 @@ export const updateProfile = async (req, res) => {
   try {
     const { fullname, email, mobilenumber } = req.body;
 
-    const userId = req.user._id; // middleware authentication
+    const userId = req.user._id; 
     console.log("user id", userId);
     let user = await User.findById(userId);
     console.log(user);
@@ -142,7 +143,7 @@ export const updateProfile = async (req, res) => {
         success: false,
       });
     }
-    // updating data
+  
     if (fullname) user.fullname = fullname;
     if (email) user.email = email;
     if (mobilenumber) user.mobilenumber = mobilenumber;

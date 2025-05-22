@@ -43,8 +43,8 @@ function App() {
       <Route path="/job-application-details/:id" element={<ViewJobApplication/>}/>
 
       {/* this page can be accessed by only users and recruiters */}
-      <Route path="user-profile" element={<ProtectedRoute allowedRoles={["user","recruiter"]} ><UserProfile/></ProtectedRoute>}/>
-      <Route path="edit-profile" element={<ProtectedRoute allowedRoles={["user","recruiter"]}><EditProfile/></ProtectedRoute>}/>
+      <Route path="user-profile" element={<ProtectedRoute allowedRoles={["user","recruiter","admin"]} ><UserProfile/></ProtectedRoute>}/>
+      <Route path="edit-profile" element={<ProtectedRoute allowedRoles={["user","recruiter","admin"]}><EditProfile/></ProtectedRoute>}/>
 
       {/* this page can be accessed by only users  */}
       <Route path="get-user-applied-job-application" element={<ProtectedRoute allowedRoles={["user"]}><UserAppliedJobApplication/></ProtectedRoute>}/>

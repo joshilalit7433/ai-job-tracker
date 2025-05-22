@@ -53,6 +53,10 @@ const JobApplicationSchema = new mongoose.Schema(
       enum: ["applied", "interviewing", "offered", "rejected","open","closed"],
       default:"open"
     },
+    isApproved: {
+    type: Boolean,
+    default: false, 
+  }
 
     
     

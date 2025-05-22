@@ -1,24 +1,30 @@
-import axios from 'axios';
-import { JOB_APPLICATION_API_END_POINT } from '../utils/constant';
-import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { BriefcaseBusiness, Banknote, Building2, MapPinned, Clock } from 'lucide-react';
-import { useSelector } from 'react-redux';
-import { toast } from 'react-toastify';
-
+import axios from "axios";
+import { JOB_APPLICATION_API_END_POINT } from "../utils/constant";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  BriefcaseBusiness,
+  Banknote,
+  Building2,
+  MapPinned,
+  Clock,
+} from "lucide-react";
+import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
 const ViewJobApplication = () => {
   const [jobApplication, setJobApplication] = useState(null);
   const [loading, setLoading] = useState(true);
   const { id } = useParams();
-  const {user}=useSelector((store)=>store.auth);
-  const navigate=useNavigate();
+  const { user } = useSelector((store) => store.auth);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchJobApplication = async () => {
       try {
-        const response = await axios.get(`${JOB_APPLICATION_API_END_POINT}/get-job-application-by-id/${id}`,
-          { withCredentials: true}
+        const response = await axios.get(
+          `${JOB_APPLICATION_API_END_POINT}/get-job-application-by-id/${id}`,
+          { withCredentials: true }
         );
         const data = response.data;
         console.log("job application", data);
@@ -40,18 +46,57 @@ const ViewJobApplication = () => {
   }
 
   if (!jobApplication) {
-    return <p className="text-center text-lg mt-10">Job application not found.</p>;
+    return (
+      <p className="text-center text-lg mt-10">Job application not found.</p>
+    );
   }
 
-const allow = () => {
-  if (user === null) {
-    toast.error("You should login to apply");
-    navigate("/login", {state:{from:`/apply-job-application/${id}`}});
-  } else {
-    navigate(`/apply-job-application/${id}`);
-  }
-};
+  const allow = () => {
+    if (!user) {
+      toast.error("You must login to apply.");
+      navigate("/login", { state: { from: `/apply-job-application/${id}` } });
+    } else {
+      navigate(`/apply-job-application/${id}`);
+    }
+  };
 
+  const handleApprove = async () => {
+    try {
+      await axios.put(
+        `${JOB_APPLICATION_API_END_POINT}/approve-job/${id}`,
+        {},
+        { withCredentials: true }
+      );
+      toast.success("job approved successfully!", {
+        position: "top-center",
+        theme: "dark",
+      });
+      navigate("/admin-dashboard");
+    } catch (error) {
+      toast.error(error, {
+        position: "top-center",
+        theme: "dark",
+      });
+    }
+  };
+
+  const handleReject = async () => {
+    try {
+      await axios.delete(`${JOB_APPLICATION_API_END_POINT}/reject-job/${id}`, {
+        withCredentials: true,
+      });
+      toast.success("job rejected successfully!", {
+        position: "top-center",
+        theme: "dark",
+      });
+      navigate("/admin-dashboard");
+    } catch (error) {
+      toast.error(error, {
+        position: "top-center",
+        theme: "dark",
+      });
+    }
+  };
 
   return (
     <div className="max-w-4xl mx-auto mt-10 p-6 shadow-lg border rounded-lg mb-6 lg:mt-[100px] bg-white space-y-4">
@@ -105,18 +150,32 @@ const allow = () => {
         <p>
           <strong>Qualification:</strong> {jobApplication.qualification}
         </p>
+        {(!user || user?.role === "user") && (
+          <button
+            onClick={() => allow()}
+            className=" h-[35px] inline-flex items-center justify-center px-6 py-3 bg-blue-500 text-white rounded-md hover:bg-blue-700 transition duration-200 shadow-lg hover:shadow-xl"
+          >
+            Apply Now
+          </button>
+        )}
 
-         <button
-        to={`/apply-job-application/${id}`}
-        className=" h-[35px] inline-flex items-center justify-center px-6 py-3 bg-blue-500 text-white rounded-md hover:bg-blue-700 transition duration-200 shadow-lg hover:shadow-xl"
-        onClick={()=>allow()}
-      >
-        Apply Now
-      </button> 
-
+        {user?.role === "admin" && (
+          <div className="mt-8 flex space-x-4">
+            <button
+              onClick={handleApprove}
+              className="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+            >
+              Approve Turf
+            </button>
+            <button
+              onClick={handleReject}
+              className="px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+            >
+              Reject Turf
+            </button>
+          </div>
+        )}
       </div>
-
-     
     </div>
   );
 };

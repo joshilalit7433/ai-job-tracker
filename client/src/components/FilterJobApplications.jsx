@@ -1,84 +1,67 @@
-import { useState } from "react"
+import { useState } from "react";
 
 const FilterJobApplications = ({ onFilterChange }) => {
-    const filterData=[
-        {
-            filterType:"Salary",
-            filterOptions:["100000-300000","500000-800000","800000-1200000","1200000+"]
-        },
-        {
-            filterType:"Location",
-            filterOptions:["Mumbai","Delhi","Bangalore","Hyderabad","Pune","Rajasthan"]
-        },
-       
-    ]
+  const filterData = [
+    {
+      filterType: "Salary",
+      filterOptions: ["100000-300000", "500000-800000", "800000-1200000", "1200000+"]
+    },
+    {
+      filterType: "Location",
+      filterOptions: ["Mumbai", "Delhi", "Bangalore", "Hyderabad", "Pune", "Rajasthan"]
+    }
+  ];
 
-    const [selectedFilters, setSelectedFilters] = useState({
-        Salary:"",
-        Location:""
-    });
+  const [selectedFilters, setSelectedFilters] = useState({
+    Salary: "",
+    Location: ""
+  });
 
+  const handleFilterChange = (filterType, value) => {
+    const updated = { ...selectedFilters, [filterType]: value };
+    setSelectedFilters(updated);
+    onFilterChange(updated);
+  };
 
-
-  const handleFilterChange = (filterType,value) =>{
-    let updateValue=value;
-
-    const updateFilter={ ...selectedFilters,[filterType]:updateValue};
-    setSelectedFilters(updateFilter);
-    onFilterChange(updateFilter);
-  }
-
-  const resetFilters = () =>{
-    const resetState={Salary:"",Location:""};
+  const resetFilters = () => {
+    const resetState = { Salary: "", Location: "" };
     setSelectedFilters(resetState);
     onFilterChange(resetState);
-  }
-
-
+  };
 
   return (
-     <div className="mt-16">
-       <div className=" hidden lg:block p-4 border-r border-gray-200 fixed top-[64px] h-[calc(100vh-64px)] overflow-y-auto w-[200px] bg-white shadow-lg z-10">
-        <h1 className="text-xl font-bold text-blue-500 mb-6 mt-4">
-          Filter Job Applications
-        </h1>
-        {filterData.map((data, index) => (
-          <div key={index} className="mb-4">
-            <h2 className="text-lg font-semibold text-blue-500 mb-2">
-              {data.filterType}
-            </h2>
-            {data.filterOptions.map((item, optionIndex) => (
-              <div key={optionIndex} className="flex items-center mb-2">
+    <div className="mt-16">
+      <div className="hidden lg:block p-4 fixed top-[64px] h-[calc(100vh-64px)] w-[200px] bg-white shadow-md border-r z-10 overflow-y-auto">
+        <h1 className="text-xl font-bold text-blue-500 mb-6">Filter Jobs</h1>
+
+        {filterData.map(({ filterType, filterOptions }) => (
+          <div key={filterType} className="mb-6">
+            <h2 className="text-base font-medium mb-2">{filterType}</h2>
+            {filterOptions.map((option) => (
+              <label key={option} className="flex items-center gap-2 text-sm mb-1">
                 <input
                   type="radio"
-                  id={`${data.filterType}-${item}`}
-                  name={data.filterType}
-                  value={item}
-                  onChange={() => handleFilterChange(data.filterType, item)}
-                  checked={data.filterType === "Jobs" 
-                    ? selectedFilters[data.filterType] === item.toLowerCase()
-                    : selectedFilters[data.filterType] === item}
-                  className="form-radio h-4 w-4 text-blue-500"
+                  name={filterType}
+                  value={option}
+                  checked={selectedFilters[filterType] === option}
+                  onChange={() => handleFilterChange(filterType, option)}
+                  className="form-radio text-blue-500"
                 />
-                <label
-                  htmlFor={`${data.filterType}-${item}`}
-                  className="ml-2 text-sm text-gray-700"
-                >
-                  {item}
-                </label>
-              </div>
+                {option}
+              </label>
             ))}
           </div>
         ))}
+
         <button
           onClick={resetFilters}
-          className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300"
+          className="w-full mt-4 bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition"
         >
           Reset Filters
         </button>
       </div>
-      </div>
-  )
-}
+    </div>
+  );
+};
 
-export default FilterJobApplications
+export default FilterJobApplications;
