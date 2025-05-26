@@ -6,7 +6,10 @@ import {
   login,
   updateProfile,
   logout,
-  UploadResume
+  UploadResume,
+  saveJob,
+  unsaveJob,
+  getSavedJobs
 } from "../controllers/user.controller.js";
 import isAuthenticated from "../middlewares/isAutheticated.js";
 
@@ -17,5 +20,11 @@ router.route("/login").post(login);
 router.route("/logout").get(logout);
 router.route("/updateprofile").post(isAuthenticated, updateProfile);
 router.route("/upload-resume").post(isAuthenticated,upload.single("resume"),UploadResume);
+router.route("/saved-job/:jobId").post(isAuthenticated, saveJob);
+router.route("/user-unsaved-job/:jobId").delete(isAuthenticated, unsaveJob);
+router.route("/get-saved-job").get(isAuthenticated, getSavedJobs);
+
+
+
 
 export default router;

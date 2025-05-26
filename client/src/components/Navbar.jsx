@@ -49,6 +49,7 @@ const Navbar = () => {
      const userLinks = [
     { id: 1, name: "Home", link: "/" },
     { id: 2, name: "Job Applications", link: "/job-applications" },
+    {id:3, name:"Saved Jobs", link:"/user-saved-job-application"}
   ];
 
   const recruiterLinks = [

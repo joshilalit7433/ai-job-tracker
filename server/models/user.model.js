@@ -27,10 +27,27 @@ const UserSchema = new mongoose.Schema(
       enum: ["user", "recruiter", "admin"],
     },
 
-    resume:{
-      type:String
+    resume: {
+      type: String,
+    },
 
-    }
+    cover_letter: {
+      type: String,
+    },
+
+    resume_analysis:{
+      type: String,
+      default: "",
+    },
+
+  
+
+    savedJobs: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "JobApplication",
+      },
+    ],
   },
   { timestamps: true }
 );

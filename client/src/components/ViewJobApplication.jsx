@@ -138,15 +138,19 @@ const ViewJobApplication = () => {
         </p>
         <strong>Skills:</strong>
         <div className="flex flex-wrap gap-2 mt-1">
-          {jobApplication.skills?.split(",").map((skill, index) => (
+          {(Array.isArray(jobApplication.skills)
+            ? jobApplication.skills.flatMap((skill) => skill.split(","))
+            : jobApplication.skills?.split(",")
+          )?.map((skill, index) => (
             <span
               key={index}
-              className="border border-gray-400 rounded-full px-3 py-1 text-sm bg-gray-100"
+              className="inline-block border border-gray-400 rounded-full px-3 py-1 text-sm bg-gray-100"
             >
               {skill.trim()}
             </span>
           ))}
         </div>
+
         <p>
           <strong>Qualification:</strong> {jobApplication.qualification}
         </p>

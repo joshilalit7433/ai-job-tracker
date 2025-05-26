@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import JobApplication from "../routes/JobApplication"
 import FilterJobApplications from "../components/FilterJobApplications"
 
+
 const JobApplications = () => {
       const [filters, setFilters] = useState({
         Salary: "",

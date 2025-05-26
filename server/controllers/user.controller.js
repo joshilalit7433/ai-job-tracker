@@ -1,6 +1,7 @@
 import { User } from "../models/user.model.js";
 import bycrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { JobApplication } from "../models/jobApplication.model.js";
 
 export const register = async (req, res) => {
   try {
@@ -109,7 +110,6 @@ export const login = async (req, res) => {
       .json({
         message: `welcome back ${user.fullname} `,
         user,
-        // token,
         success: true,
       });
   } catch (error) {
@@ -197,6 +197,112 @@ export const UploadResume = async (req, res) => {
     return res.status(500).json({
       message: "Server error while uploading resume",
       success: false,
+    });
+  }
+};
+
+
+
+
+
+export const saveJob = async (req, res) => {
+  const { jobId } = req.params;
+  const user = await User.findById(req.user._id);
+
+  if (!user || req.user.role !== "user") {
+    return res.status(403).json({
+      message: "Access denied. Only users can access",
+      success: false,
+    });
+  }
+
+  if (!user.savedJobs.includes(jobId)) {
+    user.savedJobs.push(jobId);
+    await user.save();
+  }
+
+  
+  const jobDetails = await JobApplication.findById(jobId);
+
+  if (!jobDetails) {
+    return res.status(404).json({
+      message: "Job not found",
+      success: false,
+    });
+  }
+
+  return res.status(200).json({
+    message: "Job saved!",
+    success: true,
+    job: jobDetails,
+  });
+};
+
+
+
+export const unsaveJob = async (req, res) => {
+  try {
+    const { jobId } = req.params;
+    const user = await User.findById(req.user._id);
+
+    if (!user || user.role !== "user") {
+      return res.status(403).json({
+        success: false,
+        message: "Access denied. Only users can unsave jobs.",
+      });
+    }
+
+    
+    user.savedJobs = user.savedJobs
+      .filter(id => id && id.toString() !== jobId);
+
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Job removed from saved list!",
+    });
+  } catch (error) {
+    console.error("Error unsaving job:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error while removing saved job.",
+    });
+  }
+};
+
+
+
+
+export const getSavedJobs = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).populate("savedJobs");
+
+    if (!user || user.role !== "user") {
+      return res.status(403).json({
+        success: false,
+        message: "Access denied. Only users can view saved jobs.",
+      });
+    }
+
+    if (!user.savedJobs || user.savedJobs.length === 0) {
+      return res.status(200).json({
+        success: true,
+        message: "No saved jobs found.",
+        savedJobs: [],
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Saved jobs retrieved successfully.",
+      savedJobs: user.savedJobs,
+    });
+  } catch (error) {
+    console.error("Error fetching saved jobs:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error while retrieving saved jobs.",
     });
   }
 };

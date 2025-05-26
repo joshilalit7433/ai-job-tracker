@@ -1,0 +1,64 @@
+{
+  "skills": [
+    {
+      "aliases": ["React", "React.js", "ReactJS"]
+    },
+    {
+      "aliases": ["Node.js", "Node", "Nodejs"]
+    },
+    {
+      "aliases": ["Express", "Express.js", "Expressjs"]
+    },
+    {
+      "aliases": ["MongoDB", "Mongo DB", "mongo"]
+    },
+    {
+      "aliases": ["JavaScript", "JS", "Java Script"]
+    },
+    {
+      "aliases": ["HTML", "HTML5"]
+    },
+    {
+      "aliases": ["CSS", "CSS3"]
+    },
+    {
+      "aliases": ["Tailwind", "Tailwind CSS"]
+    },
+    {
+      "aliases": ["Git"]
+    },
+    {
+      "aliases": ["GitHub"]
+    },
+    {
+      "aliases": ["Postman"]
+    },
+    {
+      "aliases": ["REST APIs", "RESTful APIs", "REST"]
+    },
+    {
+      "aliases": ["Python"]
+    },
+    {
+      "aliases": ["C++"]
+    },
+    {
+      "aliases": ["Java"]
+    },
+    {
+      "aliases": ["Leadership"]
+    },
+    {
+      "aliases": ["Time Management"]
+    },
+    {
+      "aliases": ["Quick Learner"]
+    },
+    {
+      "aliases": ["Collaboration", "Team Collaboration"]
+    },
+    {
+      "aliases": ["Soft Skills"]
+    }
+  ]
+}

@@ -1,54 +1,59 @@
-import { useState } from 'react';
-import axios from 'axios';
-import { JOB_APPLICANT_API_END_POINT, USER_API_END_POINT } from '../utils/constant.js';
-import { toast } from 'react-toastify';
-import { useDispatch } from 'react-redux';
-import { setUser } from '../redux/authSlice';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useState } from "react";
+import axios from "axios";
+import {
+  JOB_APPLICANT_API_END_POINT,
+  USER_API_END_POINT,
+  BACKEND_BASE_URL,
+} from "../utils/constant.js";
+import { toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import { setUser } from "../redux/authSlice";
+import { useParams } from "react-router-dom";
 
 const ApplyJobForm = () => {
-  const [formData, setFormData] = useState({ cover_letter: '' });
-  const { id } = useParams(); 
-
-  const [resumeFile, setResumeFile] = useState(null);
-  const [uploadedResumeURL, setUploadedResumeURL] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState('');
-
+  const { id } = useParams();
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
+  const { user } = useSelector((store) => store.auth);
+
+  const [coverLetter, setCoverLetter] = useState("");
+  const [resumeFile, setResumeFile] = useState(null);
+  const [uploadedResumeURL, setUploadedResumeURL] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [skillAnalysis, setSkillAnalysis] = useState(null);
+
 
   const handleResumeChange = (e) => {
     setResumeFile(e.target.files[0]);
+    setUploadedResumeURL("");
   };
 
   const handleResumeUpload = async () => {
-    if (!resumeFile) return toast.error('Please select a resume to upload.');
-
+    if (!resumeFile) return toast.error("Please select a resume to upload.");
     const formData = new FormData();
-    formData.append('resume', resumeFile);
+    formData.append("resume", resumeFile);
 
     try {
       setLoading(true);
-      const res = await axios.post(`${USER_API_END_POINT}/upload-resume`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-        withCredentials: true
-      });
+      const res = await axios.post(
+        `${USER_API_END_POINT}/upload-resume`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+          withCredentials: true,
+        }
+      );
 
       if (res.data.success) {
-        toast.success('Resume uploaded!');
+        toast.success("Resume uploaded!");
         setUploadedResumeURL(res.data.user.resume);
         dispatch(setUser(res.data.user));
       } else {
-        toast.error('Upload failed');
+        toast.error("Resume upload failed");
       }
     } catch (err) {
-      toast.error('Error uploading resume');
+      toast.error("Error uploading resume");
       console.error(err);
     } finally {
       setLoading(false);
@@ -57,37 +62,52 @@ const ApplyJobForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMessage("");
     setLoading(true);
-    setMessage('');
+    setSkillAnalysis(null);
 
-    if (!uploadedResumeURL) {
-      toast.error('Please upload your resume first');
+    const finalResume = uploadedResumeURL || user?.resume;
+    const finalCoverLetter = coverLetter || user?.cover_letter;
+
+    if (!finalResume || !finalCoverLetter) {
+      toast.error("Resume and cover letter are required");
       setLoading(false);
       return;
     }
 
     try {
-      const response = await axios.post(
+      const res = await axios.post(
         `${JOB_APPLICANT_API_END_POINT}/apply/${id}`,
         {
-          cover_letter: formData.cover_letter,
-          resume: uploadedResumeURL,
+          resume: finalResume,
+          cover_letter: finalCoverLetter,
         },
-        { withCredentials: true }
+        {
+          withCredentials: true,
+          headers: { "Content-Type": "application/json" },
+        }
       );
 
-      if (response.data.success) {
-        toast.success('Application submitted successfully!');
-        setFormData({ coverLetter: '' });
-        setUploadedResumeURL('');
+      if (res.data.success) {
+        toast.success("Application submitted successfully!");
+        setSkillAnalysis({
+          matched: res.data.matchedSkills || [],
+          missing: res.data.missingSkills || [],
+        });
+        setCoverLetter("");
+        setUploadedResumeURL("");
         setResumeFile(null);
-        navigate('/user-profile');
+       
       } else {
-        setMessage('Something went wrong. Please try again.');
+        setMessage(res.data.message || "Something went wrong.");
+        toast.error(res.data.message || "Something went wrong.");
       }
     } catch (error) {
-      console.error(error);
-      setMessage('An error occurred. Please try again later.');
+      console.error("Server response:", error.response?.data);
+      setMessage(
+        error.response?.data?.message || "Server error. Please try again later."
+      );
+      toast.error(error.response?.data?.message || "Error applying for job.");
     } finally {
       setLoading(false);
     }
@@ -95,63 +115,177 @@ const ApplyJobForm = () => {
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 px-4">
-      <form onSubmit={handleSubmit} className="bg-white shadow-lg rounded-xl p-8 w-full max-w-md space-y-6">
-        <h2 className="text-2xl font-semibold text-center text-blue-600">Apply for this Job</h2>
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white shadow-lg rounded-xl p-8 w-full max-w-md space-y-6"
+      >
+        <h2 className="text-2xl font-semibold text-center text-blue-600">
+          Apply for this Job
+        </h2>
 
-      
+        {/* Resume Upload Section */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Upload Resume (PDF, DOC)</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Upload Resume (PDF, DOC)
+          </label>
           <input
             type="file"
             accept=".pdf,.doc,.docx"
             onChange={handleResumeChange}
-            className="w-full px-2 py-2 border rounded-md"
+            disabled={uploadedResumeURL === user?.resume}
+            className="w-full px-2 py-2 border rounded-md bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
           />
-          {resumeFile && (
-            <div className="flex items-center justify-between mt-2">
-              <span className="text-sm text-gray-600">{resumeFile.name}</span>
-              <button
-                type="button"
-                onClick={handleResumeUpload}
-                disabled={loading}
-                className="text-blue-600 hover:underline text-sm"
+
+          {uploadedResumeURL && uploadedResumeURL === user?.resume ? (
+            <p className="mt-2 text-sm text-gray-600">
+              Using resume from profile:{" "}
+              <a
+                href={`${BACKEND_BASE_URL}/${uploadedResumeURL}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 underline"
               >
-                {loading ? 'Uploading...' : 'Upload'}
-              </button>
+                View Resume
+              </a>
+            </p>
+          ) : (
+            resumeFile && (
+              <div className="flex items-center justify-between mt-2">
+                <span className="text-sm text-gray-600">{resumeFile.name}</span>
+                <button
+                  type="button"
+                  onClick={handleResumeUpload}
+                  disabled={loading}
+                  className="text-blue-600 hover:underline text-sm"
+                >
+                  {loading ? "Uploading..." : "Upload"}
+                </button>
+              </div>
+            )
+          )}
+
+          {/* Use resume from profile checkbox */}
+          {user?.resume && (
+            <div className="mt-2">
+              <label className="flex items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  checked={uploadedResumeURL === user.resume}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setUploadedResumeURL(user.resume);
+                      setResumeFile(null);
+                    } else {
+                      setUploadedResumeURL("");
+                    }
+                  }}
+                />
+                Use resume from profile
+              </label>
             </div>
           )}
+
           {uploadedResumeURL && (
-            <p className="text-sm text-green-600 mt-1">Resume uploaded ✔️</p>
+            <p className="text-sm text-green-600 mt-1">Resume ready ✔️</p>
           )}
         </div>
 
-       
+        {/* Cover Letter */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Cover Letter</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Cover Letter
+          </label>
           <textarea
             name="cover_letter"
             rows="4"
             required
-            value={formData.coverLetter}
-            onChange={handleChange}
+            value={coverLetter}
+            onChange={(e) => setCoverLetter(e.target.value)}
             className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
           />
+          {user?.cover_letter && (
+            <div className="mt-2">
+              <label className="flex items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  checked={coverLetter === user.cover_letter}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setCoverLetter(user.cover_letter);
+                    } else {
+                      setCoverLetter("");
+                    }
+                  }}
+                />
+                Use cover letter from profile
+              </label>
+            </div>
+          )}
         </div>
 
-     
+        {/* Submit */}
         <div className="text-center">
           <button
             type="submit"
             disabled={loading}
             className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-md transition duration-200 w-full sm:w-auto"
           >
-            {loading ? 'Submitting...' : 'Submit Application'}
+            {loading ? "Submitting..." : "Submit Application"}
           </button>
         </div>
 
-      
         {message && (
-          <p className="text-center text-sm text-green-600 mt-2">{message}</p>
+          <p className="text-center text-sm text-red-600 mt-2">{message}</p>
+        )}
+        {skillAnalysis && (
+          <div className="mt-6 space-y-4">
+            <h3 className="text-lg font-semibold text-gray-800">
+              Skill Gap Analysis
+            </h3>
+
+            <div>
+              <p className="font-medium text-green-700 mb-1">
+                ✅ Matched Skills:
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {skillAnalysis.matched.length > 0 ? (
+                  skillAnalysis.matched.map((skill, i) => (
+                    <span
+                      key={i}
+                      className="border border-green-400 bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm"
+                    >
+                      {skill}
+                    </span>
+                  ))
+                ) : (
+                  <p className="text-sm text-gray-600">No matched skills.</p>
+                )}
+              </div>
+            </div>
+
+            <div>
+              <p className="font-medium text-red-700 mb-1">
+                ⚠️ Missing Skills:
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {skillAnalysis.missing.length > 0 ? (
+                  skillAnalysis.missing.map((skill, i) => (
+                    <span
+                      key={i}
+                      className="border border-red-400 bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm"
+                    >
+                      {skill}
+                    </span>
+                  ))
+                ) : (
+                  <p className="text-sm text-gray-600">
+                    You're fully qualified!
+                  </p>
+                )}
+               
+              </div>
+            </div>
+          </div>
         )}
       </form>
     </div>

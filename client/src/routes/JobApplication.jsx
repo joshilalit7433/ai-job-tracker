@@ -1,17 +1,22 @@
 import axios from "axios";
-import { JOB_APPLICATION_API_END_POINT } from "../utils/constant";
+import { JOB_APPLICATION_API_END_POINT, USER_API_END_POINT } from "../utils/constant";
 import { useEffect, useState } from "react";
-import { BriefcaseBusiness } from "lucide-react";
-import { Banknote } from "lucide-react";
-import { Building2 } from "lucide-react";
-import { MapPinned } from "lucide-react";
-import { Clock } from "lucide-react";
+import {
+  BriefcaseBusiness,
+  Banknote,
+  Building2,
+  MapPinned,
+  Clock,
+  BookMarked,
+  MoveRight,
+} from "lucide-react";
+
 import { Link } from "react-router-dom";
-import { MoveRight } from "lucide-react";
 
 const JobApplications = ({ filters }) => {
   const [jobApplications, setJobApplications] = useState([]);
   const [loading, setLoading] = useState(true);
+  
 
   useEffect(() => {
     const fetchJobApplications = async () => {
@@ -55,6 +60,24 @@ const JobApplications = ({ filters }) => {
       normalizeLocation(job.location) === normalizeLocation(filters.Location);
     return matchesSalary && matchesLocation;
   });
+
+  const handleSaveJob = async (jobId) => {
+    try {
+      const res = await axios.post(
+        `${USER_API_END_POINT}/saved-job/${jobId}`,
+        {},
+        {
+          withCredentials: true,
+        }
+      );
+      if (res.data.success) {
+        alert("Job saved successfully!");
+      }
+    } catch (error) {
+      console.error("Failed to save job:", error);
+    }
+  };
+
 
   return (
     <div className=" px-4 pb-20">
@@ -104,6 +127,13 @@ const JobApplications = ({ filters }) => {
                 View Details
                 <MoveRight className="w-5 h-5 text-blue-500 inline-block ml-2 pt-1.5" />
               </Link>
+
+              <button
+                onClick={() => handleSaveJob(job._id)}
+                className="text-blue-500 hover:text-blue-700"
+              >
+                <BookMarked />
+              </button>
             </div>
           ))}
         </div>

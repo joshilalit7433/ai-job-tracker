@@ -22,7 +22,7 @@ const isAuthenticated = async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.SECRET_KEY);
 
     const user = await User.findById(decoded.userid).select(
-      "_id fullname email mobilenumber role resume"
+      "_id fullname email mobilenumber role resume cover_letter"
     );
 
     if (!user) {
