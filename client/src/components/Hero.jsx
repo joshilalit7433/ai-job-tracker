@@ -1,116 +1,56 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { BsChevronCompactLeft, BsChevronCompactRight } from "react-icons/bs";
-import { RxDotFilled } from "react-icons/rx";
+import React from "react";
+import { Search, MapPin } from "lucide-react";
 
-export default function Hero() {
-  const slides = [
-    { url: "./images/slide_1.jpg" },
-    { url: "./images/slide_2.jpg" },
-    { url: "./images/slide_3.jpg" },
-  ];
-
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [touchStart, setTouchStart] = useState(null);
-  const [touchEnd, setTouchEnd] = useState(null);
-
-  const prevSlide = () => {
-    const isFirstSlide = currentIndex === 0;
-    const newIndex = isFirstSlide ? slides.length - 1 : currentIndex - 1;
-    setCurrentIndex(newIndex);
-  };
-
-  const nextSlide = useCallback(() => {
-    const isLastSlide = currentIndex === slides.length - 1;
-    const newIndex = isLastSlide ? 0 : currentIndex + 1;
-    setCurrentIndex(newIndex);
-  }, [currentIndex, slides.length]);
-
-  const goToSlide = (slideIndex) => {
-    setCurrentIndex(slideIndex);
-  };
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      nextSlide();
-    }, 5000);
-
-    return () => clearInterval(timer);
-  }, [nextSlide]);
-
-  const handleTouchStart = (e) => {
-    setTouchStart(e.targetTouches[0].clientX);
-  };
-
-  const handleTouchMove = (e) => {
-    setTouchEnd(e.targetTouches[0].clientX);
-  };
-
-  const handleTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
-
-    const swipeDistance = touchStart - touchEnd;
-    const minSwipeDistance = 50;
-
-    if (swipeDistance > minSwipeDistance) {
-      nextSlide();
-    }
-
-    if (swipeDistance < -minSwipeDistance) {
-      prevSlide();
-    }
-
-    setTouchStart(null);
-    setTouchEnd(null);
-  };
-
+const HeroSection = () => {
   return (
-    <div
-      className="relative group mx-auto max-w-[90%] lg:max-w-[80%] pt-8 mt-16"
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-    >
-      {/* Slide */}
-      <div className="relative w-full overflow-hidden rounded-xl">
-        <img
-          src={slides[currentIndex].url}
-          alt={`Slide ${currentIndex}`}
-          className="w-full h-[200px] sm:h-[300px] md:h-[400px] lg:h-[500px] xl:h-[600px] object-cover transition-all duration-700 rounded-xl"
-        />
+    <div className="relative bg-[#f7e9d6] min-h-screen overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 lg:px-16 flex flex-col lg:flex-row items-center justify-between pt-[72px] relative z-10">
+       
+        <div className="max-w-xl space-y-6">
+          <h1 className="text-4xl lg:text-5xl font-black text-[#131D4F] leading-tight relative">
+            Discover <br /> more than <br />
+            <span className="text-[#4a6cf7] inline-block relative">
+              5000+ Jobs
+              
+              <svg
+                className="absolute -bottom-2 left-0 w-full"
+                viewBox="0 0 200 10"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                preserveAspectRatio="none"
+              >
+                <path
+                  d="M0 6 C50 10, 150 0, 200 6"
+                  stroke="#4a6cf7"
+                  strokeWidth="4"
+                  fill="none"
+                />
+              </svg>
+            </span>
+          </h1>
+
+          <p className="text-gray-700 text-md">
+            Great platform for the job seeker that’s searching for new career
+            heights and passionate about startups.
+          </p>
+
+        
+        </div>
+
+        <div className="mt-20 lg:mt-20 ">
+          <img
+            src="/images/job-seeker.png"
+            alt="Job Seeker"
+            className="w-[400px] object-cover"
+          />
+        </div>
       </div>
 
-      {/* Left Arrow */}
-      <div
-        className="hidden group-hover:block absolute top-1/2 left-5 -translate-y-1/2 text-xl md:text-2xl rounded-full p-2 bg-black/30 text-white cursor-pointer z-10"
-        onClick={prevSlide}
-      >
-        <BsChevronCompactLeft size={30} />
-      </div>
+     
 
-      {/* Right Arrow */}
-      <div
-        className="hidden group-hover:block absolute top-1/2 right-5 -translate-y-1/2 text-xl md:text-2xl rounded-full p-2 bg-black/30 text-white cursor-pointer z-10"
-        onClick={nextSlide}
-      >
-        <BsChevronCompactRight size={30} />
-      </div>
-
-      {/* Dots */}
-      <div className="flex justify-center py-4">
-        {slides.map((_, slideIndex) => (
-          <div
-            key={slideIndex}
-            onClick={() => goToSlide(slideIndex)}
-            className={`text-xl md:text-2xl cursor-pointer mx-1 ${
-              slideIndex === currentIndex
-                ? "text-green-700 scale-125"
-                : "text-gray-400"
-            } transition-transform duration-300 hover:text-green-700 hover:scale-125`}
-          >
-            <RxDotFilled />
-          </div>
-        ))}
-      </div>
+    
     </div>
   );
-}
+};
+
+export default HeroSection;

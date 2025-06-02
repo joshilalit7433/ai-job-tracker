@@ -60,8 +60,8 @@ const UserSavedJobApplication = () => {
   };
 
   return (
-    <div className="min-h-screen py-10 px-4 sm:px-6 lg:px-20 bg-gradient-to-b from-gray-100 to-gray-200">
-      <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen py-10 px-4 sm:px-6 lg:px-20 bg-[#f7e9d6]">
+      <div className="max-w-6xl mx-auto ">
         <h2 className="text-3xl font-bold text-center text-blue-700 mb-10">
           Your Saved Jobs
         </h2>
@@ -71,11 +71,11 @@ const UserSavedJobApplication = () => {
             You haven't saved any jobs yet.
           </p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 ">
             {savedJobs.map((job) => (
               <div
                 key={job._id}
-                className="bg-white rounded-xl shadow-lg p-6 flex flex-col justify-between hover:shadow-2xl transition duration-300"
+                className="bg-[#FAF6E9] rounded-xl shadow-lg p-6 flex flex-col justify-between hover:shadow-2xl transition duration-300"
               >
                 <div>
                   <h3 className="text-xl font-semibold mb-2 text-blue-600 flex items-center gap-2">

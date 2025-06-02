@@ -8,23 +8,22 @@ const UserProfile = () => {
   const { user } = useSelector((store) => store.auth);
 
   return (
-    <div className="mt-10 min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 py-10 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-white shadow-xl rounded-2xl overflow-hidden">
-          {/* Header */}
-          <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-8 text-center">
+    <div className="bg-[#f7e9d6] min-h-screen py-10 px-4">
+      <div className="max-w-5xl mx-auto">
+        <div className="rounded-2xl shadow-lg overflow-hidden mt-[70px] bg-[#FAF6E9]">
+
+        
+          <div className="bg-[#ead695] px-6 py-10 text-center text-white">
             <div className="flex flex-col items-center">
-              <div className="w-28 h-28 bg-white text-blue-600 rounded-full flex items-center justify-center text-3xl font-bold shadow-lg border-4 border-white">
+              <div className="w-24 h-24 bg-white text-blue-600 rounded-full flex items-center justify-center text-3xl font-bold shadow-md border-4 border-white">
                 {user?.fullname?.charAt(0) || "U"}
               </div>
-              <h1 className="text-3xl font-bold text-white mt-4">
-                {user?.fullname || "Unknown User"}
-              </h1>
+              <h1 className="text-3xl font-bold mt-4">{user?.fullname || "Unknown User"}</h1>
 
-              <div className="flex flex-wrap justify-center gap-4 mt-4">
+              <div className="flex flex-wrap justify-center gap-4 mt-6">
                 <Link
                   to="/edit-profile"
-                  className="flex items-center gap-2 border border-gray-200 bg-white text-gray-800 rounded-md px-4 py-2 font-medium shadow hover:bg-gray-100 transition"
+                  className="bg-white text-gray-800 hover:bg-gray-100 px-5 py-2 rounded-md shadow transition flex items-center gap-2"
                 >
                   <Pencil className="w-5 h-5 text-gray-600" />
                   Edit Profile
@@ -33,66 +32,51 @@ const UserProfile = () => {
                 {user?.role === "recruiter" && (
                   <Link
                     to="/recruiter-posted-job-applications"
-                    className="flex items-center gap-2 border border-gray-200 bg-white text-gray-800 rounded-md px-4 py-2 font-medium shadow hover:bg-gray-100 transition"
+                    className="bg-white text-gray-800 hover:bg-gray-100 px-5 py-2 rounded-md shadow transition flex items-center gap-2"
                   >
                     <Eye className="w-5 h-5 text-gray-600" />
-                    View My Job Applications
+                    My Job Posts
                   </Link>
                 )}
               </div>
             </div>
           </div>
 
-          {/* Details */}
-          <div className="p-6 sm:p-8">
+          <div className="p-6 sm:p-8 space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Contact Info */}
-              <div className="bg-gray-50 p-6 rounded-xl">
+              <div className="bg-white p-6 rounded-xl shadow-sm">
                 <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
                   <Contact className="w-6 h-6 mr-2" />
                   Contact Information
                 </h2>
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-sm text-gray-500">Email</p>
-                    <p className="text-gray-800 font-medium">{user?.email}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Mobile Number</p>
-                    <p className="text-gray-800 font-medium">
-                      {user?.mobilenumber || "Not Available"}
-                    </p>
-                  </div>
+                <div className="space-y-2">
+                  <p className="text-sm text-gray-600">Email</p>
+                  <p className="text-gray-900 font-medium">{user?.email}</p>
+                  <p className="text-sm text-gray-600">Mobile</p>
+                  <p className="text-gray-900 font-medium">{user?.mobilenumber || "Not Provided"}</p>
                 </div>
               </div>
 
-              {/* Account Info */}
-              <div className="bg-gray-50 p-6 rounded-xl">
+              <div className="bg-white p-6 rounded-xl shadow-sm">
                 <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
                   <NotepadText className="w-6 h-6 mr-2" />
                   Account Details
                 </h2>
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-sm text-gray-500">Member Since</p>
-                    <p className="text-gray-800 font-medium">
-                      {dayjs(user.createdAt).format("MMMM D, YYYY")}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Account Type</p>
-                    <p className="text-gray-800 font-medium capitalize">
-                      {user?.role || "User"}
-                    </p>
-                  </div>
+                <div className="space-y-2">
+                  <p className="text-sm text-gray-600">Member Since</p>
+                  <p className="text-gray-900 font-medium">
+                    {dayjs(user.createdAt).format("MMMM D, YYYY")}
+                  </p>
+                  <p className="text-sm text-gray-600">Account Type</p>
+                  <p className="text-gray-900 font-medium capitalize">
+                    {user?.role || "User"}
+                  </p>
                 </div>
               </div>
             </div>
 
-            {/* User Only Actions */}
             {user?.role === "user" && (
-              <div className="mt-10 space-y-6">
-                {/* Job Links */}
+              <div className="space-y-6">
                 <div className="flex flex-col sm:flex-row sm:justify-center gap-4">
                   <Link
                     to="/get-user-applied-job-application"
@@ -103,15 +87,13 @@ const UserProfile = () => {
                   </Link>
                 </div>
 
-                {/* Resume & Cover Letter */}
-                <div className="bg-gray-50 p-6 rounded-xl">
+                <div className="bg-white p-6 rounded-xl shadow-sm">
                   <h2 className="text-xl font-semibold text-gray-800 mb-4">
                     Saved Resume & Cover Letter
                   </h2>
-
                   {user?.resume ? (
-                    <div className="mb-4">
-                      <p className="text-sm text-gray-500">Resume:</p>
+                    <div className="mb-3">
+                      <p className="text-sm text-gray-600">Resume:</p>
                       <a
                         href={`${BACKEND_BASE_URL}/${user.resume}`}
                         target="_blank"
@@ -122,26 +104,20 @@ const UserProfile = () => {
                       </a>
                     </div>
                   ) : (
-                    <p className="text-sm text-gray-500">
-                      No resume uploaded yet.
-                    </p>
+                    <p className="text-sm text-gray-600">No resume uploaded yet.</p>
                   )}
 
                   {user?.cover_letter ? (
                     <div className="mt-3">
-                      <p className="text-sm text-gray-500">Cover Letter:</p>
-                      <p className="text-sm text-gray-800 bg-white p-3 rounded shadow whitespace-pre-wrap">
+                      <p className="text-sm text-gray-600">Cover Letter:</p>
+                      <p className="text-sm text-gray-800 bg-gray-100 p-3 rounded shadow whitespace-pre-wrap">
                         {user.cover_letter}
                       </p>
                     </div>
                   ) : (
-                    <p className="text-sm text-gray-500 mt-3">
-                      No cover letter saved.
-                    </p>
+                    <p className="text-sm text-gray-600 mt-2">No cover letter saved.</p>
                   )}
                 </div>
-
-                
               </div>
             )}
           </div>

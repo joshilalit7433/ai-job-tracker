@@ -50,17 +50,24 @@ const JobApplicationSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["applied", "interviewing", "offered", "rejected","open","closed"],
-      default:"open"
+      enum: [
+        "applied",
+        "interviewing",
+        "offered",
+        "rejected",
+        "open",
+        "closed",
+      ],
+      default: "open",
     },
     isApproved: {
-    type: Boolean,
-    default: false, 
-  }
+      type: Boolean,
+      default: false,
+    },
 
-    
-    
-
+    image: {
+      type: String,
+    },
   },
   { timestamps: true }
 );

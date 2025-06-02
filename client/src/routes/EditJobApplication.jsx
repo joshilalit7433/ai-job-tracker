@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const EditJobApplication = () => {
-  const { id } = useParams(); 
+  const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [jobData, setJobData] = useState(null);
@@ -22,15 +22,18 @@ const EditJobApplication = () => {
     skills: "",
     qualification: "",
     status: "",
+    image: "",
   });
-
 
   useEffect(() => {
     const fetchJob = async () => {
       try {
-        const res = await axios.get(`${JOB_APPLICATION_API_END_POINT}/get-job-application-by-id/${id}`, {
-          withCredentials: true,
-        });
+        const res = await axios.get(
+          `${JOB_APPLICATION_API_END_POINT}/get-job-application-by-id/${id}`,
+          {
+            withCredentials: true,
+          }
+        );
 
         if (res.data.success) {
           setFormData(res.data.jobapplication);
@@ -90,13 +93,49 @@ const EditJobApplication = () => {
     }
   };
 
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setLoading(true);
+    const data = new FormData();
+    data.append("file", file);
+    data.append("upload_preset", "target");
+
+    try {
+      const res = await fetch(
+        "https://api.cloudinary.com/v1_1/dogh78y3a/image/upload",
+        {
+          method: "POST",
+          body: data,
+        }
+      );
+
+      const uploadedImage = await res.json();
+
+      if (uploadedImage.secure_url) {
+        setFormData((prev) => ({ ...prev, image: uploadedImage.secure_url }));
+        toast.success("Image uploaded!");
+      } else {
+        throw new Error("Upload failed");
+      }
+    } catch (err) {
+      toast.error("Image upload failed.");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 px-4 pt-[90px] pb-[40px]">
       <form
         onSubmit={handleSubmit}
         className="bg-white shadow-lg rounded-xl p-8 w-full max-w-md"
       >
-        <h2 className="text-2xl font-semibold text-center mb-6">Edit Job Application</h2>
+        <h2 className="text-2xl font-semibold text-center mb-6">
+          Edit Job Application
+        </h2>
 
         {[
           { label: "Title", name: "title", type: "text" },
@@ -122,7 +161,6 @@ const EditJobApplication = () => {
           </div>
         ))}
 
-        
         <div className="mb-4">
           <label className="block text-sm font-medium mb-1">Job Type</label>
           <select
@@ -139,7 +177,6 @@ const EditJobApplication = () => {
           </select>
         </div>
 
-       
         <div className="mb-6">
           <label className="block text-sm font-medium mb-1">Status</label>
           <select
@@ -153,6 +190,30 @@ const EditJobApplication = () => {
             <option value="rejected">Rejected</option>
             <option value="closed">Closed</option>
           </select>
+        </div>
+
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-1">Upload Image</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileUpload}
+            className="w-full border border-gray-300 rounded-md p-2"
+          />
+
+          {loading && (
+            <p className="text-sm text-blue-500 mt-1">Uploading...</p>
+          )}
+
+          {formData.image && (
+            <div className="mt-2">
+              <img
+                src={formData.image}
+                alt="Job"
+                className="w-32 h-32 object-cover rounded-md border"
+              />
+            </div>
+          )}
         </div>
 
         <button

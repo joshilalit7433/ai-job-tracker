@@ -13,19 +13,19 @@ const ApplicantSchema = new mongoose.Schema({
   },
   fullname: {
     type: String,
-    required: true
+    required: true,
   },
   email: {
     type: String,
-    required: true
+    required: true,
   },
   mobilenumber: {
     type: Number,
-    required: true
+    required: true,
   },
   resume: {
     type: String,
-    required: true
+    required: true,
   },
   appliedAt: {
     type: Date,
@@ -38,7 +38,14 @@ const ApplicantSchema = new mongoose.Schema({
   },
   cover_letter: {
     type: String,
-    required: true
+    required: true,
+  },
+  recruiterResponse: {
+    type: String,
+    default: "",
+  },
+  respondedAt: {
+    type: Date,
   }
 });
 

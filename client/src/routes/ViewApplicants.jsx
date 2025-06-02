@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { Mail, Phone, FileText, User, StickyNote } from "lucide-react";
-import { JOB_APPLICANT_API_END_POINT } from "../utils/constant.js";
+import { JOB_APPLICANT_API_END_POINT,BACKEND_BASE_URL } from "../utils/constant.js";
 
 const ViewApplicants = () => {
   const [applicantdetails, setapplicantdetails] = useState([]);
@@ -69,15 +69,22 @@ const ViewApplicants = () => {
                   {applicant.mobilenumber}
                 </p>
 
-                <p className="flex items-center text-sm text-gray-700 break-words">
+                <a
+                  href={`${BACKEND_BASE_URL}/${applicant.resume}`} 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center text-sm text-blue-600 hover:underline break-words"
+                >
                   <FileText className="w-4 h-4 mr-2 text-gray-500" />
                   Resume: {applicant.resume}
-                </p>
+                </a>
 
                 <p className="flex items-start text-sm text-gray-700 mt-2">
                   <StickyNote className="w-4 h-4 mr-2 text-gray-500 mt-1" />
                   <span>
-                    <span className="font-medium text-gray-800">Cover Letter:</span>{" "}
+                    <span className="font-medium text-gray-800">
+                      Cover Letter:
+                    </span>{" "}
                     {applicant.cover_letter?.slice(0, 120)}...
                   </span>
                 </p>

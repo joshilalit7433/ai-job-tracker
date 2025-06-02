@@ -8,6 +8,7 @@ import { Mail,Lock } from "lucide-react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useLocation } from "react-router-dom";
+import { connectSocket} from "../utils/socket";
 
 
 const Login = () => {
@@ -53,10 +54,9 @@ const Login = () => {
 
     if(response.data.success){
       dispatch(setUser(response.data.user));
-      
-
-     
-
+        localStorage.setItem("token", response.data.token);
+        connectSocket();
+    
       toast.success(response.data.message, {
           position: "top-center",
           autoClose: 5000,
@@ -130,7 +130,7 @@ const Login = () => {
           <p className="text-2xl font-bold text-white">Login</p>
         </div>
 
-        {/* Email Input */}
+       
         <div className="mb-4">
           <label className="text-sm text-white">Email ID:</label>
           <div className="flex items-center border-b-2 border-white py-2 mt-2">
@@ -147,7 +147,7 @@ const Login = () => {
           <p className="text-black text-sm">{formerrors.email}</p>
         </div>
 
-        {/* Password Input */}
+       
         <div className="mb-4">
           <label className="text-sm text-white">Password:</label>
           <div className="flex items-center border-b-2 border-white py-2 mt-2">
@@ -164,7 +164,7 @@ const Login = () => {
           <p className="text-black text-sm">{formerrors.password}</p>
         </div>
 
-        {/* Role Input */}
+    
         <div className="mb-4">
           <label className="text-sm text-white">Role:</label>
           <div className="flex items-center space-x-4 mt-2">
@@ -187,21 +187,21 @@ const Login = () => {
           <p className="text-black text-sm">{formerrors.role}</p>
         </div>
 
-        {/* Forgot Password */}
+       
         <div className="flex justify-between text-white text-sm mb-6">
           <Link to="/forgot-password" className="underline">
             Forgot Password?
           </Link>
         </div>
 
-        {/* Submit Button */}
+        
         <div className="flex justify-center">
           <button className="w-full py-2 bg-white text-blue-500 rounded-lg font-bold hover:bg-gray-200 transition">
             LOGIN
           </button>
         </div>
 
-        {/* Signup Link */}
+       
         <div className="text-center mt-4">
           <Link to="/signup" className="text-white underline">
             Don't have an account?

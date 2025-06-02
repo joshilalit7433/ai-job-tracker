@@ -13,7 +13,6 @@ import { useParams } from "react-router-dom";
 const ApplyJobForm = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
-
   const { user } = useSelector((store) => store.auth);
 
   const [coverLetter, setCoverLetter] = useState("");
@@ -22,7 +21,6 @@ const ApplyJobForm = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [skillAnalysis, setSkillAnalysis] = useState(null);
-
 
   const handleResumeChange = (e) => {
     setResumeFile(e.target.files[0]);
@@ -97,7 +95,6 @@ const ApplyJobForm = () => {
         setCoverLetter("");
         setUploadedResumeURL("");
         setResumeFile(null);
-       
       } else {
         setMessage(res.data.message || "Something went wrong.");
         toast.error(res.data.message || "Something went wrong.");
@@ -114,18 +111,18 @@ const ApplyJobForm = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100 px-4">
+    <div className="flex justify-center items-start min-h-screen bg-[#f7e9d6] px-4  pb-20">
       <form
         onSubmit={handleSubmit}
-        className="bg-white shadow-lg rounded-xl p-8 w-full max-w-md space-y-6"
+        className="bg-[#FAF6E9] w-full max-w-2xl md:p-10 p-6 shadow-lg border mt-20 border-gray-300 rounded-2xl space-y-6"
       >
-        <h2 className="text-2xl font-semibold text-center text-blue-600">
+        <h2 className="text-2xl sm:text-3xl font-bold text-center text-blue-700">
           Apply for this Job
         </h2>
 
-        {/* Resume Upload Section */}
+       
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-gray-800 mb-1">
             Upload Resume (PDF, DOC)
           </label>
           <input
@@ -133,11 +130,11 @@ const ApplyJobForm = () => {
             accept=".pdf,.doc,.docx"
             onChange={handleResumeChange}
             disabled={uploadedResumeURL === user?.resume}
-            className="w-full px-2 py-2 border rounded-md bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-sm"
           />
 
           {uploadedResumeURL && uploadedResumeURL === user?.resume ? (
-            <p className="mt-2 text-sm text-gray-600">
+            <p className="mt-2 text-sm text-gray-700">
               Using resume from profile:{" "}
               <a
                 href={`${BACKEND_BASE_URL}/${uploadedResumeURL}`}
@@ -150,13 +147,13 @@ const ApplyJobForm = () => {
             </p>
           ) : (
             resumeFile && (
-              <div className="flex items-center justify-between mt-2">
-                <span className="text-sm text-gray-600">{resumeFile.name}</span>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-2 gap-2 text-sm">
+                <span className="text-gray-700 truncate">{resumeFile.name}</span>
                 <button
                   type="button"
                   onClick={handleResumeUpload}
                   disabled={loading}
-                  className="text-blue-600 hover:underline text-sm"
+                  className="text-blue-600 hover:underline"
                 >
                   {loading ? "Uploading..." : "Upload"}
                 </button>
@@ -164,66 +161,50 @@ const ApplyJobForm = () => {
             )
           )}
 
-          {/* Use resume from profile checkbox */}
           {user?.resume && (
-            <div className="mt-2">
-              <label className="flex items-center gap-2 text-sm">
-                <input
-                  type="checkbox"
-                  checked={uploadedResumeURL === user.resume}
-                  onChange={(e) => {
-                    if (e.target.checked) {
-                      setUploadedResumeURL(user.resume);
-                      setResumeFile(null);
-                    } else {
-                      setUploadedResumeURL("");
-                    }
-                  }}
-                />
-                Use resume from profile
-              </label>
-            </div>
+            <label className="flex items-center gap-2 mt-2 text-sm text-gray-700">
+              <input
+                type="checkbox"
+                checked={uploadedResumeURL === user.resume}
+                onChange={(e) =>
+                  setUploadedResumeURL(e.target.checked ? user.resume : "")
+                }
+              />
+              Use resume from profile
+            </label>
           )}
-
           {uploadedResumeURL && (
             <p className="text-sm text-green-600 mt-1">Resume ready ✔️</p>
           )}
         </div>
 
-        {/* Cover Letter */}
+       
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-gray-800 mb-1">
             Cover Letter
           </label>
           <textarea
-            name="cover_letter"
             rows="4"
             required
             value={coverLetter}
             onChange={(e) => setCoverLetter(e.target.value)}
-            className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 text-sm"
           />
           {user?.cover_letter && (
-            <div className="mt-2">
-              <label className="flex items-center gap-2 text-sm">
-                <input
-                  type="checkbox"
-                  checked={coverLetter === user.cover_letter}
-                  onChange={(e) => {
-                    if (e.target.checked) {
-                      setCoverLetter(user.cover_letter);
-                    } else {
-                      setCoverLetter("");
-                    }
-                  }}
-                />
-                Use cover letter from profile
-              </label>
-            </div>
+            <label className="flex items-center gap-2 mt-2 text-sm text-gray-700">
+              <input
+                type="checkbox"
+                checked={coverLetter === user.cover_letter}
+                onChange={(e) =>
+                  setCoverLetter(e.target.checked ? user.cover_letter : "")
+                }
+              />
+              Use cover letter from profile
+            </label>
           )}
         </div>
 
-        {/* Submit */}
+     
         <div className="text-center">
           <button
             type="submit"
@@ -234,25 +215,26 @@ const ApplyJobForm = () => {
           </button>
         </div>
 
+        
         {message && (
           <p className="text-center text-sm text-red-600 mt-2">{message}</p>
         )}
+
         {skillAnalysis && (
           <div className="mt-6 space-y-4">
             <h3 className="text-lg font-semibold text-gray-800">
               Skill Gap Analysis
             </h3>
 
+           
             <div>
-              <p className="font-medium text-green-700 mb-1">
-                ✅ Matched Skills:
-              </p>
+              <p className="font-medium text-green-700 mb-1">✅ Matched Skills:</p>
               <div className="flex flex-wrap gap-2">
                 {skillAnalysis.matched.length > 0 ? (
                   skillAnalysis.matched.map((skill, i) => (
                     <span
                       key={i}
-                      className="border border-green-400 bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm"
+                      className="border border-green-400 bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs"
                     >
                       {skill}
                     </span>
@@ -263,26 +245,22 @@ const ApplyJobForm = () => {
               </div>
             </div>
 
+           
             <div>
-              <p className="font-medium text-red-700 mb-1">
-                ⚠️ Missing Skills:
-              </p>
+              <p className="font-medium text-red-700 mb-1">⚠️ Missing Skills:</p>
               <div className="flex flex-wrap gap-2">
                 {skillAnalysis.missing.length > 0 ? (
                   skillAnalysis.missing.map((skill, i) => (
                     <span
                       key={i}
-                      className="border border-red-400 bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm"
+                      className="border border-red-400 bg-red-100 text-red-800 px-3 py-1 rounded-full text-xs"
                     >
                       {skill}
                     </span>
                   ))
                 ) : (
-                  <p className="text-sm text-gray-600">
-                    You're fully qualified!
-                  </p>
+                  <p className="text-sm text-green-700">You're fully qualified!</p>
                 )}
-               
               </div>
             </div>
           </div>

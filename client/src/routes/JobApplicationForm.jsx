@@ -6,6 +6,7 @@ import { JOB_APPLICATION_API_END_POINT } from "../utils/constant";
 
 const JobApplicationForm = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -18,35 +19,76 @@ const JobApplicationForm = () => {
     responsibilities: "",
     skills: "",
     qualification: "",
+    jobApplicationImages: "",
   });
 
-
   const handleChange = (e) => {
-      const { name, value } = e.target;
-  setFormData({...formData,[name]:value});
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  try {
-    const res = await axios.post(
-      `${JOB_APPLICATION_API_END_POINT}/post-job-applications`,
-      formData,
-      { withCredentials: true }
-    );
+    try {
+      console.log("Submitting form data:", formData);
 
-    if (res.data.success) {
-      toast.success("Job posted successfully!");
-      navigate("/job-applications");
+      const res = await axios.post(
+        `${JOB_APPLICATION_API_END_POINT}/post-job-applications`,
+        formData,
+        { withCredentials: true }
+      );
+      console.log("Submitting formData:", formData);
+
+
+      if (res.data.success) {
+        toast.success("Job posted successfully!");
+        navigate("/job-applications");
+      }
+    } catch (err) {
+      toast.error("Failed to post job. Check form or server.");
+      console.error(err.response?.data || err.message);
     }
+  };
 
-  } catch (err) {
-    toast.error("Failed to post job. Check form or server.");
-    console.error(err.response?.data || err.message);
-  }
-};
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
+    setLoading(true);
+
+    const data = new FormData();
+    data.append("file", file);
+    data.append("upload_preset", "target");
+
+    try {
+      const res = await fetch(
+        "https://api.cloudinary.com/v1_1/dogh78y3a/image/upload",
+        {
+          method: "POST",
+          body: data,
+        }
+      );
+
+      const uploadedImage = await res.json();
+
+      if (uploadedImage.secure_url) {
+        setFormData({ ...formData, image: uploadedImage.secure_url });
+      } else {
+        throw new Error("Upload failed. No URL returned.");
+      }
+
+      setLoading(false);
+    } catch (err) {
+      toast.error("Image upload failed. Please try again.", {
+        position: "top-center",
+        autoClose: 3000,
+        theme: "dark",
+      });
+      console.error(err);
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="max-w-3xl mx-auto p-6 bg-white shadow-2xl mt-[80px] mb-[40px] rounded-lg">
@@ -89,6 +131,30 @@ const handleSubmit = async (e) => {
             <option value="contract">Contract</option>
             <option value="internship">Internship</option>
           </select>
+        </div>
+
+        <div>
+          <label className="block font-semibold mb-1">Upload Job Image</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileUpload}
+            className="w-full border border-gray-300 rounded-md p-2"
+          />
+
+          {loading && (
+            <p className="text-sm text-blue-500 mt-2">Uploading...</p>
+          )}
+
+          {formData.jobApplicationImages && (
+            <div className="mt-2">
+              <img
+                src={formData.jobApplicationImages}
+                alt="Uploaded Preview"
+                className="w-32 h-32 object-cover rounded-md shadow"
+              />
+            </div>
+          )}
         </div>
 
         <button

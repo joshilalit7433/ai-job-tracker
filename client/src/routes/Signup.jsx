@@ -129,7 +129,7 @@ const Signup = () =>{
             <p className="text-xl sm:text-2xl font-bold text-white">Sign Up</p>
           </div>
 
-          {/* Full Name Input */}
+      
           <div className="mb-4">
             <label className="text-base sm:text-lg text-white">
               Full Name:
@@ -150,7 +150,7 @@ const Signup = () =>{
             </p>
           </div>
 
-          {/* Email Input */}
+         
           <div className="mb-4">
             <label className="text-base sm:text-lg text-white">Email:</label>
             <div className="flex items-center border-b-2 border-white py-2 mt-1">
@@ -169,7 +169,7 @@ const Signup = () =>{
             </p>
           </div>
 
-          {/* Password Input */}
+          
           <div className="mb-4">
             <label className="text-base sm:text-lg text-white">Password:</label>
             <div className="flex items-center border-b-2 border-white py-2 mt-1">
@@ -188,7 +188,7 @@ const Signup = () =>{
             </p>
           </div>
 
-          {/* Mobile Number Input */}
+          
           <div className="mb-4">
             <label className="text-base sm:text-lg text-white">
               Mobile Number:
@@ -209,7 +209,7 @@ const Signup = () =>{
             </p>
           </div>
 
-          {/* Role Input */}
+        
           <div className="mb-4">
             <label className="text-base sm:text-lg text-white">Role:</label>
             <div className="flex items-center space-x-4 border-b-2 border-white py-2 mt-1">
@@ -252,14 +252,14 @@ const Signup = () =>{
             </p>
           </div>
 
-          {/* Submit Button */}
+          
           <div className="flex justify-center mt-6">
             <button className="text-base sm:text-lg w-full py-2 bg-white text-blue-500 rounded-lg font-bold transition-colors hover:bg-gray-100">
               SIGN UP
             </button>
           </div>
 
-          {/* Already have an account? */}
+       
           <div className="text-center mt-4">
             <Link
               to="/login"

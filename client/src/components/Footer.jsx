@@ -11,7 +11,7 @@ function Footer() {
             <br />
             phone-9089085655
           </p>
-          <div className="mt-4">{/* Social media icons here */}</div>
+          <div className="mt-4"></div>
         </div>
         <div className="text-center md:text-left">
           <h3 className="text-xl font-bold">Quick Links</h3>
@@ -31,7 +31,7 @@ function Footer() {
                 Contact Us
               </a>
             </li>
-            {/* Add more links as needed */}
+           
           </ul>
         </div>
         <div className="text-center md:text-right lg:mr-[80px]">
