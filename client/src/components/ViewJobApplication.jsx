@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import dayjs from "dayjs";
 
 const ViewJobApplication = () => {
   const [jobApplication, setJobApplication] = useState(null);
@@ -25,6 +26,7 @@ const ViewJobApplication = () => {
   const [applyMessage, setApplyMessage] = useState("");
   const [applicationStatus, setApplicationStatus] = useState("");
   const [recruiterResponse, setRecruiterResponse] = useState("");
+  const [appliedAt, setAppliedAt] = useState("");
 
   useEffect(() => {
     const fetchJobApplication = async () => {
@@ -45,6 +47,7 @@ const ViewJobApplication = () => {
           setApplyMessage(appliedRes.data.message);
           setApplicationStatus(appliedRes.data.status || "");
           setRecruiterResponse(appliedRes.data.recruiterResponse || "");
+          setAppliedAt(appliedRes.data.appliedAt || "");
         }
       } catch (error) {
         console.error("Error fetching job application:", error);
@@ -114,7 +117,6 @@ const ViewJobApplication = () => {
   return (
     <div className="px-4 pb-6 pt-2 bg-[#f7e9d6] min-h-screen">
       <div className="max-w-4xl mx-auto mt-10 lg:mt-[100px] p-6 shadow-md border border-gray-200 rounded-xl bg-[#FAF6E9] space-y-6 text-gray-900">
-        
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-4">
             <img
@@ -124,8 +126,12 @@ const ViewJobApplication = () => {
               onError={(e) => (e.target.src = "/images/placeholder.jpg")}
             />
             <div>
-              <h1 className="text-2xl font-bold text-blue-800">{jobApplication.title}</h1>
-              <p className="text-blue-600 text-sm font-medium">{jobApplication.company_name}</p>
+              <h1 className="text-2xl font-bold text-blue-800">
+                {jobApplication.title}
+              </h1>
+              <p className="text-blue-600 text-sm font-medium">
+                {jobApplication.company_name}
+              </p>
             </div>
           </div>
           <span className="text-xs px-3 py-1 border border-blue-500 text-blue-600 rounded-md font-semibold">
@@ -133,7 +139,6 @@ const ViewJobApplication = () => {
           </span>
         </div>
 
-        
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <p className="text-gray-800">
             <MapPinned className="w-4 h-4 inline-block mr-2 text-gray-500" />
@@ -142,7 +147,8 @@ const ViewJobApplication = () => {
           </p>
           <p className="text-gray-800">
             <Banknote className="w-4 h-4 inline-block mr-2 text-gray-500" />
-            <strong className="text-gray-700">Salary:</strong> ₹{jobApplication.salary}/year
+            <strong className="text-gray-700">Salary:</strong> ₹
+            {jobApplication.salary}/year
           </p>
           <p className="text-gray-800">
             <Clock className="w-4 h-4 inline-block mr-2 text-gray-500" />
@@ -156,18 +162,19 @@ const ViewJobApplication = () => {
           </p>
         </div>
 
-        
         <div className="space-y-2">
           <p>
-            <strong className="text-blue-700">Benefits:</strong> {jobApplication.benefits}
+            <strong className="text-blue-700">Benefits:</strong>{" "}
+            {jobApplication.benefits}
           </p>
           <p>
-            <strong className="text-blue-700">Responsibilities:</strong> {jobApplication.responsibilities}
+            <strong className="text-blue-700">Responsibilities:</strong>{" "}
+            {jobApplication.responsibilities}
           </p>
         </div>
 
-       
-        {Array.isArray(jobApplication.skills) && jobApplication.skills.length > 0 ? (
+        {Array.isArray(jobApplication.skills) &&
+        jobApplication.skills.length > 0 ? (
           <div className="space-y-1">
             <p className="font-semibold text-blue-700">Skills:</p>
             <div className="flex flex-wrap gap-2">
@@ -189,7 +196,6 @@ const ViewJobApplication = () => {
           <p className="text-sm text-gray-500">No skills listed.</p>
         )}
 
-        
         {user?.role === "user" && hasApplied && (
           <div className="bg-green-50 p-4 rounded-md border border-green-200 space-y-2">
             <p className="text-green-600 font-semibold">{applyMessage}</p>
@@ -203,10 +209,12 @@ const ViewJobApplication = () => {
                 <strong>Recruiter Response:</strong> {recruiterResponse}
               </p>
             )}
+            {appliedAt && (
+              <div>Applied on: {dayjs(appliedAt).format("MMMM D, YYYY")}</div>
+            )}
           </div>
         )}
 
-      
         <div className="flex flex-wrap gap-4 mt-4">
           {(!user || (user.role === "user" && !hasApplied)) && (
             <button

@@ -140,6 +140,7 @@ export const checkIfApplied = async (req, res) => {
       message: "You have already applied for this job.",
       status: applicant.status,
       recruiterResponse: applicant.recruiterResponse || "",
+      appliedAt:applicant.appliedAt
     });
   } catch (error) {
     console.error("Error in checkIfApplied:", error);
