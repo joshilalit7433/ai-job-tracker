@@ -94,11 +94,11 @@ const JobApplications = ({ filters }) => {
           No job applications match your filters.
         </p>
       ) : (
-        <div className="lg:ml-[210px] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="lg:ml-[250px] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredJobApplications.map((job) => (
             <div
               key={job._id}
-              className="bg-[#FAF6E9] border border-gray-200 hover:shadow-lg transition duration-300 rounded-xl p-5 relative"
+              className="bg-[#FAF6E9] border lg:w-[360px] border-gray-200 hover:shadow-lg transition duration-300 rounded-xl p-5 relative"
             >
              
               <div className="flex justify-between items-center mb-3">
