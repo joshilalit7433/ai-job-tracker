@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { Mail, Phone, FileText, User, StickyNote } from "lucide-react";
-import { JOB_APPLICANT_API_END_POINT,BACKEND_BASE_URL } from "../utils/constant.js";
+import {
+  JOB_APPLICANT_API_END_POINT,
+  BACKEND_BASE_URL,
+} from "../utils/constant.js";
+import { Link } from "react-router-dom";
 
 const ViewApplicants = () => {
   const [applicantdetails, setapplicantdetails] = useState([]);
@@ -70,7 +74,7 @@ const ViewApplicants = () => {
                 </p>
 
                 <a
-                  href={`${BACKEND_BASE_URL}/${applicant.resume}`} 
+                  href={`${BACKEND_BASE_URL}/${applicant.resume}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center text-sm text-blue-600 hover:underline break-words"
@@ -88,6 +92,13 @@ const ViewApplicants = () => {
                     {applicant.cover_letter?.slice(0, 120)}...
                   </span>
                 </p>
+                <div className="mt-4 flex justify-end">
+                <Link to={`/recruiter-response/${applicant._id}`}
+                  className="px-6 py-3  bg-blue-600 text-white rounded-md hover:bg-blue-700 transition shadow"
+                >
+                  Your Response
+                </Link>
+                </div>
               </div>
             </div>
           ))}
