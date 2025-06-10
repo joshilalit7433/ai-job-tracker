@@ -120,28 +120,28 @@ const Signup = () =>{
 
     return(
         <>
-         <div className="flex mt-[100px] justify-center items-center px-4 py-6 sm:py-8 md:py-10 lg:py-12">
+         <div className="flex bg-[#FAF6E9]  justify-center items-center px-4 py-6 sm:py-8 md:py-10 lg:py-12">
         <form
           onSubmit={handleSubmit}
-          className="w-full max-w-md bg-blue-500 p-4 sm:p-6 md:p-8 rounded-lg shadow-lg"
+          className="w-full mt-[50px] max-w-md bg-[#f7e9d6] p-4 sm:p-6 md:p-8 rounded-lg shadow-lg"
         >
           <div className="text-center mb-4 sm:mb-6">
-            <p className="text-xl sm:text-2xl font-bold text-white">Sign Up</p>
+            <p className="text-xl sm:text-2xl font-bold text-[#131D4F]">Sign Up</p>
           </div>
 
       
           <div className="mb-4">
-            <label className="text-base sm:text-lg text-white">
+            <label className="text-base sm:text-lg text-[#131D4F]">
               Full Name:
             </label>
-            <div className="flex items-center border-b-2 border-white py-2 mt-1">
-              <User className="text-white mr-2 h-5 w-5" />
+            <div className="flex items-center border-b-2 border-[#131D4F] py-2 mt-1">
+              <User className="text-[#131D4F] mr-2 h-5 w-5" />
               <input
                 type="text"
                 onChange={handleChange}
                 placeholder="Full Name"
                 name="fullname"
-                className="bg-transparent w-full text-white focus:outline-none text-sm sm:text-base"
+                className="bg-transparent w-full text-[#131D4F] focus:outline-none text-sm sm:text-base"
                 value={formvalues.fullname}
               />
             </div>
@@ -152,15 +152,15 @@ const Signup = () =>{
 
          
           <div className="mb-4">
-            <label className="text-base sm:text-lg text-white">Email:</label>
-            <div className="flex items-center border-b-2 border-white py-2 mt-1">
-              <Mail className="text-white mr-2 h-5 w-5" />
+            <label className="text-base sm:text-lg text-[#131D4F]">Email:</label>
+            <div className="flex items-center border-b-2 border-[#131D4F] py-2 mt-1">
+              <Mail className="text-[#131D4F] mr-2 h-5 w-5" />
               <input
                 type="email"
                 onChange={handleChange}
                 placeholder="Email"
                 name="email"
-                className="bg-transparent w-full text-white focus:outline-none text-sm sm:text-base"
+                className="bg-transparent w-full text-[#131D4F] focus:outline-none text-sm sm:text-base"
                 value={formvalues.email}
               />
             </div>
@@ -171,48 +171,48 @@ const Signup = () =>{
 
           
           <div className="mb-4">
-            <label className="text-base sm:text-lg text-white">Password:</label>
-            <div className="flex items-center border-b-2 border-white py-2 mt-1">
-              <Lock className="text-white mr-2 h-5 w-5" />
+            <label className="text-base sm:text-lg text-[#131D4F]">Password:</label>
+            <div className="flex items-center border-b-2 border-[#131D4F] py-2 mt-1">
+              <Lock className="text-[#131D4F] mr-2 h-5 w-5" />
               <input
                 type="password"
                 onChange={handleChange}
                 placeholder="Password"
                 name="password"
-                className="bg-transparent w-full text-white focus:outline-none text-sm sm:text-base"
+                className="bg-transparent w-full text-[#131D4F] focus:outline-none text-sm sm:text-base"
                 value={formvalues.password}
               />
             </div>
-            <p className="text-black text-xs sm:text-sm mt-1">
+            <p className="text-[#131D4F] text-xs sm:text-sm mt-1">
               {formerrors.password}
             </p>
           </div>
 
           
           <div className="mb-4">
-            <label className="text-base sm:text-lg text-white">
+            <label className="text-base sm:text-lg text-[#131D4F]">
               Mobile Number:
             </label>
-            <div className="flex items-center border-b-2 border-white py-2 mt-1">
-              <Phone className="text-white mr-2 h-5 w-5" />
+            <div className="flex items-center border-b-2 border-[#131D4F] py-2 mt-1">
+              <Phone className="text-[#131D4F] mr-2 h-5 w-5" />
               <input
                 type="number"
                 onChange={handleChange}
                 placeholder="Mobile Number"
                 name="mobilenumber"
-                className="bg-transparent w-full text-white focus:outline-none text-sm sm:text-base"
+                className="bg-transparent w-full text-[#131D4F] focus:outline-none text-sm sm:text-base"
                 value={formvalues.mobilenumber}
               />
             </div>
-            <p className="text-black text-xs sm:text-sm mt-1">
+            <p className="text-[#131D4F] text-xs sm:text-sm mt-1">
               {formerrors.mobilenumber}
             </p>
           </div>
 
         
           <div className="mb-4">
-            <label className="text-base sm:text-lg text-white">Role:</label>
-            <div className="flex items-center space-x-4 border-b-2 border-white py-2 mt-1">
+            <label className="text-base sm:text-lg text-[#131D4F]">Role:</label>
+            <div className="flex items-center space-x-4 border-b-2 border-[#131D4F] py-2 mt-1">
               <div className="flex items-center">
                 <input
                   type="radio"
@@ -224,7 +224,7 @@ const Signup = () =>{
                 />
                 <label
                   htmlFor="User"
-                  className="text-white text-sm sm:text-base"
+                  className="text-[#131D4F] text-sm sm:text-base"
                 >
                   User
                 </label>
@@ -241,20 +241,20 @@ const Signup = () =>{
                 />
                 <label
                   htmlFor="Owner"
-                  className="text-white text-sm sm:text-base"
+                  className="text-[#131D4F] text-sm sm:text-base"
                 >
                   Recruiter
                 </label>
               </div>
             </div>
-            <p className="text-black text-xs sm:text-sm mt-1">
+            <p className="text-[#131D4F] text-xs sm:text-sm mt-1">
               {formerrors.role}
             </p>
           </div>
 
           
           <div className="flex justify-center mt-6">
-            <button className="text-base sm:text-lg w-full py-2 bg-white text-blue-500 rounded-lg font-bold transition-colors hover:bg-gray-100">
+            <button className="text-base sm:text-lg w-full py-2 text-white bg-blue-600 rounded-lg font-bold transition-colors hover:bg-blue-700">
               SIGN UP
             </button>
           </div>
@@ -263,7 +263,7 @@ const Signup = () =>{
           <div className="text-center mt-4">
             <Link
               to="/login"
-              className="text-white text-sm sm:text-base underline hover:text-gray-200"
+              className="text-[#131D4F] text-sm sm:text-base underline "
             >
               Already have an account?
             </Link>

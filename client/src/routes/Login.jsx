@@ -121,27 +121,27 @@ const Login = () => {
   }
  
   return (
-       <div className="flex  justify-center items-center min-h-screen bg-gray-100 px-4">
+       <div className="flex  justify-center items-center min-h-screen bg-[#FAF6E9] px-4">
       <form
         onSubmit={handleSubmit}
-        className="w-full  max-w-md bg-blue-500 p-6 rounded-lg shadow-lg"
+        className="w-full  max-w-md bg-[#f7e9d6] p-6 rounded-lg shadow-lg"
       >
         <div className="text-center mb-6">
-          <p className="text-2xl font-bold text-white">Login</p>
+          <p className="text-2xl font-bold text-[#131D4F]">Login</p>
         </div>
 
        
-        <div className="mb-4">
-          <label className="text-sm text-white">Email ID:</label>
-          <div className="flex items-center border-b-2 border-white py-2 mt-2">
-            <Mail className="text-white mr-2" />
+        <div className="mb-4 ">
+          <label className="text-sm text-[#131D4F]">Email ID:</label>
+          <div className="flex items-center border-b-2 border-[#131D4F] py-2 mt-2">
+            <Mail className="text-[#131D4F] mr-2" />
             <input
               type="email"
               name="email"
               placeholder="Email"
               value={formvalues.email}
               onChange={handleChange}
-              className="bg-transparent w-full text-white focus:outline-none"
+              className="bg-transparent w-full text-[#131D4F] focus:outline-none"
             />
           </div>
           <p className="text-black text-sm">{formerrors.email}</p>
@@ -149,24 +149,24 @@ const Login = () => {
 
        
         <div className="mb-4">
-          <label className="text-sm text-white">Password:</label>
-          <div className="flex items-center border-b-2 border-white py-2 mt-2">
-            <Lock className="text-white mr-2" />
+          <label className="text-sm text-[#131D4F]">Password:</label>
+          <div className="flex items-center border-b-2 border-[#131D4F] py-2 mt-2">
+            <Lock className="text-[#131D4F] mr-2" />
             <input
               type="password"
               name="password"
               placeholder="Password"
               value={formvalues.password}
               onChange={handleChange}
-              className="bg-transparent w-full text-white focus:outline-none"
+              className="bg-transparent w-full text-[#131D4F] focus:outline-none"
             />
           </div>
-          <p className="text-black text-sm">{formerrors.password}</p>
+          <p className="text-[#131D4F] text-sm">{formerrors.password}</p>
         </div>
 
     
         <div className="mb-4">
-          <label className="text-sm text-white">Role:</label>
+          <label className="text-sm text-[#131D4F]">Role:</label>
           <div className="flex items-center space-x-4 mt-2">
             {["user", "recruiter", "admin"].map((role) => (
               <div key={role} className="flex items-center">
@@ -178,17 +178,17 @@ const Login = () => {
                   onChange={handleChange}
                   className="mr-2"
                 />
-                <label htmlFor={role} className="text-white capitalize">
+                <label htmlFor={role} className="text-[#131D4F] capitalize">
                   {role}
                 </label>
               </div>
             ))}
           </div>
-          <p className="text-black text-sm">{formerrors.role}</p>
+          <p className="text-[#131D4F] text-sm">{formerrors.role}</p>
         </div>
 
        
-        <div className="flex justify-between text-white text-sm mb-6">
+        <div className="flex justify-between text-[#131D4F] text-sm mb-6">
           <Link to="/forgot-password" className="underline">
             Forgot Password?
           </Link>
@@ -196,14 +196,14 @@ const Login = () => {
 
         
         <div className="flex justify-center">
-          <button className="w-full py-2 bg-white text-blue-500 rounded-lg font-bold hover:bg-gray-200 transition">
+          <button className="w-full py-2  text-white bg-blue-600 rounded-lg font-bold hover:bg-blue-700 transition">
             LOGIN
           </button>
         </div>
 
        
         <div className="text-center mt-4">
-          <Link to="/signup" className="text-white underline">
+          <Link to="/signup" className="text-[#131D4F] underline">
             Don't have an account?
           </Link>
         </div>
