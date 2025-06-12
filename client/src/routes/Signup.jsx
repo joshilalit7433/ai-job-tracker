@@ -120,10 +120,10 @@ const Signup = () =>{
 
     return(
         <>
-         <div className="flex bg-[#FAF6E9]  justify-center items-center px-4 py-6 sm:py-8 md:py-10 lg:py-12">
+         <div className="flex bg-[#f7e9d6]  justify-center items-center px-4 py-6 sm:py-8 md:py-10 lg:py-12">
         <form
           onSubmit={handleSubmit}
-          className="w-full mt-[50px] max-w-md bg-[#f7e9d6] p-4 sm:p-6 md:p-8 rounded-lg shadow-lg"
+          className="w-full mt-[50px] max-w-md bg-[#FAF6E9] p-4 sm:p-6 md:p-8 rounded-lg shadow-lg"
         >
           <div className="text-center mb-4 sm:mb-6">
             <p className="text-xl sm:text-2xl font-bold text-[#131D4F]">Sign Up</p>

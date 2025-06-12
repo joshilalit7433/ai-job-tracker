@@ -90,11 +90,11 @@ const JobApplicationForm = () => {
   };
 
   return (
-    <div className="bg-[#FAF6E9] ">
-      <div className="flex bg-[#FAF6E9]  justify-center items-center px-4 py-6 sm:py-8 md:py-10 lg:py-12">
+    
+      <div className="flex bg-[#f7e9d6]  justify-center items-center px-4 py-6 sm:py-8 md:py-10 lg:py-[70px]">
         <form
           onSubmit={handleSubmit}
-          className="w-full mt-[50px] max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl bg-[#f7e9d6] p-4 sm:p-6 md:p-8 rounded-lg shadow-lg"
+          className="w-full mt-[50px] max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl bg-[#FAF6E9] p-4 sm:p-6 md:p-8 rounded-lg shadow-lg"
         >
           <h2 className="text-2xl font-bold mb-6 text-center">
             Post a New Job
@@ -170,7 +170,7 @@ const JobApplicationForm = () => {
           </button>
         </form>
       </div>
-    </div>
+    
   );
 };
 

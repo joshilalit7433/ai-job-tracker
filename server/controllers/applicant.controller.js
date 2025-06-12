@@ -5,14 +5,25 @@ import { User } from "../models/user.model.js";
 import fs from "fs";
 import path from "path";
 import { sendEmail } from "../utils/sendEmail.js";
+import { CohereClient } from "cohere-ai";
+import dotenv from "dotenv";
+import { extractResumeText } from "../utils/extractResumeText.js";
 
+dotenv.config();
+
+const cohere = new CohereClient({
+  token: process.env.COHERE_API_KEY,
+});
 
 const skillReference = JSON.parse(
   fs.readFileSync(path.resolve("data/skills_reference.json"), "utf-8")
 );
 
 const normalizeSkill = (skill) =>
-  skill.toLowerCase().replace(/[^a-z0-9+]/gi, "").replace(/js$/, "");
+  skill
+    .toLowerCase()
+    .replace(/[^a-z0-9+]/gi, "")
+    .replace(/js$/, "");
 
 const extractSkillsFromAnalysis = (text) => {
   const normalizedText = text
@@ -32,24 +43,14 @@ const extractSkillsFromAnalysis = (text) => {
   return [...extracted];
 };
 
-
 export const ApplyJobApplication = async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
-    if (!user)
+    if (!user) {
       return res.status(404).json({ message: "User not found", success: false });
-
-    const jobId = req.params.id;
-    const resume = req.body.resume || user.resume;
-    const cover_letter = req.body.cover_letter || user.cover_letter;
-
-    if (!resume || !cover_letter) {
-      return res.status(400).json({
-        message: !resume ? "Please upload a resume" : "Please provide a cover letter",
-        success: false,
-      });
     }
 
+    const jobId = req.params.id;
     if (!mongoose.Types.ObjectId.isValid(jobId)) {
       return res.status(400).json({ message: "Invalid job ID", success: false });
     }
@@ -63,15 +64,74 @@ export const ApplyJobApplication = async (req, res) => {
       return res.status(404).json({ message: "Job not found", success: false });
     }
 
-    const alreadyApplied = await Applicant.findOne({ job: jobId, user: user._id });
+    const alreadyApplied = await Applicant.findOne({
+      job: jobId,
+      user: user._id,
+    });
     if (alreadyApplied) {
-      return res.status(400).json({
-        message: "You already applied for this job",
-        success: false,
-      });
+      return res.status(400).json({ message: "You already applied for this job", success: false });
     }
 
-    const analysisText = typeof user.resume_analysis === "string" ? user.resume_analysis : "";
+    
+    const resume = req.file
+      ? `uploads/resumes/${req.file.filename}`
+      : user.resume;
+
+    if (!resume) {
+      return res.status(400).json({ message: "Please upload your resume first.", success: false });
+    }
+
+    
+    let cover_letter = req.body.cover_letter;
+
+    if (!cover_letter) {
+      const resumePath = path.join(process.cwd(), "uploads", "resumes", path.basename(resume));
+      if (!fs.existsSync(resumePath)) {
+        return res.status(404).json({ message: "Resume file not found.", success: false });
+      }
+
+      const resumeText = await extractResumeText(resumePath);
+
+      const jobDescription = `
+Company: ${job.company_name}
+Title: ${job.title}
+Location: ${job.location}
+Responsibilities: ${job.responsibilities || ""}
+Required Skills: ${(job.skills || []).join(", ")}
+`;
+
+      const prompt = `
+Write a personalized and professional cover letter (200–250 words) tailored to the following:
+
+Resume:
+${resumeText}
+
+Job Description:
+${jobDescription}
+
+Match the applicant's strengths to the responsibilities and skills. Use a confident and clear tone.
+`;
+
+      const response = await cohere.generate({
+        model: "command",
+        prompt,
+        max_tokens: 300,
+        temperature: 0.7,
+      });
+
+      if (!response.generations || !response.generations.length) {
+        return res.status(500).json({
+          success: false,
+          message: "AI failed to generate cover letter.",
+        });
+      }
+
+      cover_letter = response.generations[0].text;
+    }
+
+    
+    const analysisText =
+      typeof user.resume_analysis === "string" ? user.resume_analysis : "";
     const userSkills = extractSkillsFromAnalysis(analysisText);
 
     const jobSkills = (
@@ -80,8 +140,12 @@ export const ApplyJobApplication = async (req, res) => {
         : (job.skills || "").split(/[\s,]+/)
     ).map((s) => normalizeSkill(s.trim()));
 
-    const matchedSkills = jobSkills.filter((skill) => userSkills.includes(skill));
-    const missingSkills = jobSkills.filter((skill) => !userSkills.includes(skill));
+    const matchedSkills = jobSkills.filter((skill) =>
+      userSkills.includes(skill)
+    );
+    const missingSkills = jobSkills.filter(
+      (skill) => !userSkills.includes(skill)
+    );
 
     await Applicant.create({
       job: jobId,
@@ -94,15 +158,11 @@ export const ApplyJobApplication = async (req, res) => {
       skill_gap: missingSkills,
     });
 
-    
-    if (!user.resume && req.body.resume) user.resume = req.body.resume;
-    if (!user.cover_letter && req.body.cover_letter) user.cover_letter = req.body.cover_letter;
-    await user.save();
-
     return res.status(200).json({
       message: "Successfully applied to the job",
       matchedSkills,
       missingSkills,
+      coverLetter: cover_letter,
       parsedResume: analysisText,
       success: true,
     });
@@ -112,13 +172,14 @@ export const ApplyJobApplication = async (req, res) => {
   }
 };
 
-
 export const checkIfApplied = async (req, res) => {
   try {
     const jobId = req.params.id;
 
     if (!mongoose.Types.ObjectId.isValid(jobId)) {
-      return res.status(400).json({ success: false, message: "Invalid job ID" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid job ID" });
     }
 
     const applicant = await Applicant.findOne({
@@ -140,14 +201,13 @@ export const checkIfApplied = async (req, res) => {
       message: "You have already applied for this job.",
       status: applicant.status,
       recruiterResponse: applicant.recruiterResponse || "",
-      appliedAt:applicant.appliedAt
+      appliedAt: applicant.appliedAt,
     });
   } catch (error) {
     console.error("Error in checkIfApplied:", error);
     return res.status(500).json({ success: false, message: "Server error" });
   }
 };
-
 
 export const GetApplicantsForSpecificJob = async (req, res) => {
   try {
@@ -175,7 +235,6 @@ export const GetApplicantsForSpecificJob = async (req, res) => {
   }
 };
 
-
 export const respondToApplicant = async (req, res) => {
   try {
     const applicantId = req.params.id;
@@ -188,7 +247,6 @@ export const respondToApplicant = async (req, res) => {
       });
     }
 
-    
     const applicant = await Applicant.findById(applicantId).populate("job");
 
     if (!applicant) {
@@ -198,7 +256,6 @@ export const respondToApplicant = async (req, res) => {
       });
     }
 
-    
     const job = applicant.job;
     if (!job || job.user.toString() !== req.user._id.toString()) {
       return res.status(403).json({
@@ -233,4 +290,3 @@ export const respondToApplicant = async (req, res) => {
     });
   }
 };
-

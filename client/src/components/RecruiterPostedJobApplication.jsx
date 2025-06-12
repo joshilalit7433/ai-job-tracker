@@ -66,7 +66,7 @@ const handleDelete = async (id) => {
 
 
   return (
-    <div className="pt-20 px-4 pb-20">
+    <div className="pt-20 px-4 pb-20 bg-[#f7e9d6]  ">
       <h1 className="text-center text-2xl lg:text-3xl font-semibold mb-6">
         Your Posted Job Applications
       </h1>
@@ -78,11 +78,11 @@ const handleDelete = async (id) => {
       ) : jobs.length === 0 ? (
         <p className="text-center text-lg">No job applications found.</p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ">
           {jobs.map((job) => (
             <div
               key={job._id}
-              className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition duration-300 cursor-pointer overflow-hidden p-4 space-y-2"
+              className="bg-[#FAF6E9] rounded-xl shadow-lg hover:shadow-2xl transition duration-300 cursor-pointer overflow-hidden p-4 space-y-2"
             >
               <p className="text-black text-lg font-bold capitalize">
                 Role: {job.title}
