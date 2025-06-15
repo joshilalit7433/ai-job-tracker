@@ -30,13 +30,19 @@ const ApplyJobForm = () => {
 
   const handleGenerateCoverLetter = async () => {
     try {
+       if (!uploadedResumeURL ) {
+      toast.error("Please upload a resume first to generate a cover letter.");
+    } else {
       setGenerating(true);
       const res = await axios.get(
-        `${JOB_APPLICANT_API_END_POINT}/${id}/generate-cover-letter?force=true`,
+        `${JOB_APPLICANT_API_END_POINT}/generate-cover-letter/${id}`,
         { withCredentials: true }
       );
       setCoverLetter(res.data.letter);
       toast.success("Cover letter generated!");
+      
+    }
+      
     } catch (error) {
       console.error("Cover letter generation failed:", error);
       toast.error("Failed to generate cover letter");
@@ -169,14 +175,16 @@ const ApplyJobForm = () => {
             className="w-full px-4 py-2 border rounded-md text-sm"
             placeholder="Paste or generate your cover letter here"
           />
-          <button
-            type="button"
-            onClick={handleGenerateCoverLetter}
-            disabled={generating}
-            className="mt-2 text-white bg-green-600 hover:bg-green-700 px-4 py-1 rounded text-sm"
-          >
-            {generating ? "Generating..." : "Generate Cover Letter"}
-          </button>
+           
+            <button
+              type="button"
+              onClick={handleGenerateCoverLetter}
+              disabled={generating}
+              className="mt-2 text-white bg-green-600 hover:bg-green-700 px-4 py-1 rounded text-sm"
+            >
+              {generating ? "Generating..." : "Generate Cover Letter"}
+            </button>
+          
         </div>
 
         <div className="text-center">
@@ -199,7 +207,9 @@ const ApplyJobForm = () => {
               Skill Gap Analysis
             </h3>
             <div className="mt-2">
-              <p className="font-medium text-green-700 mb-1">✅ Matched Skills:</p>
+              <p className="font-medium text-green-700 mb-1">
+                ✅ Matched Skills:
+              </p>
               <div className="flex flex-wrap gap-2">
                 {skillAnalysis.matched.length > 0 ? (
                   skillAnalysis.matched.map((skill, i) => (
@@ -214,7 +224,9 @@ const ApplyJobForm = () => {
                   <p className="text-sm text-gray-600">No matched skills.</p>
                 )}
               </div>
-              <p className="font-medium text-red-700 mt-4 mb-1">⚠️ Missing Skills:</p>
+              <p className="font-medium text-red-700 mt-4 mb-1">
+                ⚠️ Missing Skills:
+              </p>
               <div className="flex flex-wrap gap-2">
                 {skillAnalysis.missing.length > 0 ? (
                   skillAnalysis.missing.map((skill, i) => (
@@ -226,7 +238,9 @@ const ApplyJobForm = () => {
                     </span>
                   ))
                 ) : (
-                  <p className="text-sm text-green-700">You're fully qualified!</p>
+                  <p className="text-sm text-green-700">
+                    You're fully qualified!
+                  </p>
                 )}
               </div>
             </div>

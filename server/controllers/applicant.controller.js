@@ -47,16 +47,22 @@ export const ApplyJobApplication = async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
     if (!user) {
-      return res.status(404).json({ message: "User not found", success: false });
+      return res
+        .status(404)
+        .json({ message: "User not found", success: false });
     }
 
     const jobId = req.params.id;
     if (!mongoose.Types.ObjectId.isValid(jobId)) {
-      return res.status(400).json({ message: "Invalid job ID", success: false });
+      return res
+        .status(400)
+        .json({ message: "Invalid job ID", success: false });
     }
 
     if (req.user.role !== "user") {
-      return res.status(403).json({ message: "Only users can apply", success: false });
+      return res
+        .status(403)
+        .json({ message: "Only users can apply", success: false });
     }
 
     const job = await JobApplication.findById(jobId);
@@ -69,7 +75,9 @@ export const ApplyJobApplication = async (req, res) => {
       user: user._id,
     });
     if (alreadyApplied) {
-      return res.status(400).json({ message: "You already applied for this job", success: false });
+      return res
+        .status(400)
+        .json({ message: "You already applied for this job", success: false });
     }
 
     
@@ -78,55 +86,17 @@ export const ApplyJobApplication = async (req, res) => {
       : user.resume;
 
     if (!resume) {
-      return res.status(400).json({ message: "Please upload your resume first.", success: false });
+      return res
+        .status(400)
+        .json({ message: "Please upload your resume first.", success: false });
     }
 
     
-    let cover_letter = req.body.cover_letter;
-
+    const cover_letter = req.body.cover_letter;
     if (!cover_letter) {
-      const resumePath = path.join(process.cwd(), "uploads", "resumes", path.basename(resume));
-      if (!fs.existsSync(resumePath)) {
-        return res.status(404).json({ message: "Resume file not found.", success: false });
-      }
-
-      const resumeText = await extractResumeText(resumePath);
-
-      const jobDescription = `
-Company: ${job.company_name}
-Title: ${job.title}
-Location: ${job.location}
-Responsibilities: ${job.responsibilities || ""}
-Required Skills: ${(job.skills || []).join(", ")}
-`;
-
-      const prompt = `
-Write a personalized and professional cover letter (200–250 words) tailored to the following:
-
-Resume:
-${resumeText}
-
-Job Description:
-${jobDescription}
-
-Match the applicant's strengths to the responsibilities and skills. Use a confident and clear tone.
-`;
-
-      const response = await cohere.generate({
-        model: "command",
-        prompt,
-        max_tokens: 300,
-        temperature: 0.7,
-      });
-
-      if (!response.generations || !response.generations.length) {
-        return res.status(500).json({
-          success: false,
-          message: "AI failed to generate cover letter.",
-        });
-      }
-
-      cover_letter = response.generations[0].text;
+      return res
+        .status(400)
+        .json({ message: "Cover letter is required.", success: false });
     }
 
     
@@ -290,3 +260,77 @@ export const respondToApplicant = async (req, res) => {
     });
   }
 };
+
+export const GenerateCoverLetter = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user || !user.resume) {
+      return res.status(400).json({
+        success: false,
+        message: "Resume not found. Please upload it first.",
+      });
+    }
+
+    const jobId = req.params.id;
+    if (!mongoose.Types.ObjectId.isValid(jobId)) {
+      return res.status(400).json({ message: "Invalid job ID", success: false });
+    }
+
+    const job = await JobApplication.findById(jobId);
+    if (!job) {
+      return res.status(404).json({ message: "Job not found", success: false });
+    }
+
+   
+    const resumePath = path.join(process.cwd(), "uploads", "resumes", path.basename(user.resume));
+    const resumeText = await extractResumeText(resumePath);
+
+    const jobDescription = `
+Company: ${job.company_name}
+Title: ${job.title}
+Location: ${job.location}
+Responsibilities: ${job.responsibilities || ""}
+Required Skills: ${(job.skills || []).join(", ")}
+`;
+
+    const prompt = `
+Write a personalized and professional cover letter (200–250 words) tailored to the following:
+
+Resume:
+${resumeText}
+
+Job Description:
+${jobDescription}
+
+Match the applicant's strengths to the responsibilities and skills. Use a confident and clear tone.
+`;
+
+    const response = await cohere.generate({
+      model: "command",
+      prompt,
+      max_tokens: 300,
+      temperature: 0.7,
+    });
+
+    if (!response.generations || !response.generations.length) {
+      return res.status(500).json({
+        success: false,
+        message: "AI failed to generate cover letter.",
+      });
+    }
+
+    const letter = response.generations[0].text;
+
+    return res.status(200).json({
+      success: true,
+      letter,
+    });
+  } catch (error) {
+    console.error("Error generating cover letter:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error while generating cover letter.",
+    });
+  }
+};
+

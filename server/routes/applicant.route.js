@@ -1,5 +1,5 @@
 import express from "express";
-import { ApplyJobApplication,GetApplicantsForSpecificJob,checkIfApplied,respondToApplicant } from "../controllers/applicant.controller.js";
+import { ApplyJobApplication,GetApplicantsForSpecificJob,checkIfApplied,respondToApplicant,GenerateCoverLetter } from "../controllers/applicant.controller.js";
 import isAuthenticated from "../middlewares/isAutheticated.js";
 import { upload } from "../middlewares/upload.js"; 
 
@@ -10,6 +10,7 @@ router.route("/get-job-applicants-for-recruiter/:jobId").get(isAuthenticated,Get
 router.route("/is-applied/:id").get(isAuthenticated,checkIfApplied);
 router.route("/response-to-applicant/:id").post(isAuthenticated,respondToApplicant);
 router.route("/response-to-applicant/:id").post(isAuthenticated,respondToApplicant);
+router.route("/generate-cover-letter/:id").get(isAuthenticated,GenerateCoverLetter);
 
 
 
