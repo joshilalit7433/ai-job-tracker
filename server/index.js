@@ -13,6 +13,7 @@ import userRoute from "../server/routes/user.route.js";
 import JobApplicationRoute from "../server/routes/jobApplication.route.js";
 import ApplicantRoute from "../server/routes/applicant.route.js";
 import NotificationRoute from "../server/routes/notification.route.js";
+import RecruiterDashboardRoute from "../server/routes/recruiterDashboard.route.js";
 
 dotenv.config();
 
@@ -40,6 +41,7 @@ app.use("/api/v1/job-application", JobApplicationRoute);
 app.use("/api/v1/applicant", ApplicantRoute);
 app.use("/api/v1/notifications", NotificationRoute);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/api/v1/recruiter", RecruiterDashboardRoute);
 
 // HTTP & Socket Server
 const server = http.createServer(app);

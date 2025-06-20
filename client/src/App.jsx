@@ -10,7 +10,7 @@ import { ToastContainer } from "react-toastify";
 import UserProfile from "./components/UserProfile";
 import UserAppliedJobApplication from "./components/UserAppliedJobApplication";
 import EditProfile from "./routes/EditProfile";
-import RecruiterPostedJobApplication from "./components/RecruiterPostedJobApplication";
+import RecruiterPostedJobApplications from "./components/RecruiterPostedJobApplications";
 import EditJobApplication from "./routes/EditJobApplication";
 import ViewJobApplication from "./components/ViewJobApplication";
 import ApplyJobApplication from "./routes/ApplyJobApplication";
@@ -20,6 +20,7 @@ import AdminDashboard from "./components/AdminDashboard";
 import UserSavedJobApplication from "./components/UserSavedJobApplication";
 import NotificationPanel from "./components/NotificationPanel";
 import RecruiterResponse from "./components/RecruiterResponse";
+import RecruiterDashboard from "./components/RecruiterDashboard";
 
 
 function App() {
@@ -51,11 +52,14 @@ function App() {
 
             {/*  Recruiter Only */}
             <Route path="/job-application-form" element={<ProtectedRoute allowedRoles={["recruiter"]}><JobApplicationForm /></ProtectedRoute>} />
-            <Route path="/recruiter-posted-job-applications" element={<ProtectedRoute allowedRoles={["recruiter"]}><RecruiterPostedJobApplication /></ProtectedRoute>} />
+            <Route path="/recruiter-posted-job-applications" element={<ProtectedRoute allowedRoles={["recruiter"]}><RecruiterPostedJobApplications /></ProtectedRoute>} />
             <Route path="/edit-job-applications/:id" element={<ProtectedRoute allowedRoles={["recruiter"]}><EditJobApplication /></ProtectedRoute>} />
             <Route path="/view-applicant/:jobId" element={<ProtectedRoute allowedRoles={["recruiter"]}><ViewApplicants /></ProtectedRoute>} />
             <Route path="/notifications" element={<ProtectedRoute allowedRoles={["recruiter"]}><NotificationPanel /></ProtectedRoute>} />
             <Route path="/recruiter-response/:id" element={<ProtectedRoute allowedRoles={["recruiter"]}><RecruiterResponse /></ProtectedRoute>} />
+            <Route path="/recruiter-dashboard" element={<ProtectedRoute allowedRoles={["recruiter"]}><RecruiterDashboard /></ProtectedRoute>} />
+
+
 
 
 

@@ -1,3 +1,4 @@
+
 import mongoose from "mongoose";
 
 const UserSchema = new mongoose.Schema(
@@ -35,19 +36,22 @@ const UserSchema = new mongoose.Schema(
       type: String,
     },
 
-    resume_analysis:{
+    resume_analysis: {
       type: String,
       default: "",
     },
-
-  
-
     savedJobs: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "JobApplication",
       },
     ],
+    totalJobsPosted:{
+      type:Number,
+      default:0
+
+
+    }
   },
   { timestamps: true }
 );

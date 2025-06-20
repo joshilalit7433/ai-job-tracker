@@ -1,9 +1,8 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import axios from "axios";
 import {
   JOB_APPLICANT_API_END_POINT,
   USER_API_END_POINT,
-  BACKEND_BASE_URL,
 } from "../utils/constant.js";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,6 +13,7 @@ const ApplyJobForm = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const { user } = useSelector((store) => store.auth);
+  const fileInputRef = useRef(null);
 
   const [coverLetter, setCoverLetter] = useState("");
   const [resumeFile, setResumeFile] = useState(null);
@@ -30,19 +30,17 @@ const ApplyJobForm = () => {
 
   const handleGenerateCoverLetter = async () => {
     try {
-       if (!uploadedResumeURL ) {
-      toast.error("Please upload a resume first to generate a cover letter.");
-    } else {
-      setGenerating(true);
-      const res = await axios.get(
-        `${JOB_APPLICANT_API_END_POINT}/generate-cover-letter/${id}`,
-        { withCredentials: true }
-      );
-      setCoverLetter(res.data.letter);
-      toast.success("Cover letter generated!");
-      
-    }
-      
+      if (!uploadedResumeURL) {
+        toast.error("Please upload a resume first to generate a cover letter.");
+      } else {
+        setGenerating(true);
+        const res = await axios.get(
+          `${JOB_APPLICANT_API_END_POINT}/generate-cover-letter/${id}`,
+          { withCredentials: true }
+        );
+        setCoverLetter(res.data.letter);
+        toast.success("Cover letter generated!");
+      }
     } catch (error) {
       console.error("Cover letter generation failed:", error);
       toast.error("Failed to generate cover letter");
@@ -146,21 +144,41 @@ const ApplyJobForm = () => {
           <label className="block text-sm font-medium text-gray-800 mb-1">
             Upload Resume
           </label>
-          <input
-            type="file"
-            accept=".pdf,.doc,.docx"
-            onChange={handleResumeChange}
-            className="w-full px-3 py-2 border rounded-md text-sm"
-          />
-          {resumeFile && (
+          <div className="relative">
+            <input
+              type="file"
+              accept=".pdf,.doc,.docx"
+              onChange={handleResumeChange}
+              ref={fileInputRef}
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+              id="resume-upload"
+            />
+            <div className="flex items-center justify-between w-full px-3 py-2 border rounded-md text-sm bg-white">
+              <span className="truncate">
+                {resumeFile ? resumeFile.name : "Choose a file"}
+              </span>
+              <button
+                type="button"
+                onClick={() => fileInputRef.current.click()}
+                className="ml-2 text-blue-600 hover:text-blue-800"
+              >
+                Browse
+              </button>
+            </div>
+          </div>
+          {!uploadedResumeURL ? (
             <button
               type="button"
               onClick={handleResumeUpload}
-              disabled={loading}
+              disabled={loading || !resumeFile}
               className="mt-2 text-blue-600 hover:underline text-sm"
             >
               {loading ? "Uploading..." : "Upload Resume"}
             </button>
+          ) : (
+            <p className="text-green-600 font-semibold mt-2">
+              Resume Uploaded Successfully
+            </p>
           )}
         </div>
 
@@ -175,23 +193,21 @@ const ApplyJobForm = () => {
             className="w-full px-4 py-2 border rounded-md text-sm"
             placeholder="Paste or generate your cover letter here"
           />
-           
-            <button
-              type="button"
-              onClick={handleGenerateCoverLetter}
-              disabled={generating}
-              className="mt-2 text-white bg-green-600 hover:bg-green-700 px-4 py-1 rounded text-sm"
-            >
-              {generating ? "Generating..." : "Generate Cover Letter"}
-            </button>
-          
+          <button
+            type="button"
+            onClick={handleGenerateCoverLetter}
+            disabled={generating || !uploadedResumeURL}
+            className="mt-2 text-white bg-green-600 hover:bg-green-700 px-4 py-1 rounded text-sm disabled:bg-gray-400"
+          >
+            {generating ? "Generating..." : "Generate Cover Letter"}
+          </button>
         </div>
 
         <div className="text-center">
           <button
             type="submit"
             disabled={loading}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-md transition w-full sm:w-auto"
+            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-md transition w-full sm:w-auto disabled:bg-gray-400"
           >
             {loading ? "Submitting..." : "Submit Application"}
           </button>

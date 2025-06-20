@@ -2,6 +2,7 @@ import { JobApplication } from "../models/jobApplication.model.js";
 import { Applicant } from "../models/applicant.model.js";
 import { io, userSocketMap } from "../index.js";
 import { Notification } from "../models/notification.model.js";
+import { User } from "../models/user.model.js";
 
 export const PostJobApplication = async (req, res) => {
   try {
@@ -62,6 +63,11 @@ export const PostJobApplication = async (req, res) => {
       isApproved: false,
       image
     });
+
+    await User.findByIdAndUpdate(req.user._id,{
+      $inc:{totalJobsPosted: 1}
+
+    })
 
     return res.status(201).json({
       message: "Job application submitted. Awaiting admin approval.",
