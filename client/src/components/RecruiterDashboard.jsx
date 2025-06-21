@@ -83,6 +83,11 @@ export default function RecruiterDashboard() {
       label: "Interviews",
       value: dashboardStats.interviews,
     },
+    {
+      icon: <CalendarCheck className="text-purple-600" />,
+      label: "Hired",
+      value: dashboardStats.hired,
+    },
   ];
 
   return (

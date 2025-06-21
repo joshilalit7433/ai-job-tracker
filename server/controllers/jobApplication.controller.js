@@ -64,10 +64,7 @@ export const PostJobApplication = async (req, res) => {
       image
     });
 
-    await User.findByIdAndUpdate(req.user._id,{
-      $inc:{totalJobsPosted: 1}
-
-    })
+    
 
     return res.status(201).json({
       message: "Job application submitted. Awaiting admin approval.",
@@ -237,6 +234,11 @@ export const DeleteJobApplication = async (req, res) => {
 
     await jobapplication.deleteOne();
 
+    await User.findByIdAndUpdate(req.user._id,{
+      $inc:{totalJobsPosted: -1}
+
+    })
+
     return res.status(200).json({
       message: "Job Application Deleted Successfully",
       success: true,
@@ -375,6 +377,12 @@ export const approveJob = async (req, res) => {
     await job.save();
 
     const recruiterId = job.user.toString();
+
+    await User.findByIdAndUpdate(recruiterId, {
+      $inc: { totalJobsPosted: 1 },
+    });
+
+
     const sockets = userSocketMap.get(recruiterId);
 
     

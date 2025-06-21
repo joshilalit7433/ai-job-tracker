@@ -234,11 +234,14 @@ export const respondToApplicant = async (req, res) => {
       });
     }
 
-    const finalResponse =
-      recruiterResponse ||
-      (status === "accepted"
-        ? "Congratulations! You’ve been accepted."
-        : "Thank you for applying. Unfortunately, you were not shortlisted.");
+    const defaultMessages = {
+      hired: "Congratulations! You have been hired. We’ll contact you with further details.",
+      shortlisted: "You have been shortlisted. We’ll contact you for next steps.",
+      interview: "You’ve been selected for interview. We’ll schedule it soon.",
+      rejected: "Thank you for applying. Unfortunately, you were not selected.",
+    };
+
+    const finalResponse = recruiterResponse || defaultMessages[status] || "";
 
     await sendEmail(applicant.email, "Job Application Response", finalResponse);
 
@@ -260,6 +263,7 @@ export const respondToApplicant = async (req, res) => {
     });
   }
 };
+
 
 export const GenerateCoverLetter = async (req, res) => {
   try {

@@ -24,14 +24,29 @@ export const RecruiterDashboard = async (req, res) => {
       job: { $in: JobIds },
     });
 
+     const shortlisted = await Applicant.countDocuments({
+      job: { $in: JobIds },
+      status: "shortlisted",
+    });
 
+    const interviews = await Applicant.countDocuments({
+      job: { $in: JobIds },
+      status: "interview",
+    });
 
+    const hired = await Applicant.countDocuments({
+      job: { $in: JobIds },
+      status: "hired",
+    });
 
 
     res.status(200).json({
       message: "Recruiter dashboard data fetched successfully",
       totalJobsPosted: user.totalJobsPosted,
       totalApplicants,
+      shortlisted,
+      interviews,
+      hired,
     });
   } catch (error) {
     console.log(error);

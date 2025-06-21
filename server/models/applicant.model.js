@@ -33,7 +33,7 @@ const ApplicantSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["pending", "interview", "rejected", "accepted"],
+    enum: ["pending", "interview", "rejected", "shortlisted","hired"],
     default: "pending",
   },
   cover_letter: {

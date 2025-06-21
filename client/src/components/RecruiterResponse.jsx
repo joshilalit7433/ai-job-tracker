@@ -78,7 +78,8 @@ const RecruiterResponse = () => {
             <option value="pending">Pending</option>
             <option value="interview">Interview</option>
             <option value="rejected">Rejected</option>
-            <option value="accepted">Accepted</option>
+            <option value="shortlisted">Shortlisted</option>
+            <option value="hired">Hired</option>
           </select>
         </div>
 

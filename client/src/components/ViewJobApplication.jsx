@@ -197,20 +197,66 @@ const ViewJobApplication = () => {
         )}
 
         {user?.role === "user" && hasApplied && (
-          <div className="bg-green-50 p-4 rounded-md border border-green-200 space-y-2">
-            <p className="text-green-600 font-semibold">{applyMessage}</p>
+          <div className="p-4 rounded-xl border shadow bg-white space-y-3 border-gray-200">
+            <div className="text-lg font-semibold text-green-700">
+              ✅ {applyMessage}
+            </div>
+
             {applicationStatus && (
-              <p className="text-sm text-gray-800">
-                <strong>Status:</strong> {applicationStatus}
-              </p>
+              <div className="flex items-center gap-2 text-sm font-medium">
+                {applicationStatus === "shortlisted" && (
+                  <>
+                    <span className="text-yellow-600">📝 Shortlisted</span>
+                    <span className="text-gray-600">(Await next steps)</span>
+                  </>
+                )}
+                {applicationStatus === "interview" && (
+                  <>
+                    <span className="text-blue-600">
+                      📅 Interview Scheduled
+                    </span>
+                    <span className="text-gray-600">
+                      (Details will be sent soon)
+                    </span>
+                  </>
+                )}
+                {applicationStatus === "hired" && (
+                  <>
+                    <span className="text-green-600">
+                      🎉 You’ve been Hired!
+                    </span>
+                    <span className="text-gray-600">(Congrats!)</span>
+                  </>
+                )}
+                {applicationStatus === "rejected" && (
+                  <>
+                    <span className="text-red-600">❌ Not Selected</span>
+                    <span className="text-gray-600">
+                      (Better luck next time)
+                    </span>
+                  </>
+                )}
+                {["pending"].includes(applicationStatus) && (
+                  <>
+                    <span className="text-gray-700">⏳ Under Review</span>
+                  </>
+                )}
+              </div>
             )}
+
             {recruiterResponse && (
-              <p className="text-sm text-gray-700">
-                <strong>Recruiter Response:</strong> {recruiterResponse}
-              </p>
+              <div className="bg-gray-50 border border-gray-200 p-3 rounded-md text-sm text-gray-800 italic">
+                <strong className="block text-gray-600 mb-1">
+                  Recruiter Response:
+                </strong>
+                {recruiterResponse}
+              </div>
             )}
+
             {appliedAt && (
-              <div>Applied on: {dayjs(appliedAt).format("MMMM D, YYYY")}</div>
+              <div className="text-xs text-gray-500">
+                Applied on: {dayjs(appliedAt).format("MMMM D, YYYY")}
+              </div>
             )}
           </div>
         )}
