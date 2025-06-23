@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { Mail, Phone, FileText, User, StickyNote } from "lucide-react";
 import {
   JOB_APPLICANT_API_END_POINT,
   BACKEND_BASE_URL,
 } from "../utils/constant.js";
-import { Link } from "react-router-dom";
 
 const ViewApplicants = () => {
   const [applicantdetails, setapplicantdetails] = useState([]);
@@ -22,9 +21,8 @@ const ViewApplicants = () => {
           `${JOB_APPLICANT_API_END_POINT}/get-job-applicants-for-recruiter/${jobId}`,
           { withCredentials: true }
         );
-        const data = response.data;
-        if (data.success) {
-          setapplicantdetails(data.applicants || []);
+        if (response.data.success) {
+          setapplicantdetails(response.data.applicants || []);
         }
       } catch (err) {
         console.error("Error fetching applicants:", err.message);
@@ -38,7 +36,7 @@ const ViewApplicants = () => {
 
   return (
     <div className="px-4 pb-20 bg-gray-100 min-h-screen">
-      <h1 className="text-center text-3xl font-bold text-blue-600 mt-8 mb-10">
+      <h1 className="text-center text-4xl font-bold text-blue-700 mt-10 mb-12">
         Applicant Details
       </h1>
 
@@ -51,54 +49,67 @@ const ViewApplicants = () => {
           No applicants found for this job.
         </p>
       ) : (
-        <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {applicantdetails.map((applicant) => (
             <div
               key={applicant._id}
-              className="bg-white shadow-lg rounded-xl p-6 transition hover:shadow-2xl"
+              className="bg-white border border-gray-200 shadow-sm rounded-2xl p-6 hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
             >
-              <div className="space-y-2">
-                <h2 className="text-xl font-semibold flex items-center gap-2">
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 text-xl font-semibold text-gray-800">
                   <User className="w-5 h-5 text-blue-600" />
                   {applicant.fullname}
-                </h2>
-
-                <p className="flex items-center text-sm text-gray-700">
-                  <Mail className="w-4 h-4 mr-2 text-gray-500" />
-                  {applicant.email}
-                </p>
-
-                <p className="flex items-center text-sm text-gray-700">
-                  <Phone className="w-4 h-4 mr-2 text-gray-500" />
-                  {applicant.mobilenumber}
-                </p>
-
-                <a
-                  href={`${BACKEND_BASE_URL}/${applicant.resume}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center text-sm text-blue-600 hover:underline break-words"
-                >
-                  <FileText className="w-4 h-4 mr-2 text-gray-500" />
-                  Resume: {applicant.resume}
-                </a>
-
-                <p className="flex items-start text-sm text-gray-700 mt-2">
-                  <StickyNote className="w-4 h-4 mr-2 text-gray-500 mt-1" />
-                  <span>
-                    <span className="font-medium text-gray-800">
-                      Cover Letter:
-                    </span>{" "}
-                    {applicant.cover_letter?.slice(0, 120)}...
-                  </span>
-                </p>
-                <div className="mt-4 flex justify-end">
-                <Link to={`/recruiter-response/${applicant._id}`}
-                  className="px-6 py-3  bg-blue-600 text-white rounded-md hover:bg-blue-700 transition shadow"
-                >
-                  Your Response
-                </Link>
                 </div>
+
+                <div className="text-sm text-gray-700 space-y-2">
+                  <p className="flex items-center">
+                    <Mail className="w-4 h-4 mr-2 text-gray-500" />
+                    {applicant.email}
+                  </p>
+                  <p className="flex items-center">
+                    <Phone className="w-4 h-4 mr-2 text-gray-500" />
+                    {applicant.mobilenumber}
+                  </p>
+                </div>
+
+                <div className="border-t border-gray-200 pt-3">
+                  <a
+                    href={`${BACKEND_BASE_URL}/${applicant.resume}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center text-blue-600 text-sm hover:underline"
+                  >
+                    <FileText className="w-4 h-4 mr-2 text-gray-500" />
+                    View Resume
+                  </a>
+                </div>
+
+                <div className="border-t border-gray-200 pt-3">
+                  <p className="flex items-start text-sm text-gray-700">
+                    <StickyNote className="w-4 h-4 mt-1 mr-2 text-gray-500" />
+                    <span>
+                      <span className="font-medium text-gray-800">
+                        Cover Letter:
+                      </span>{" "}
+                      {applicant.cover_letter?.slice(0, 120)}...
+                    </span>
+                  </p>
+                </div>
+
+                <div className="mt-4">
+                  <span className="inline-block px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-700">
+                    Status: {applicant.status}
+                  </span>
+                </div>
+              </div>
+
+              <div className="mt-6 flex justify-end">
+                <Link
+                  to={`/recruiter-response/${applicant._id}`}
+                  className="px-5 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 shadow"
+                >
+                  Respond
+                </Link>
               </div>
             </div>
           ))}

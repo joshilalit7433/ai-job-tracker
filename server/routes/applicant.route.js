@@ -9,7 +9,6 @@ router.route("/apply/:id").post(isAuthenticated,upload.single("resume"),ApplyJob
 router.route("/get-job-applicants-for-recruiter/:jobId").get(isAuthenticated,GetApplicantsForSpecificJob);
 router.route("/is-applied/:id").get(isAuthenticated,checkIfApplied);
 router.route("/response-to-applicant/:id").post(isAuthenticated,respondToApplicant);
-router.route("/response-to-applicant/:id").post(isAuthenticated,respondToApplicant);
 router.route("/generate-cover-letter/:id").get(isAuthenticated,GenerateCoverLetter);
 
 

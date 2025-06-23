@@ -49,6 +49,8 @@ const RecruiterResponse = () => {
       const data = response.data;
       if (data.success) {
         setMessage('Response sent successfully!');
+        setRecruiterResponse('');
+        setStatus('');
       } else {
         setMessage('Failed to send response.');
       }

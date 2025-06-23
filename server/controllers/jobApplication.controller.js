@@ -3,6 +3,8 @@ import { Applicant } from "../models/applicant.model.js";
 import { io, userSocketMap } from "../index.js";
 import { Notification } from "../models/notification.model.js";
 import { User } from "../models/user.model.js";
+import { sendEmail } from "../utils/sendEmail.js";
+
 
 export const PostJobApplication = async (req, res) => {
   try {
@@ -63,6 +65,8 @@ export const PostJobApplication = async (req, res) => {
       isApproved: false,
       image
     });
+
+    await sendEmail(req.user.email, "Job Application Response", "your job application has been submitted and is awaiting admin approval.");
 
     
 
