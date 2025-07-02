@@ -27,7 +27,7 @@ const Navbar = () => {
     dispatch(logout());
     navigate("/");
     toast.success("You have successfully Logged Out.", {
-      position: "top-center",
+      position: "bottom-right",
       autoClose: 3000,
       theme: "dark",
     });

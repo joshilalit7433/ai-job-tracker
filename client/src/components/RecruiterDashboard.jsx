@@ -115,7 +115,13 @@ export default function RecruiterDashboard() {
           <ResponsiveContainer width="100%" height={250}>
             <BarChart data={dashboardStats.barData}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="job" />
+              <XAxis
+                dataKey="job"
+                interval={0}
+                angle={-45}
+                textAnchor="end"
+                height={120}
+              />
               <YAxis />
               <Tooltip />
               <Bar

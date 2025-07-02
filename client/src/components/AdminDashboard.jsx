@@ -25,7 +25,7 @@ const AdminDashboard = () => {
       try {
         if (!user || user.role !== "admin") {
           toast.error("You don't have permission to access this page", {
-            position: "top-center",
+            position: "bottom-right",
             theme: "dark",
           });
           navigate("/login");
@@ -35,7 +35,7 @@ const AdminDashboard = () => {
         fetchPendingJobs();
       } catch (error) {
         toast.error(error, {
-          position: "top-center",
+          position: "bottom-right",
           theme: "dark",
         });
         navigate("/login");
@@ -54,13 +54,13 @@ const AdminDashboard = () => {
       } catch (error) {
         if (error.response && error.response.status === 403) {
           toast.error("Access denied. Only admins can view this page", {
-            position: "top-center",
+            position: "bottom-right",
             theme: "dark",
           });
           navigate("/login");
         } else {
           toast.error("Failed to fetch pending turf requests", {
-            position: "top-center",
+            position: "bottom-right",
             theme: "dark",
           });
         }

@@ -59,7 +59,7 @@ const ViewJobApplication = () => {
 
   const allow = () => {
     if (!user) {
-      toast.error("You must login to apply.");
+      toast.error("You must login to apply.",{position:"bottom-right"});
       navigate("/login", { state: { from: `/apply-job-application/${id}` } });
     } else {
       navigate(`/apply-job-application/${id}`);
@@ -74,13 +74,13 @@ const ViewJobApplication = () => {
         { withCredentials: true }
       );
       toast.success("Job approved successfully!", {
-        position: "top-center",
+        position: "bottom-right",
         theme: "dark",
       });
       navigate("/admin-dashboard");
     } catch (error) {
       toast.error(error.message || "Failed to approve job", {
-        position: "top-center",
+        position: "bottom-right",
         theme: "dark",
       });
     }
@@ -92,13 +92,13 @@ const ViewJobApplication = () => {
         withCredentials: true,
       });
       toast.success("Job rejected successfully!", {
-        position: "top-center",
+        position: "bottom-right",
         theme: "dark",
       });
       navigate("/admin-dashboard");
     } catch (error) {
       toast.error(error.message || "Failed to reject job", {
-        position: "top-center",
+        position: "bottom-right",
         theme: "dark",
       });
     }

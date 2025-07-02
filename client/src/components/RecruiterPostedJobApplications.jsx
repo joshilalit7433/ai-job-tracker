@@ -55,11 +55,11 @@ const handleDelete = async (id) => {
       toast.success("Job application deleted successfully!");
       setJobs(jobs.filter((job) => job._id !== id));
     } else {
-      toast.error(res.data.message || "Failed to delete job application.");
+      toast.error(res.data.message || "Failed to delete job application.",{position:"bottom-right"});
     }
   } catch (err) {
     console.error("Error deleting job application:", err);
-    toast.error("Something went wrong while deleting.");
+    toast.error("Something went wrong while deleting.",{position:"bottom-right"});
   }
 };
 

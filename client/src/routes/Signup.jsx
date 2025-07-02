@@ -49,7 +49,7 @@ const Signup = () =>{
             if(response.data.success){
             navigate("/login");
             toast("Registered successfully", {
-             position: "top-center",
+             position: "bottom-right",
              autoClose: 5000,
              hideProgressBar: false,
              closeOnClick: true,
@@ -66,7 +66,7 @@ const Signup = () =>{
         } catch (error) {
             console.log("error",error);
          toast.error("error", {
-        position: "top-center",
+        position: "bottom-right",
         autoClose: 5000,
         hideProgressBar: false,
         closeOnClick: true,

@@ -9,7 +9,7 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
 
   useEffect(() => {
     if (!user || (allowedRoles.length > 0 && !allowedRoles.includes(user.role))) {
-      toast.error("You are not allowed to access this page");
+      toast.error("You are not allowed to access this page",{position:"bottom-right"});
       navigate("/");
     }
   }, [user, allowedRoles, navigate]);

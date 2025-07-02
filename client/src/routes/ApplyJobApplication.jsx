@@ -31,7 +31,7 @@ const ApplyJobForm = () => {
   const handleGenerateCoverLetter = async () => {
     try {
       if (!uploadedResumeURL) {
-        toast.error("Please upload a resume first to generate a cover letter.");
+        toast.error("Please upload a resume first to generate a cover letter.",{position:"bottom-right"});
       } else {
         setGenerating(true);
         const res = await axios.get(
@@ -43,14 +43,14 @@ const ApplyJobForm = () => {
       }
     } catch (error) {
       console.error("Cover letter generation failed:", error);
-      toast.error("Failed to generate cover letter");
+      toast.error("Failed to generate cover letter",{position:"bottom-right"});
     } finally {
       setGenerating(false);
     }
   };
 
   const handleResumeUpload = async () => {
-    if (!resumeFile) return toast.error("Please select a resume to upload.");
+    if (!resumeFile) return toast.error("Please select a resume to upload.",{position:"bottom-right"});
     const formData = new FormData();
     formData.append("resume", resumeFile);
 
@@ -70,10 +70,10 @@ const ApplyJobForm = () => {
         setUploadedResumeURL(res.data.user.resume);
         dispatch(setUser(res.data.user));
       } else {
-        toast.error("Resume upload failed");
+        toast.error("Resume upload failed",{position:"bottom-right"});
       }
     } catch (err) {
-      toast.error("Error uploading resume");
+      toast.error("Error uploading resume",{position:"bottom-right"});
       console.error(err);
     } finally {
       setLoading(false);
@@ -90,7 +90,7 @@ const ApplyJobForm = () => {
     const finalCoverLetter = coverLetter || user?.cover_letter;
 
     if (!finalResume || !finalCoverLetter) {
-      toast.error("Resume and cover letter are required");
+      toast.error("Resume and cover letter are required",{position:"bottom-right"});
       setLoading(false);
       return;
     }
@@ -119,12 +119,12 @@ const ApplyJobForm = () => {
         setResumeFile(null);
       } else {
         setMessage(res.data.message || "Something went wrong.");
-        toast.error(res.data.message || "Something went wrong.");
+        toast.error(res.data.message || "Something went wrong.",{position:"bottom-right"});
       }
     } catch (error) {
       console.error("Error submitting:", error);
       setMessage(error.response?.data?.message || "Server error.");
-      toast.error(error.response?.data?.message || "Error applying.");
+      toast.error(error.response?.data?.message || "Error applying.",{position:"bottom-right"});
     } finally {
       setLoading(false);
     }

@@ -45,7 +45,7 @@ const JobApplicationForm = () => {
         navigate("/job-applications");
       }
     } catch (err) {
-      toast.error("Failed to post job. Check form or server.");
+      toast.error("Failed to post job. Check form or server.",{position:"bottom-right"});
       console.error(err.response?.data || err.message);
     }
   };
@@ -80,7 +80,7 @@ const JobApplicationForm = () => {
       setLoading(false);
     } catch (err) {
       toast.error("Image upload failed. Please try again.", {
-        position: "top-center",
+        position: "bottom-right",
         autoClose: 3000,
         theme: "dark",
       });

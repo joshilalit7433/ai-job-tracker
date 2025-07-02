@@ -51,11 +51,11 @@ const UserSavedJobApplication = () => {
         toast.success("Job application removed from saved list!");
         setSavedJobs((prev) => prev.filter((job) => job._id !== jobId));
       } else {
-        toast.error(res.data.message || "Failed to delete job application.");
+        toast.error(res.data.message || "Failed to delete job application.",{position:"bottom-right"});
       }
     } catch (err) {
       console.error("Error deleting job application:", err);
-      toast.error("Something went wrong while deleting.");
+      toast.error("Something went wrong while deleting.",{position:"bottom-right"});
     }
   };
 

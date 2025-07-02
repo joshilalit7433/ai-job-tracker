@@ -59,10 +59,10 @@ const EditProfile = () => {
         dispatch(setUser(res.data.user));
         navigate("/user-profile");
       } else {
-        toast.error(res.data.message || "Update failed.");
+        toast.error(res.data.message || "Update failed.",{position:"bottom-right"});
       }
     } catch (err) {
-      toast.error("Error updating profile");
+      toast.error("Error updating profile",{position:"bottom-right"});
       console.error(err);
     } finally {
       setLoading(false);

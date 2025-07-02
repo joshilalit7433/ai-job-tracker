@@ -39,11 +39,11 @@ const EditJobApplication = () => {
           setFormData(res.data.jobapplication);
           setJobData(res.data.jobapplication);
         } else {
-          toast.error("Failed to fetch job details.");
+          toast.error("Failed to fetch job details.",{position:"bottom-right"});
         }
       } catch (err) {
         console.error(err);
-        toast.error("Error fetching job data.");
+        toast.error("Error fetching job data.",{position:"bottom-right"});
       }
     };
 
@@ -83,11 +83,11 @@ const EditJobApplication = () => {
         toast.success("Job application updated successfully!");
         navigate("/recruiter-posted-job-applications");
       } else {
-        toast.error(res.data.message || "Update failed.");
+        toast.error(res.data.message || "Update failed.",{position:"bottom-right"});
       }
     } catch (err) {
       console.error(err);
-      toast.error("Error updating job application.");
+      toast.error("Error updating job application.",{position:"bottom-right"});
     } finally {
       setLoading(false);
     }
@@ -120,7 +120,7 @@ const EditJobApplication = () => {
         throw new Error("Upload failed");
       }
     } catch (err) {
-      toast.error("Image upload failed.");
+      toast.error("Image upload failed.",{position:"bottom-right"});
       console.error(err);
     } finally {
       setLoading(false);

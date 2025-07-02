@@ -47,6 +47,6 @@ const ApplicantSchema = new mongoose.Schema({
   respondedAt: {
     type: Date,
   }
-});
+},{timestamps:true});
 
 export const Applicant = mongoose.model("Applicant", ApplicantSchema);

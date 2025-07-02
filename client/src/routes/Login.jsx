@@ -58,7 +58,7 @@ const Login = () => {
         connectSocket();
     
       toast.success(response.data.message, {
-          position: "top-center",
+          position: "bottom-right",
           autoClose: 5000,
           hideProgressBar: false,
           closeOnClick: true,
@@ -73,7 +73,7 @@ const Login = () => {
 
     else{
        toast.error(response.data.message || "Login failed. Please try again.", {
-          position: "top-center",
+          position: "bottom-right",
           autoClose: 5000,
           theme: "dark",
         });
@@ -85,7 +85,7 @@ const Login = () => {
     toast.error(
         "An error occurred. Please check your credentials and try again.",
         {
-          position: "top-center",
+          position: "bottom-right",
           autoClose: 5000,
           theme: "dark",
         }
