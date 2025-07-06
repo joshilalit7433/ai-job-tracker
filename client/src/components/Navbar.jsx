@@ -45,6 +45,8 @@ const Navbar = () => {
     { id: 1, name: "Home", link: "/" },
     { id: 2, name: "Job Application Form", link: "/job-application-form" },
     { id: 3, name: "Job Notifications", link: "/notifications" },
+    { id: 4, name: "Dashboard", link: "/recruiter-dashboard" },
+
   ];
 
   const adminLinks = [

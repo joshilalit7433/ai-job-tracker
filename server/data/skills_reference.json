@@ -1,64 +1,39 @@
 {
   "skills": [
-    {
-      "aliases": ["React", "React.js", "ReactJS"]
-    },
-    {
-      "aliases": ["Node.js", "Node", "Nodejs"]
-    },
-    {
-      "aliases": ["Express", "Express.js", "Expressjs"]
-    },
-    {
-      "aliases": ["MongoDB", "Mongo DB", "mongo"]
-    },
-    {
-      "aliases": ["JavaScript", "JS", "Java Script"]
-    },
-    {
-      "aliases": ["HTML", "HTML5"]
-    },
-    {
-      "aliases": ["CSS", "CSS3"]
-    },
-    {
-      "aliases": ["Tailwind", "Tailwind CSS"]
-    },
-    {
-      "aliases": ["Git"]
-    },
-    {
-      "aliases": ["GitHub"]
-    },
-    {
-      "aliases": ["Postman"]
-    },
-    {
-      "aliases": ["REST APIs", "RESTful APIs", "REST"]
-    },
-    {
-      "aliases": ["Python"]
-    },
-    {
-      "aliases": ["C++"]
-    },
-    {
-      "aliases": ["Java"]
-    },
-    {
-      "aliases": ["Leadership"]
-    },
-    {
-      "aliases": ["Time Management"]
-    },
-    {
-      "aliases": ["Quick Learner"]
-    },
-    {
-      "aliases": ["Collaboration", "Team Collaboration"]
-    },
-    {
-      "aliases": ["Soft Skills"]
-    }
+    { "aliases": ["React", "React.js", "ReactJS", "React JS", "ReactJs"] },
+    { "aliases": ["Node.js", "Node", "Nodejs", "Node JS", "NodeJS"] },
+    { "aliases": ["Express", "Express.js", "Expressjs", "Express JS"] },
+    { "aliases": ["MongoDB", "Mongo DB", "mongo", "Mongoose", "Mongo"] },
+    { "aliases": ["JavaScript", "JS", "Java Script", "ECMAScript", "ES6", "ES6+"] },
+    { "aliases": ["HTML", "HTML5", "Hypertext Markup Language"] },
+    { "aliases": ["CSS", "CSS3", "Cascading Style Sheets"] },
+    { "aliases": ["Tailwind", "Tailwind CSS", "TailwindCSS"] },
+    { "aliases": ["Redux", "Redux Toolkit", "RTK"] },
+    { "aliases": ["Git"] },
+    { "aliases": ["GitHub", "Github", "Git Hub"] },
+    { "aliases": ["Postman"] },
+    { "aliases": ["Figma"] },
+    { "aliases": ["REST APIs", "RESTful APIs", "REST API", "REST"] },
+    { "aliases": ["Python"] },
+    { "aliases": ["C++", "CPP"] },
+    { "aliases": ["Java"] },
+    { "aliases": ["Leadership", "Team Leadership"] },
+    { "aliases": ["Time Management", "Deadline Management"] },
+    { "aliases": ["Quick Learner", "Fast Learner", "Adaptive"] },
+    { "aliases": ["Collaboration", "Team Collaboration", "Teamwork", "Team Player"] },
+    { "aliases": ["Communication", "Interpersonal Skills", "Verbal Skills"] },
+    { "aliases": ["Soft Skills", "People Skills"] },
+    { "aliases": ["Agile", "Agile Development", "Scrum"] },
+    { "aliases": ["Jira", "Project Tracking"] },
+    { "aliases": ["OpenAI API", "OpenAI", "ChatGPT API"] },
+    { "aliases": ["Stripe API", "Stripe Integration"] },
+    { "aliases": ["Render", "Render.com"] },
+    { "aliases": ["Netlify"] },
+    { "aliases": ["Next.js", "NextJS", "Next JS"] },
+    { "aliases": ["TypeScript", "TS"] },
+    { "aliases": ["Bootstrap"] },
+    { "aliases": ["Material UI", "MUI"] },
+    { "aliases": ["MySQL", "SQL", "Structured Query Language"] },
+    { "aliases": ["NoSQL"] }
   ]
 }

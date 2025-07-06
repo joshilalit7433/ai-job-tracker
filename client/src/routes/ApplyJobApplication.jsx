@@ -7,14 +7,14 @@ import {
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../redux/authSlice";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 const ApplyJobForm = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const { user } = useSelector((store) => store.auth);
   const fileInputRef = useRef(null);
-  const navigate = useNavigate();
+
 
   const [coverLetter, setCoverLetter] = useState("");
   const [resumeFile, setResumeFile] = useState(null);
@@ -27,14 +27,28 @@ const ApplyJobForm = () => {
 
   
   useEffect(() => {
-    const savedCoverLetter = localStorage.getItem("coverLetter");
-    const savedResumeURL = localStorage.getItem("uploadedResumeURL");
-    const submittedFlag = localStorage.getItem(`job_${id}_submitted`);
+  const checkIfAlreadyApplied = async () => {
+    try {
+      const res = await axios.get(
+        `${JOB_APPLICANT_API_END_POINT}/is-applied/${id}`,
+        { withCredentials: true }
+      );
 
-    if (savedCoverLetter) setCoverLetter(savedCoverLetter);
-    if (savedResumeURL) setUploadedResumeURL(savedResumeURL);
-    if (submittedFlag === "true") setIsSubmitted(true);
-  }, [id]);
+      if (res.data.success && res.data.applied) {
+        setIsSubmitted(true);
+      } else {
+        setIsSubmitted(false);
+      }
+    } catch (err) {
+      console.error("Error checking if already applied:", err);
+    }
+  };
+
+  if (user && id) {
+    checkIfAlreadyApplied();
+  }
+}, [id, user]);
+
 
   
   useEffect(() => {
@@ -161,7 +175,7 @@ const ApplyJobForm = () => {
         localStorage.removeItem("uploadedResumeURL");
         setIsSubmitted(true);
 
-        navigate("/job-application-details");
+        
       } else {
         setMessage(res.data.message || "Something went wrong.");
         toast.error(res.data.message || "Something went wrong.", {

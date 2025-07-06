@@ -29,15 +29,7 @@ const UserProfile = () => {
                   Edit Profile
                 </Link>
 
-                {user?.role === "recruiter" && (
-                  <Link
-                    to="/recruiter-dashboard"
-                    className="bg-white text-gray-800 hover:bg-gray-100 px-5 py-2 rounded-md shadow transition flex items-center gap-2"
-                  >
-                    <Eye className="w-5 h-5 text-gray-600" />
-                    Dashboard
-                  </Link>
-                )}
+                
               </div>
             </div>
           </div>

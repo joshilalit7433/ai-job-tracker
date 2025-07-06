@@ -80,7 +80,6 @@ export const ApplyJobApplication = async (req, res) => {
         .json({ message: "You already applied for this job", success: false });
     }
 
-    
     const resume = req.file
       ? `uploads/resumes/${req.file.filename}`
       : user.resume;
@@ -91,7 +90,6 @@ export const ApplyJobApplication = async (req, res) => {
         .json({ message: "Please upload your resume first.", success: false });
     }
 
-    
     const cover_letter = req.body.cover_letter;
     if (!cover_letter) {
       return res
@@ -99,9 +97,9 @@ export const ApplyJobApplication = async (req, res) => {
         .json({ message: "Cover letter is required.", success: false });
     }
 
-    
-    const analysisText =
-      typeof user.resume_analysis === "string" ? user.resume_analysis : "";
+    const resumePath = path.resolve(resume);
+    const analysisText = await extractResumeText(resumePath);
+
     const userSkills = extractSkillsFromAnalysis(analysisText);
 
     const jobSkills = (
@@ -235,8 +233,10 @@ export const respondToApplicant = async (req, res) => {
     }
 
     const defaultMessages = {
-      hired: "Congratulations! You have been hired. We’ll contact you with further details.",
-      shortlisted: "You have been shortlisted. We’ll contact you for next steps.",
+      hired:
+        "Congratulations! You have been hired. We’ll contact you with further details.",
+      shortlisted:
+        "You have been shortlisted. We’ll contact you for next steps.",
       interview: "You’ve been selected for interview. We’ll schedule it soon.",
       rejected: "Thank you for applying. Unfortunately, you were not selected.",
     };
@@ -264,7 +264,6 @@ export const respondToApplicant = async (req, res) => {
   }
 };
 
-
 export const GenerateCoverLetter = async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
@@ -277,7 +276,9 @@ export const GenerateCoverLetter = async (req, res) => {
 
     const jobId = req.params.id;
     if (!mongoose.Types.ObjectId.isValid(jobId)) {
-      return res.status(400).json({ message: "Invalid job ID", success: false });
+      return res
+        .status(400)
+        .json({ message: "Invalid job ID", success: false });
     }
 
     const job = await JobApplication.findById(jobId);
@@ -285,8 +286,12 @@ export const GenerateCoverLetter = async (req, res) => {
       return res.status(404).json({ message: "Job not found", success: false });
     }
 
-   
-    const resumePath = path.join(process.cwd(), "uploads", "resumes", path.basename(user.resume));
+    const resumePath = path.join(
+      process.cwd(),
+      "uploads",
+      "resumes",
+      path.basename(user.resume)
+    );
     const resumeText = await extractResumeText(resumePath);
 
     const jobDescription = `
@@ -337,4 +342,3 @@ Match the applicant's strengths to the responsibilities and skills. Use a confid
     });
   }
 };
-
