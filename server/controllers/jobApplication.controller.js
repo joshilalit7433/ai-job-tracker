@@ -27,7 +27,8 @@ export const PostJobApplication = async (req, res) => {
       skills,
       qualification,
       status,
-      image
+      image,
+      jobCategory
     } = req.body;
 
     if (
@@ -41,7 +42,8 @@ export const PostJobApplication = async (req, res) => {
       !responsibilities ||
       !skills ||
       !qualification ||
-      !image
+      !image ||
+      !jobCategory
     ) {
       return res.status(400).json({
         message: "All fields are required",
@@ -63,7 +65,8 @@ export const PostJobApplication = async (req, res) => {
       qualification,
       status: status || "open",
       isApproved: false,
-      image
+      image,
+      jobCategory
     });
 
     await sendEmail(req.user.email, "Job Application Response", "your job application has been submitted and is awaiting admin approval.");
@@ -99,7 +102,8 @@ export const UpdateJobApplication = async (req, res) => {
       skills,
       qualification,
       status,
-      image
+      image,
+      jobCategory
     } = req.body;
 
     if (req.user.role !== "recruiter") {
@@ -140,6 +144,7 @@ export const UpdateJobApplication = async (req, res) => {
     if (qualification) jobapplication.qualification = qualification;
     if (status) jobapplication.status = status;
     if(image) jobapplication.image=image;
+    if(jobCategory) jobapplication.jobCategory=jobCategory;
 
     await jobapplication.save();
 

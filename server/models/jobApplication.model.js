@@ -68,6 +68,19 @@ const JobApplicationSchema = new mongoose.Schema(
     image: {
       type: String,
     },
+    jobCategory: {
+      type: String,
+      enum: [
+        "Information Technology (IT)",
+        "Human Resources (HR)",
+        "Finance & Accounting",
+        "Marketing & Advertising",
+        "Customer Service",
+        "Product Management",
+        "Design & Creative",
+      ],
+      required: true,
+    },
   },
   { timestamps: true }
 );

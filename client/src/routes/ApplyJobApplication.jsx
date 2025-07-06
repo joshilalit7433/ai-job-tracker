@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import {
   JOB_APPLICANT_API_END_POINT,
@@ -7,13 +7,14 @@ import {
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../redux/authSlice";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 const ApplyJobForm = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const { user } = useSelector((store) => store.auth);
   const fileInputRef = useRef(null);
+  const navigate = useNavigate();
 
   const [coverLetter, setCoverLetter] = useState("");
   const [resumeFile, setResumeFile] = useState(null);
@@ -22,35 +23,68 @@ const ApplyJobForm = () => {
   const [message, setMessage] = useState("");
   const [skillAnalysis, setSkillAnalysis] = useState(null);
   const [generating, setGenerating] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  
+  useEffect(() => {
+    const savedCoverLetter = localStorage.getItem("coverLetter");
+    const savedResumeURL = localStorage.getItem("uploadedResumeURL");
+    const submittedFlag = localStorage.getItem(`job_${id}_submitted`);
+
+    if (savedCoverLetter) setCoverLetter(savedCoverLetter);
+    if (savedResumeURL) setUploadedResumeURL(savedResumeURL);
+    if (submittedFlag === "true") setIsSubmitted(true);
+  }, [id]);
+
+  
+  useEffect(() => {
+    localStorage.setItem("coverLetter", coverLetter);
+  }, [coverLetter]);
+
+  useEffect(() => {
+    localStorage.setItem("uploadedResumeURL", uploadedResumeURL);
+  }, [uploadedResumeURL]);
 
   const handleResumeChange = (e) => {
-    setResumeFile(e.target.files[0]);
+    const file = e.target.files[0];
+    setResumeFile(file);
     setUploadedResumeURL("");
+    localStorage.removeItem("uploadedResumeURL");
   };
 
   const handleGenerateCoverLetter = async () => {
+    if (!uploadedResumeURL) {
+      toast.error("Please upload a resume first to generate a cover letter.", {
+        position: "bottom-right",
+      });
+      return;
+    }
+
     try {
-      if (!uploadedResumeURL) {
-        toast.error("Please upload a resume first to generate a cover letter.",{position:"bottom-right"});
-      } else {
-        setGenerating(true);
-        const res = await axios.get(
-          `${JOB_APPLICANT_API_END_POINT}/generate-cover-letter/${id}`,
-          { withCredentials: true }
-        );
-        setCoverLetter(res.data.letter);
-        toast.success("Cover letter generated!");
-      }
+      setGenerating(true);
+      const res = await axios.get(
+        `${JOB_APPLICANT_API_END_POINT}/generate-cover-letter/${id}`,
+        { withCredentials: true }
+      );
+      setCoverLetter(res.data.letter);
+      toast.success("Cover letter generated!");
     } catch (error) {
       console.error("Cover letter generation failed:", error);
-      toast.error("Failed to generate cover letter",{position:"bottom-right"});
+      toast.error("Failed to generate cover letter", {
+        position: "bottom-right",
+      });
     } finally {
       setGenerating(false);
     }
   };
 
   const handleResumeUpload = async () => {
-    if (!resumeFile) return toast.error("Please select a resume to upload.",{position:"bottom-right"});
+    if (!resumeFile) {
+      return toast.error("Please select a resume to upload.", {
+        position: "bottom-right",
+      });
+    }
+
     const formData = new FormData();
     formData.append("resume", resumeFile);
 
@@ -70,10 +104,10 @@ const ApplyJobForm = () => {
         setUploadedResumeURL(res.data.user.resume);
         dispatch(setUser(res.data.user));
       } else {
-        toast.error("Resume upload failed",{position:"bottom-right"});
+        toast.error("Resume upload failed", { position: "bottom-right" });
       }
     } catch (err) {
-      toast.error("Error uploading resume",{position:"bottom-right"});
+      toast.error("Error uploading resume", { position: "bottom-right" });
       console.error(err);
     } finally {
       setLoading(false);
@@ -90,7 +124,9 @@ const ApplyJobForm = () => {
     const finalCoverLetter = coverLetter || user?.cover_letter;
 
     if (!finalResume || !finalCoverLetter) {
-      toast.error("Resume and cover letter are required",{position:"bottom-right"});
+      toast.error("Resume and cover letter are required", {
+        position: "bottom-right",
+      });
       setLoading(false);
       return;
     }
@@ -114,17 +150,30 @@ const ApplyJobForm = () => {
           matched: res.data.matchedSkills || [],
           missing: res.data.missingSkills || [],
         });
+
         setCoverLetter("");
         setUploadedResumeURL("");
         setResumeFile(null);
+
+       
+        localStorage.setItem(`job_${id}_submitted`, "true");
+        localStorage.removeItem("coverLetter");
+        localStorage.removeItem("uploadedResumeURL");
+        setIsSubmitted(true);
+
+        navigate("/job-application-details");
       } else {
         setMessage(res.data.message || "Something went wrong.");
-        toast.error(res.data.message || "Something went wrong.",{position:"bottom-right"});
+        toast.error(res.data.message || "Something went wrong.", {
+          position: "bottom-right",
+        });
       }
     } catch (error) {
       console.error("Error submitting:", error);
       setMessage(error.response?.data?.message || "Server error.");
-      toast.error(error.response?.data?.message || "Error applying.",{position:"bottom-right"});
+      toast.error(error.response?.data?.message || "Error applying.", {
+        position: "bottom-right",
+      });
     } finally {
       setLoading(false);
     }
@@ -140,6 +189,7 @@ const ApplyJobForm = () => {
           Apply for this Job
         </h2>
 
+        
         <div>
           <label className="block text-sm font-medium text-gray-800 mb-1">
             Upload Resume
@@ -182,6 +232,7 @@ const ApplyJobForm = () => {
           )}
         </div>
 
+        
         <div>
           <label className="block text-sm font-medium text-gray-800 mb-1">
             Cover Letter
@@ -203,13 +254,22 @@ const ApplyJobForm = () => {
           </button>
         </div>
 
+        
         <div className="text-center">
           <button
             type="submit"
-            disabled={loading}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-md transition w-full sm:w-auto disabled:bg-gray-400"
+            disabled={loading || isSubmitted}
+            className={`${
+              isSubmitted
+                ? "bg-blue-400 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700"
+            } text-white font-semibold py-2 px-6 rounded-md transition w-full sm:w-auto`}
           >
-            {loading ? "Submitting..." : "Submit Application"}
+            {isSubmitted
+              ? "Already Submitted"
+              : loading
+              ? "Submitting..."
+              : "Submit Application"}
           </button>
         </div>
 
@@ -217,6 +277,7 @@ const ApplyJobForm = () => {
           <p className="text-center text-sm text-red-600 mt-2">{message}</p>
         )}
 
+      
         {skillAnalysis && (
           <div className="mt-6">
             <h3 className="text-lg font-semibold text-gray-800">

@@ -59,7 +59,7 @@ const ViewJobApplication = () => {
 
   const allow = () => {
     if (!user) {
-      toast.error("You must login to apply.",{position:"bottom-right"});
+      toast.error("You must login to apply.", { position: "bottom-right" });
       navigate("/login", { state: { from: `/apply-job-application/${id}` } });
     } else {
       navigate(`/apply-job-application/${id}`);
@@ -160,6 +160,11 @@ const ViewJobApplication = () => {
             <strong className="text-gray-700">Qualification:</strong>{" "}
             {jobApplication.qualification}
           </p>
+
+          <p className="text-gray-800">
+            <strong className="text-gray-700">Job Category:</strong>{" "}
+            {jobApplication.jobCategory}
+          </p>
         </div>
 
         <div className="space-y-2">
@@ -175,21 +180,17 @@ const ViewJobApplication = () => {
 
         {Array.isArray(jobApplication.skills) &&
         jobApplication.skills.length > 0 ? (
-          <div className="space-y-1">
+          <div className="space-y-2">
             <p className="font-semibold text-blue-700">Skills:</p>
             <div className="flex flex-wrap gap-2">
-              {jobApplication.skills[0]
-                .split(",")
-                .map((skill) => skill.trim())
-                .filter((skill) => skill.length > 0)
-                .map((skill, index) => (
-                  <span
-                    key={index}
-                    className="inline-block bg-blue-100 text-blue-800 text-xs px-3 py-1 rounded-full"
-                  >
-                    {skill}
-                  </span>
-                ))}
+              {jobApplication.skills.map((skill, index) => (
+                <span
+                  key={index}
+                  className="inline-block bg-blue-100 text-blue-800 text-xs px-3 py-1 rounded-full"
+                >
+                  {skill}
+                </span>
+              ))}
             </div>
           </div>
         ) : (

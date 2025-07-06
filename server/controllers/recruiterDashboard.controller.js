@@ -14,17 +14,17 @@ export const RecruiterDashboard = async (req, res) => {
       });
     }
 
-    // Fetch jobs posted by the recruiter
+    
     const jobs = await JobApplication.find({ user: recruiterId });
     const jobIds = jobs.map((job) => job._id);
 
-    // Total counts
+    
     const totalApplicants = await Applicant.countDocuments({ job: { $in: jobIds } });
     const shortlisted = await Applicant.countDocuments({ job: { $in: jobIds }, status: "shortlisted" });
     const interviews = await Applicant.countDocuments({ job: { $in: jobIds }, status: "interview" });
     const hired = await Applicant.countDocuments({ job: { $in: jobIds }, status: "hired" });
 
-    // Bar chart: Applications per job
+   
     const barData = await Applicant.aggregate([
       { $match: { job: { $in: jobIds } } },
       {
@@ -49,7 +49,7 @@ export const RecruiterDashboard = async (req, res) => {
       },
     ]);
 
-    // Line chart: Application trend over time (e.g., by week)
+    
     const lineData = await Applicant.aggregate([
   { $match: { job: { $in: jobIds } } },
   {

@@ -20,6 +20,7 @@ const JobApplicationForm = () => {
     skills: "",
     qualification: "",
     jobApplicationImages: "",
+    jobApplicationCategory: "",
   });
 
   const handleChange = (e) => {
@@ -45,7 +46,9 @@ const JobApplicationForm = () => {
         navigate("/job-applications");
       }
     } catch (err) {
-      toast.error("Failed to post job. Check form or server.",{position:"bottom-right"});
+      toast.error("Failed to post job. Check form or server.", {
+        position: "bottom-right",
+      });
       console.error(err.response?.data || err.message);
     }
   };
@@ -90,87 +93,106 @@ const JobApplicationForm = () => {
   };
 
   return (
-    
-      <div className="flex bg-[#f7e9d6]  justify-center items-center px-4 py-6 sm:py-8 md:py-10 lg:py-[70px]">
-        <form
-          onSubmit={handleSubmit}
-          className="w-full mt-[50px] max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl bg-[#FAF6E9] p-4 sm:p-6 md:p-8 rounded-lg shadow-lg"
-        >
-          <h2 className="text-2xl font-bold mb-6 text-center">
-            Post a New Job
-          </h2>
-          {[
-            { name: "title", label: "Job Title" },
-            { name: "salary", label: "Salary", type: "number" },
-            { name: "location", label: "Location" },
-            { name: "company_name", label: "Company Name" },
-            { name: "benefits", label: "Benefits" },
-            { name: "experience", label: "Experience" },
-            { name: "responsibilities", label: "Responsibilities" },
-            { name: "skills", label: "Skills" },
-            { name: "qualification", label: "Qualification" },
-          ].map(({ name, label, type = "text" }) => (
-            <div key={name} className="mb-4">
-              <label className="block font-semibold mb-1">{label}</label>
-              <input
-                type={type}
-                name={name}
-                value={formData[name]}
-                onChange={handleChange}
-                className="w-full border border-[#131D4F] rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
+    <div className="flex bg-[#f7e9d6]  justify-center items-center px-4 py-6 sm:py-8 md:py-10 lg:py-[70px]">
+      <form
+        onSubmit={handleSubmit}
+        className="w-full mt-[50px] max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl bg-[#FAF6E9] p-4 sm:p-6 md:p-8 rounded-lg shadow-lg"
+      >
+        <h2 className="text-2xl font-bold mb-6 text-center">Post a New Job</h2>
+        {[
+          { name: "title", label: "Job Title" },
+          { name: "salary", label: "Salary", type: "number" },
+          { name: "location", label: "Location" },
+          { name: "company_name", label: "Company Name" },
+          { name: "benefits", label: "Benefits" },
+          { name: "experience", label: "Experience" },
+          { name: "responsibilities", label: "Responsibilities" },
+          { name: "skills", label: "Skills" },
+          { name: "qualification", label: "Qualification" },
+        ].map(({ name, label, type = "text" }) => (
+          <div key={name} className="mb-4">
+            <label className="block font-semibold mb-1">{label}</label>
+            <input
+              type={type}
+              name={name}
+              value={formData[name]}
+              onChange={handleChange}
+              className="w-full border border-[#131D4F] rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+        ))}
+
+        <div className="mb-4">
+          <label className="block font-semibold mb-1">Job Type</label>
+          <select
+            name="job_type"
+            value={formData.job_type}
+            onChange={handleChange}
+            className="w-full border border-[#131D4F] rounded-md p-2"
+          >
+            <option value="full-time">Full-time</option>
+            <option value="part-time">Part-time</option>
+            <option value="contract">Contract</option>
+            <option value="internship">Internship</option>
+          </select>
+        </div>
+
+        <div className="mb-4">
+          <label className="block font-semibold mb-1">Job Category</label>
+          <select
+            name="jobCategory"
+            value={formData.jobCategory}
+            onChange={handleChange}
+            className="w-full border border-[#131D4F] rounded-md p-2"
+          >
+            <option value="">Select a category</option>
+            <option value="Information Technology (IT)">
+              Information Technology (IT)
+            </option>
+            <option value="Human Resources (HR)">Human Resources (HR)</option>
+            <option value="Finance & Accounting">Finance & Accounting</option>
+            <option value="Marketing & Advertising">
+              Marketing & Advertising
+            </option>
+            <option value="Customer Service">Customer Service</option>
+            <option value="Product Management">Product Management</option>
+            <option value="Design & Creative">Design & Creative</option>
+          </select>
+        </div>
+
+        <div className="mb-4">
+          <label className="block font-semibold mb-1">Upload Job Image</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileUpload}
+            className="w-full border border-[#131D4F] rounded-md p-2"
+          />
+
+          {loading && (
+            <p className="text-sm text-blue-500 mt-2">Uploading...</p>
+          )}
+
+          {formData.jobApplicationImages && (
+            <div className="mt-2">
+              <img
+                src={formData.jobApplicationImages}
+                alt="Uploaded Preview"
+                className="w-32 h-32 object-cover rounded-md shadow"
               />
             </div>
-          ))}
+          )}
+        </div>
 
-          <div className="mb-4">
-            <label className="block font-semibold mb-1">Job Type</label>
-            <select
-              name="job_type"
-              value={formData.job_type}
-              onChange={handleChange}
-              className="w-full border border-[#131D4F] rounded-md p-2"
-            >
-              <option value="full-time">Full-time</option>
-              <option value="part-time">Part-time</option>
-              <option value="contract">Contract</option>
-              <option value="internship">Internship</option>
-            </select>
-          </div>
-
-          <div className="mb-4">
-            <label className="block font-semibold mb-1">Upload Job Image</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleFileUpload}
-              className="w-full border border-[#131D4F] rounded-md p-2"
-            />
-
-            {loading && (
-              <p className="text-sm text-blue-500 mt-2">Uploading...</p>
-            )}
-
-            {formData.jobApplicationImages && (
-              <div className="mt-2">
-                <img
-                  src={formData.jobApplicationImages}
-                  alt="Uploaded Preview"
-                  className="w-32 h-32 object-cover rounded-md shadow"
-                />
-              </div>
-            )}
-          </div>
-
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200"
-          >
-            Post Job
-          </button>
-        </form>
-      </div>
-    
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200"
+        >
+          Post Job
+        </button>
+      </form>
+    </div>
   );
 };
 

@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "pdf-parse": "^1.1.0"
+    "pdf-parse": "^1.1.0",
+    "react-icons": "^5.5.0"
   }
 }

@@ -177,6 +177,29 @@ const EditJobApplication = () => {
           </select>
         </div>
 
+        <div className="mb-4">
+          <label className="block font-semibold mb-1">Job Category</label>
+          <select
+            name="jobCategory"
+            value={formData.jobCategory}
+            onChange={handleChange}
+            className="w-full border border-[#131D4F] rounded-md p-2"
+          >
+            <option value="">Select a category</option>
+            <option value="Information Technology (IT)">
+              Information Technology (IT)
+            </option>
+            <option value="Human Resources (HR)">Human Resources (HR)</option>
+            <option value="Finance & Accounting">Finance & Accounting</option>
+            <option value="Marketing & Advertising">
+              Marketing & Advertising
+            </option>
+            <option value="Customer Service">Customer Service</option>
+            <option value="Product Management">Product Management</option>
+            <option value="Design & Creative">Design & Creative</option>
+          </select>
+        </div>
+
         <div className="mb-6">
           <label className="block text-sm font-medium mb-1">Status</label>
           <select
