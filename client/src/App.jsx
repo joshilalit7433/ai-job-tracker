@@ -21,6 +21,7 @@ import UserSavedJobApplication from "./components/UserSavedJobApplication";
 import NotificationPanel from "./components/NotificationPanel";
 import RecruiterResponse from "./components/RecruiterResponse";
 import RecruiterDashboard from "./components/RecruiterDashboard";
+import SpecifiJobs from "./components/SpecifiJobs";
 
 
 function App() {
@@ -37,6 +38,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/job-application-details/:id" element={<ViewJobApplication />} />
+            <Route path="/jobs/category/:categoryName" element={<SpecifiJobs />} />
 
             {/*  Admin Only */}
             <Route path="/admin-dashboard" element={<ProtectedRoute allowedRoles={["admin"]}><AdminDashboard /></ProtectedRoute>} />

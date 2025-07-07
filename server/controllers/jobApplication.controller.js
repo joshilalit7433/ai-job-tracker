@@ -61,7 +61,7 @@ export const PostJobApplication = async (req, res) => {
       benefits,
       experience,
       responsibilities,
-      skills,
+      skills: typeof skills === "string" ? skills.split(",").map(s => s.trim()) : skills,
       qualification,
       status: status || "open",
       isApproved: false,

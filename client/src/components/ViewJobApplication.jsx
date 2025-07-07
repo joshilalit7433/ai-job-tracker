@@ -178,12 +178,16 @@ const ViewJobApplication = () => {
           </p>
         </div>
 
-        {Array.isArray(jobApplication.skills) &&
-        jobApplication.skills.length > 0 ? (
+        {jobApplication.skills &&
+        (Array.isArray(jobApplication.skills) ||
+          typeof jobApplication.skills === "string") ? (
           <div className="space-y-2">
             <p className="font-semibold text-blue-700">Skills:</p>
             <div className="flex flex-wrap gap-2">
-              {jobApplication.skills.map((skill, index) => (
+              {(Array.isArray(jobApplication.skills)
+                ? jobApplication.skills
+                : jobApplication.skills.split(",").map((s) => s.trim())
+              ).map((skill, index) => (
                 <span
                   key={index}
                   className="inline-block bg-blue-100 text-blue-800 text-xs px-3 py-1 rounded-full"
