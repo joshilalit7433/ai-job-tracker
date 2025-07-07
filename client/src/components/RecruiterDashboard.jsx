@@ -28,9 +28,11 @@ export default function RecruiterDashboard() {
     totalApplicants: 0,
     shortlisted: 0,
     interviews: 0,
+    hired: 0,
     barData: [],
     lineData: [],
   });
+
   const user = useSelector((store) => store.auth.user);
   const recruiterId = user?._id;
 
@@ -39,19 +41,16 @@ export default function RecruiterDashboard() {
       try {
         const response = await axios.get(
           `${RECRUITER_DASHBOARD_API_END_POINT}/recruiter-dashboard/${recruiterId}`,
-          {
-            withCredentials: true,
-          }
+          { withCredentials: true }
         );
-        const data = response.data;
-        setDashboardStats(data);
+        setDashboardStats(response.data);
       } catch (error) {
-        console.log("Dashboard fetch error:", error);
+        console.error("Dashboard fetch error:", error);
       }
     };
 
-    fetchDashboardData();
-  }, []);
+    if (recruiterId) fetchDashboardData();
+  }, [recruiterId]);
 
   const stats = [
     {
@@ -61,7 +60,7 @@ export default function RecruiterDashboard() {
       btn: (
         <Link
           to="/recruiter-posted-job-applications"
-          className="text-blue-500 flex justify-end  "
+          className="text-blue-500 flex justify-end"
         >
           View all
           <MoveRight className="w-5 h-5 text-blue-500 inline-block ml-2 pt-1.5" />
@@ -91,36 +90,52 @@ export default function RecruiterDashboard() {
   ];
 
   return (
-    <div className="p-6 bg-[#f7e9d6] min-h-screen">
-      <h1 className="text-3xl font-bold mb-6">Recruiter Dashboard</h1>
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+    <div className="p-4 sm:p-6 lg:p-8 bg-[#f7e9d6] min-h-screen">
+      <h1 className="text-3xl font-bold text-blue-800 mb-8">
+        Recruiter Dashboard
+      </h1>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 mb-10">
         {stats.map((item, index) => (
           <div
             key={index}
-            className="bg-[#FAF6E9] shadow-md p-4 rounded-2xl flex items-center gap-4 border border-gray-200"
+            className="bg-[#FAF6E9] border border-gray-200 shadow-md rounded-2xl p-5 flex flex-col gap-2"
           >
-            <div className="bg-gray-100 p-2 rounded-full">{item.icon}</div>
-            <div>
-              <p className="text-gray-500 text-sm">{item.label}</p>
-              <p className="text-xl font-semibold">{item.value}</p>
-              <p>{item.btn}</p>
+            <div className="flex items-center gap-3">
+              <div className="bg-gray-100 p-2 rounded-full">{item.icon}</div>
+              <div>
+                <p className="text-sm text-gray-600">{item.label}</p>
+                <p className="text-xl font-semibold text-gray-800">
+                  {item.value}
+                </p>
+              </div>
             </div>
+            {item.btn && <div className="mt-auto text-right">{item.btn}</div>}
           </div>
         ))}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-[#FAF6E9] shadow-md p-6 rounded-2xl border border-gray-200">
-          <h2 className="text-lg font-semibold mb-4">Applications per Job</h2>
-          <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={dashboardStats.barData}>
+        {/* Bar Chart */}
+        <div className="bg-[#FAF6E9] border border-gray-200 shadow-md p-6 rounded-2xl">
+          <h2 className="text-lg font-semibold mb-4 text-gray-800">
+            Applications per Job
+          </h2>
+          <ResponsiveContainer width="100%" height={280}>
+            <BarChart
+              data={dashboardStats.barData}
+              margin={{ top: 10, right: 20, left: -10, bottom: 80 }}
+              barCategoryGap={20}
+              barGap={5}
+              barSize={50}
+            >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis
                 dataKey="job"
-                interval={0}
                 angle={-45}
+                interval={0}
                 textAnchor="end"
-                height={120}
+                height={100}
               />
               <YAxis />
               <Tooltip />
@@ -133,11 +148,12 @@ export default function RecruiterDashboard() {
           </ResponsiveContainer>
         </div>
 
-        <div className="bg-[#FAF6E9] shadow-md p-6 rounded-2xl border border-gray-200">
-          <h2 className="text-lg font-semibold mb-4">
+        {/* Line Chart */}
+        <div className="bg-[#FAF6E9] border border-gray-200 shadow-md p-6 rounded-2xl">
+          <h2 className="text-lg font-semibold mb-4 text-gray-800">
             Application Trend Over Time
           </h2>
-          <ResponsiveContainer width="100%" height={250}>
+          <ResponsiveContainer width="100%" height={280}>
             <LineChart data={dashboardStats.lineData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="time" />

@@ -39,11 +39,13 @@ const EditJobApplication = () => {
           setFormData(res.data.jobapplication);
           setJobData(res.data.jobapplication);
         } else {
-          toast.error("Failed to fetch job details.",{position:"bottom-right"});
+          toast.error("Failed to fetch job details.", {
+            position: "bottom-right",
+          });
         }
       } catch (err) {
         console.error(err);
-        toast.error("Error fetching job data.",{position:"bottom-right"});
+        toast.error("Error fetching job data.", { position: "bottom-right" });
       }
     };
 
@@ -83,11 +85,15 @@ const EditJobApplication = () => {
         toast.success("Job application updated successfully!");
         navigate("/recruiter-posted-job-applications");
       } else {
-        toast.error(res.data.message || "Update failed.",{position:"bottom-right"});
+        toast.error(res.data.message || "Update failed.", {
+          position: "bottom-right",
+        });
       }
     } catch (err) {
       console.error(err);
-      toast.error("Error updating job application.",{position:"bottom-right"});
+      toast.error("Error updating job application.", {
+        position: "bottom-right",
+      });
     } finally {
       setLoading(false);
     }
@@ -120,7 +126,7 @@ const EditJobApplication = () => {
         throw new Error("Upload failed");
       }
     } catch (err) {
-      toast.error("Image upload failed.",{position:"bottom-right"});
+      toast.error("Image upload failed.", { position: "bottom-right" });
       console.error(err);
     } finally {
       setLoading(false);
@@ -128,124 +134,134 @@ const EditJobApplication = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100 px-4 pt-[90px] pb-[40px]">
+    <div className="flex justify-center items-center min-h-screen bg-[#f7e9d6] px-4 pt-[90px] pb-[40px]">
       <form
         onSubmit={handleSubmit}
-        className="bg-white shadow-lg rounded-xl p-8 w-full max-w-md"
+        className="bg-[#FAF6E9] shadow-lg rounded-xl p-8 w-full max-w-5xl"
       >
         <h2 className="text-2xl font-semibold text-center mb-6">
           Edit Job Application
         </h2>
 
-        {[
-          { label: "Title", name: "title", type: "text" },
-          { label: "Salary", name: "salary", type: "number" },
-          { label: "Location", name: "location", type: "text" },
-          { label: "Company Name", name: "company_name", type: "text" },
-          { label: "Benefits", name: "benefits", type: "text" },
-          { label: "Experience", name: "experience", type: "text" },
-          { label: "Responsibilities", name: "responsibilities", type: "text" },
-          { label: "Skills", name: "skills", type: "text" },
-          { label: "Qualification", name: "qualification", type: "text" },
-        ].map(({ label, name, type }) => (
-          <div key={name} className="mb-4">
-            <label className="block text-sm font-medium mb-1">{label}</label>
-            <input
-              type={type}
-              name={name}
-              value={formData[name]}
-              onChange={handleChange}
-              className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder={`Enter ${label.toLowerCase()}`}
-            />
-          </div>
-        ))}
-
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-1">Job Type</label>
-          <select
-            name="job_type"
-            value={formData.job_type}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded-md p-2"
-          >
-            <option value="">Select</option>
-            <option value="full-time">Full-time</option>
-            <option value="part-time">Part-time</option>
-            <option value="contract">Contract</option>
-            <option value="internship">Internship</option>
-          </select>
-        </div>
-
-        <div className="mb-4">
-          <label className="block font-semibold mb-1">Job Category</label>
-          <select
-            name="jobCategory"
-            value={formData.jobCategory}
-            onChange={handleChange}
-            className="w-full border border-[#131D4F] rounded-md p-2"
-          >
-            <option value="">Select a category</option>
-            <option value="Information Technology (IT)">
-              Information Technology (IT)
-            </option>
-            <option value="Human Resources (HR)">Human Resources (HR)</option>
-            <option value="Finance & Accounting">Finance & Accounting</option>
-            <option value="Marketing & Advertising">
-              Marketing & Advertising
-            </option>
-            <option value="Customer Service">Customer Service</option>
-            <option value="Product Management">Product Management</option>
-            <option value="Design & Creative">Design & Creative</option>
-          </select>
-        </div>
-
-        <div className="mb-6">
-          <label className="block text-sm font-medium mb-1">Status</label>
-          <select
-            name="status"
-            value={formData.status}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded-md p-2"
-          >
-            <option value="">Select</option>
-            <option value="open">Open</option>
-            <option value="rejected">Rejected</option>
-            <option value="closed">Closed</option>
-          </select>
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-1">Upload Image</label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleFileUpload}
-            className="w-full border border-gray-300 rounded-md p-2"
-          />
-
-          {loading && (
-            <p className="text-sm text-blue-500 mt-1">Uploading...</p>
-          )}
-
-          {formData.image && (
-            <div className="mt-2">
-              <img
-                src={formData.image}
-                alt="Job"
-                className="w-32 h-32 object-cover rounded-md border"
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[
+            { label: "Title", name: "title", type: "text" },
+            { label: "Salary", name: "salary", type: "number" },
+            { label: "Location", name: "location", type: "text" },
+            { label: "Company Name", name: "company_name", type: "text" },
+            { label: "Benefits", name: "benefits", type: "text" },
+            { label: "Experience", name: "experience", type: "text" },
+            {
+              label: "Responsibilities",
+              name: "responsibilities",
+              type: "text",
+            },
+            { label: "Skills", name: "skills", type: "text" },
+            { label: "Qualification", name: "qualification", type: "text" },
+          ].map(({ label, name, type }) => (
+            <div key={name} className="mb-4">
+              <label className="block text-sm font-medium mb-1">{label}</label>
+              <input
+                type={type}
+                name={name}
+                value={formData[name]}
+                onChange={handleChange}
+                className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder={`Enter ${label.toLowerCase()}`}
               />
             </div>
-          )}
+          ))}
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-1">Job Type</label>
+            <select
+              name="job_type"
+              value={formData.job_type}
+              onChange={handleChange}
+              className="w-full border border-gray-300 rounded-md p-2"
+            >
+              <option value="">Select</option>
+              <option value="full-time">Full-time</option>
+              <option value="part-time">Part-time</option>
+              <option value="contract">Contract</option>
+              <option value="internship">Internship</option>
+            </select>
+          </div>
+
+          <div className="mb-4">
+            <label className="block font-semibold mb-1">Job Category</label>
+            <select
+              name="jobCategory"
+              value={formData.jobCategory}
+              onChange={handleChange}
+              className="w-full border border-[#131D4F] rounded-md p-2"
+            >
+              <option value="">Select a category</option>
+              <option value="Information Technology (IT)">
+                Information Technology (IT)
+              </option>
+              <option value="Human Resources (HR)">Human Resources (HR)</option>
+              <option value="Finance & Accounting">Finance & Accounting</option>
+              <option value="Marketing & Advertising">
+                Marketing & Advertising
+              </option>
+              <option value="Customer Service">Customer Service</option>
+              <option value="Product Management">Product Management</option>
+              <option value="Design & Creative">Design & Creative</option>
+            </select>
+          </div>
+
+          <div className="mb-6">
+            <label className="block text-sm font-medium mb-1">Status</label>
+            <select
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+              className="w-full border border-gray-300 rounded-md p-2"
+            >
+              <option value="">Select</option>
+              <option value="open">Open</option>
+              <option value="rejected">Rejected</option>
+              <option value="closed">Closed</option>
+            </select>
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-1">
+              Upload Image
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileUpload}
+              className="w-full border border-gray-300 rounded-md p-2"
+            />
+
+            {loading && (
+              <p className="text-sm text-blue-500 mt-1">Uploading...</p>
+            )}
+
+            {formData.image && (
+              <div className="mt-2">
+                <img
+                  src={formData.image}
+                  alt="Job"
+                  className="w-32 h-32 object-cover rounded-md border"
+                />
+              </div>
+            )}
+          </div>
         </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition duration-200"
-        >
-          {loading ? "Updating..." : "Update Job Application"}
-        </button>
+        <div className="flex justify-center mt-6">
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full sm:w-auto px-8 py-3 text-base font-medium bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            {loading ? "Updating..." : "Update Job Application"}
+          </button>
+        </div>
       </form>
     </div>
   );
