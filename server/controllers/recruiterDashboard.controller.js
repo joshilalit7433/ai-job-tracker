@@ -5,26 +5,18 @@ import { Applicant } from "../models/applicant.model.js";
 export const RecruiterDashboard = async (req, res) => {
   try {
     const recruiterId = req.user._id;
-    const user = await User.findById(recruiterId);
 
-    if (!user || user.role !== "recruiter") {
-      return res.status(404).json({
-        message: "Recruiter not found",
-        success: false,
-      });
-    }
-
-    
+    // Fetch jobs posted by recruiter
     const jobs = await JobApplication.find({ user: recruiterId });
     const jobIds = jobs.map((job) => job._id);
 
-    
+    // Stats
     const totalApplicants = await Applicant.countDocuments({ job: { $in: jobIds } });
     const shortlisted = await Applicant.countDocuments({ job: { $in: jobIds }, status: "shortlisted" });
     const interviews = await Applicant.countDocuments({ job: { $in: jobIds }, status: "interview" });
     const hired = await Applicant.countDocuments({ job: { $in: jobIds }, status: "hired" });
 
-   
+    // Bar Chart Data: Applications per Job
     const barData = await Applicant.aggregate([
       { $match: { job: { $in: jobIds } } },
       {
@@ -49,33 +41,31 @@ export const RecruiterDashboard = async (req, res) => {
       },
     ]);
 
-    
+    // Line Chart Data: Applications over time
     const lineData = await Applicant.aggregate([
-  { $match: { job: { $in: jobIds } } },
-  {
-    $group: {
-      _id: {
-        $dateToString: { format: "%Y-%m-%d", date: "$createdAt" },
+      { $match: { job: { $in: jobIds } } },
+      {
+        $group: {
+          _id: {
+            $dateToString: { format: "%Y-%m-%d", date: "$createdAt" },
+          },
+          applications: { $sum: 1 },
+        },
       },
-      applications: { $sum: 1 },
-    },
-  },
-  {
-    $sort: { _id: 1 },
-  },
-  {
-    $project: {
-      time: "$_id",
-      applications: 1,
-      _id: 0,
-    },
-  },
-]);
+      { $sort: { _id: 1 } },
+      {
+        $project: {
+          time: "$_id",
+          applications: 1,
+          _id: 0,
+        },
+      },
+    ]);
 
     res.status(200).json({
       message: "Recruiter dashboard data fetched successfully",
       success: true,
-      totalJobsPosted: user.totalJobsPosted || jobs.length,
+      totalJobsPosted: jobs.length,
       totalApplicants,
       shortlisted,
       interviews,
@@ -84,7 +74,7 @@ export const RecruiterDashboard = async (req, res) => {
       lineData,
     });
   } catch (error) {
-    console.error(error);
+    console.error("RecruiterDashboard Error:", error);
     return res.status(500).json({
       message: "Internal server error",
       success: false,
