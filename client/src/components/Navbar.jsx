@@ -34,25 +34,34 @@ const Navbar = () => {
   };
 
   const userLinks = [
-    { id: 1, name: "Home", link: "/" },
-    { id: 2, name: "Job Applications", link: "/job-applications" },
+    { id: 1, name: "Job Applications", link: "/job-applications" },
     ...(user?.role === "user"
-      ? [{ id: 3, name: "Saved Jobs", link: "/user-saved-job-application" }]
+      ? [{ id: 2, name: "Saved Jobs", link: "/user-saved-job-application" }]
       : []),
   ];
 
-  const adminLinks = [
-    { id: 1, name: "Home", link: "/" },
-    { id: 2, name: "Dashboard", link: "/admin-dashboard" },
-  ];
+  const adminLinks = [{ id: 1, name: "Dashboard", link: "/admin-dashboard" }];
 
   const shouldShowNavbarLinks =
     user?.role !== "recruiter" && !isLoginOrSignupPage;
 
+  const isRecruiter = user?.role === "recruiter";
+
   return (
     <nav className="bg-[#f7e9d6] fixed top-0 left-0 right-0 z-50">
       <div className="max-w-7xl mx-auto px-4 lg:px-16 py-4 flex justify-between items-center">
-        <Link to="/" className="text-xl font-bold flex items-center space-x-1">
+        <Link
+          to={
+            user?.role === "recruiter"
+              ? "/recruiter-dashboard"
+              : user?.role === "admin"
+              ? "/admin-dashboard"
+              : "/"
+          }
+          className={`font-bold flex items-center space-x-1 ${
+            user?.role === "recruiter" ? "text-lg lg:text-xl" : "text-xl"
+          }`}
+        >
           <span className="text-purple-700 text-2xl">●</span>
           <span className="text-[#5e2b14]">Target</span>
           <span className="text-orange-600">Aims</span>
@@ -69,61 +78,65 @@ const Navbar = () => {
           </div>
         )}
 
-        {/* Right-side profile/login */}
-        <div className="hidden sm:flex space-x-3 items-center">
-          {!user ? (
-            !isLoginOrSignupPage && (
-              <Link
-                to="/login"
-                className="bg-[#0a0a23] hover:bg-black text-white text-sm px-4 py-2 rounded-md font-semibold"
-              >
-                Login
-              </Link>
-            )
-          ) : (
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="ghost" className="flex items-center space-x-2">
-                  <div className="w-9 h-9 bg-white text-[#131D4F] rounded-full flex items-center justify-center font-semibold">
-                    {user?.fullname?.charAt(0) || "U"}
-                  </div>
-                  <span className="hidden md:block text-sm text-[#131D4F] font-medium">
-                    {user?.fullname?.split(" ")[0]}
-                  </span>
-                  <ChevronDown className="w-4 h-4 text-[#131D4F]" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-40 p-2 bg-white rounded-md shadow-lg">
+        {/* Right-side profile/login - Hidden for recruiters on large screens */}
+        {!isRecruiter && (
+          <div className="hidden sm:flex space-x-3 items-center">
+            {!user ? (
+              !isLoginOrSignupPage && (
                 <Link
-                  to="/user-profile"
-                  className="block px-4 py-2 text-sm hover:bg-gray-100 rounded"
+                  to="/login"
+                  className="bg-[#0a0a23] hover:bg-black text-white text-sm px-4 py-2 rounded-md font-semibold"
                 >
-                  Profile
+                  Login
                 </Link>
-                <button
-                  onClick={handleLogout}
-                  className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 rounded"
-                >
-                  Logout
-                </button>
-              </PopoverContent>
-            </Popover>
-          )}
-        </div>
+              )
+            ) : (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="ghost" className="flex items-center space-x-2">
+                    <div className="w-9 h-9 bg-white text-[#131D4F] rounded-full flex items-center justify-center font-semibold">
+                      {user?.fullname?.charAt(0) || "U"}
+                    </div>
+                    <span className="hidden md:block text-sm text-[#131D4F] font-medium">
+                      {user?.fullname?.split(" ")[0]}
+                    </span>
+                    <ChevronDown className="w-4 h-4 text-[#131D4F]" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-40 p-2 bg-white rounded-md shadow-lg">
+                  <Link
+                    to="/user-profile"
+                    className="block px-4 py-2 text-sm hover:bg-gray-100 rounded"
+                  >
+                    Profile
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 rounded"
+                  >
+                    Logout
+                  </button>
+                </PopoverContent>
+              </Popover>
+            )}
+          </div>
+        )}
 
-        {/* Mobile menu icon */}
-        <div className="sm:hidden">
-          <button
-            onClick={toggleMenu}
-            className="text-[#131D4F] focus:outline-none"
-          >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-        </div>
+        {/* Mobile menu icon - Hidden for recruiters */}
+        {!isRecruiter && (
+          <div className="sm:hidden">
+            <button
+              onClick={toggleMenu}
+              className="text-[#131D4F] focus:outline-none"
+            >
+              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
+        )}
       </div>
 
-      {/* Mobile Menu */}
-      {isMenuOpen && shouldShowNavbarLinks && (
+      {/* Mobile Menu - Hidden for recruiters */}
+      {isMenuOpen && shouldShowNavbarLinks && !isRecruiter && (
         <div className="sm:hidden px-4 pb-4 space-y-2">
           {(user?.role === "admin" ? adminLinks : userLinks).map((link) => (
             <Link

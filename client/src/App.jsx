@@ -22,13 +22,15 @@ import NotificationPanel from "./components/NotificationPanel";
 import RecruiterResponse from "./components/RecruiterResponse";
 import RecruiterDashboard from "./components/RecruiterDashboard";
 import SpecifiJobs from "./components/SpecifiJobs";
+import { useSelector } from "react-redux";
 
 
 function App() {
+  const { user } = useSelector((state) => state.auth);
   return (
     <>
       <BrowserRouter>
-        <Navbar />
+        {user?.role !== "recruiter" && <Navbar />}
         <ToastContainer />
         <div >
           <Routes>

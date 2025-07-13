@@ -36,7 +36,7 @@ const ViewApplicants = () => {
 
   return (
     <div className="px-4 bg-[#f7e9d6] min-h-screen pb-20">
-      <h1 className="text-center text-4xl font-bold text-blue-700 pt-20 mb-12">
+      <h1 className="text-center text-4xl font-bold text-black pt-20 mb-12">
         Applicant Details
       </h1>
 
