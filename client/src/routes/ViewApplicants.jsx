@@ -50,7 +50,7 @@ const ViewApplicants = () => {
         </p>
       ) : (
         <>
-          {/* ✅ Desktop Table */}
+          {/*  Desktop Table */}
           <div className="hidden md:block overflow-x-auto bg-white rounded-xl shadow-lg">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-[#FAF6E9]">
@@ -119,7 +119,7 @@ const ViewApplicants = () => {
             </table>
           </div>
 
-          {/* ✅ Mobile Cards */}
+          {/*  Mobile Cards */}
           <div className="md:hidden space-y-4">
             {applicantdetails.map((applicant) => (
               <div

@@ -1,7 +1,8 @@
 import { User } from "../models/user.model.js";
-import bycrypt from "bcryptjs";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { JobApplication } from "../models/jobApplication.model.js";
+
 
 export const register = async (req, res) => {
   try {
@@ -20,7 +21,7 @@ export const register = async (req, res) => {
         .json({ message: "User already exists", success: false });
     }
 
-    const hashedPassword = await bycrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     await User.create({
       fullname,
@@ -55,7 +56,7 @@ export const login = async (req, res) => {
         .json({ message: "Incorrect email or password", success: false });
     }
 
-    const isMatch = await bycrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch || user.role !== role) {
       return res
         .status(401)

@@ -136,6 +136,29 @@ export const GetJobApplication = async (req, res) => {
   }
 };
 
+export const getJobApplicationByCategory = async (req, res) => {
+  try {
+    const { categoryName } = req.params;
+
+    const jobs = await JobApplication.find({
+      jobCategory: categoryName,
+      isApproved: true,
+    });
+
+    return res.status(200).json({
+      success: true,
+      jobapplications: jobs,
+    });
+  } catch (error) {
+    console.error("getJobsByCategory Error:", error);
+    return res.status(500).json({
+      message: "Server error while fetching jobs by category",
+      success: false,
+    });
+  }
+};
+
+
 export const GetJobApplicationById = async (req, res) => {
   try {
     const jobapplication = await JobApplication.findById(req.params.id);
@@ -288,4 +311,23 @@ export const rejectJob = async (req, res) => {
       .json({ message: "Error rejecting job", success: false });
   }
 };
+
+
+export const JobCategoryCount = async (req,res) =>{
+  try {
+    const jobs = await JobApplication.find({ isApproved: true });
+
+    const counts = jobs.reduce((acc, job) => {
+      acc[job.jobCategory] = (acc[job.jobCategory] || 0) + 1;
+      return acc;
+    }, {});
+
+    res.json({ success: true, counts });
+  } catch (error) {
+    console.error("Error getting job counts:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+}
+
+
 

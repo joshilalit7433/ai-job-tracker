@@ -10,7 +10,7 @@ import {
   BookMarked,
   MoveRight,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import FilterJobApplications from "../components/FilterJobApplications";
 
 const SpecifiJobs = () => {
@@ -23,6 +23,8 @@ const SpecifiJobs = () => {
   });
   const [loading, setLoading] = useState(true);
 
+  const { categoryName } = useParams(); 
+
   const fetchJobApplications = async () => {
     try {
       const response = await axios.get(
@@ -30,13 +32,14 @@ const SpecifiJobs = () => {
       );
       const data = response.data;
 
-      const approvedITJobs = data.jobapplications.filter(
+      
+      const approvedJobs = data.jobapplications.filter(
         (job) =>
           job.isApproved === true &&
-          job.jobCategory === "Information Technology (IT)"
+          job.jobCategory === decodeURIComponent(categoryName)
       );
-      setAllJobs(approvedITJobs);
-      setFilteredJobs(approvedITJobs);
+      setAllJobs(approvedJobs);
+      setFilteredJobs(approvedJobs);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching job applications:", error);
@@ -46,7 +49,7 @@ const SpecifiJobs = () => {
 
   useEffect(() => {
     fetchJobApplications();
-  }, []);
+  }, [categoryName]); 
 
   const isSalaryInRange = (salary, range) => {
     if (!range) return true;
@@ -99,7 +102,7 @@ const SpecifiJobs = () => {
 
       <div className="flex-1 px-4 pb-20 pt-10 min-h-screen lg:pt-20">
         <h1 className="text-center text-2xl lg:text-3xl font-semibold mb-6">
-          Information Technology (IT) Jobs
+          {categoryName} Jobs
         </h1>
 
         {loading ? (
@@ -143,27 +146,16 @@ const SpecifiJobs = () => {
                   {job.location}
                 </p>
 
-                {typeof job.skills === "string" && (
-                  <div className="flex gap-2 flex-wrap mb-4">
-                    {job.skills
-                      .split(",")
-                      .map((skill) => skill.trim())
-                      .filter((skill) => skill.length > 0)
-                      .slice(0, 3)
-                      .map((skill, idx) => (
-                        <span
-                          key={idx}
-                          className={`text-xs px-2 py-1 rounded-full ${
-                            idx % 2 === 0
-                              ? "bg-orange-100 text-orange-600"
-                              : "bg-green-100 text-green-600"
-                          }`}
-                        >
-                          {skill}
-                        </span>
-                      ))}
-                  </div>
-                )}
+                <div className="flex gap-2 flex-wrap mb-4">
+                  {job.skills?.slice(0, 3).map((skill, idx) => (
+                    <span
+                      key={idx}
+                      className={`text-xs px-2 py-1 rounded-full bg-blue-100`}
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                </div>
 
                 <div className="flex justify-between items-center">
                   <Link
