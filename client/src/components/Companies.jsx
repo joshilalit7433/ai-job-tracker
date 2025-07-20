@@ -22,23 +22,68 @@ const Companies = () => {
     fetchCompanyLogo();
   }, []);
 
+  // Split companies into two rows
+  const firstRow = logo.slice(0, Math.ceil(logo.length / 2));
+  const secondRow = logo.slice(Math.ceil(logo.length / 2));
+
   return (
-    <div className="text-center py-10 px-4 bg-[#f7e9d6]">
+    <div className="text-center py-10 px-4 bg-[#f7e9d6] overflow-hidden">
       <h2 className="text-2xl font-semibold mb-10">
         We Are Glad To Be Trusted By!
       </h2>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-        {logo.map((company) => (
-          <div key={company._id} className="flex flex-col items-center">
-            <img
-              src={company.image}
-              alt={company.company_name}
-              className="h-16 object-contain mb-2"
-            />
-            <p className="text-sm">{company.company_name}</p>
-          </div>
-        ))}
+      {/* First row - slides left to right */}
+      <div className="mb-8">
+        <div className="flex animate-slide-left-to-right">
+          {firstRow.map((company) => (
+            <div key={company._id} className="flex flex-col items-center mx-8 min-w-[120px]">
+              <img
+                src={company.image}
+                alt={company.company_name}
+                className="h-16 object-contain mb-2"
+              />
+              <p className="text-sm text-center">{company.company_name}</p>
+            </div>
+          ))}
+          {/* Duplicate for seamless loop */}
+          {firstRow.map((company) => (
+            <div key={`duplicate-${company._id}`} className="flex flex-col items-center mx-8 min-w-[120px]">
+              <img
+                src={company.image}
+                alt={company.company_name}
+                className="h-16 object-contain mb-2"
+              />
+              <p className="text-sm text-center">{company.company_name}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Second row - slides right to left */}
+      <div>
+        <div className="flex animate-slide-right-to-left">
+          {secondRow.map((company) => (
+            <div key={company._id} className="flex flex-col items-center mx-8 min-w-[120px]">
+              <img
+                src={company.image}
+                alt={company.company_name}
+                className="h-16 object-contain mb-2"
+              />
+              <p className="text-sm text-center">{company.company_name}</p>
+            </div>
+          ))}
+          {/* Duplicate for seamless loop */}
+          {secondRow.map((company) => (
+            <div key={`duplicate-${company._id}`} className="flex flex-col items-center mx-8 min-w-[120px]">
+              <img
+                src={company.image}
+                alt={company.company_name}
+                className="h-16 object-contain mb-2"
+              />
+              <p className="text-sm text-center">{company.company_name}</p>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -70,6 +70,12 @@ const ViewApplicants = () => {
                   <th className="px-6 py-3 text-left text-base font-medium text-gray-600">
                     Cover Letter
                   </th>
+                  <th className="px-6 py-3 text-left text-base font-medium text-gray-600">
+                    Matched Skills
+                  </th>
+                  <th className="px-6 py-3 text-left text-base font-medium text-gray-600">
+                    Missing Skills
+                  </th>
                   <th className="px-6 py-3 text-left text-base font-semibold text-gray-800">
                     Action
                   </th>
@@ -104,7 +110,12 @@ const ViewApplicants = () => {
                     <td className="px-6 py-4 text-sm text-gray-700 max-w-xs whitespace-pre-wrap break-words">
                       {applicant.cover_letter || "N/A"}
                     </td>
-
+                    <td className="px-6 py-4 text-sm text-green-700">
+                      {(applicant.matchedSkills || []).join(", ") || "N/A"}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-red-600">
+                      {(applicant.missingSkills || []).join(", ") || "N/A"}
+                    </td>
                     <td className="px-6 py-4">
                       <Link
                         to={`/recruiter-response/${applicant._id}`}
@@ -157,7 +168,22 @@ const ViewApplicants = () => {
                     {applicant.cover_letter || "N/A"}
                   </div>
                 </div>
-
+                <div>
+                  <span className="font-semibold text-gray-800">
+                    Matched Skills:
+                  </span>{" "}
+                  <span className="text-green-700">
+                    {(applicant.matchedSkills || []).join(", ") || "N/A"}
+                  </span>
+                </div>
+                <div>
+                  <span className="font-semibold text-gray-800">
+                    Missing Skills:
+                  </span>{" "}
+                  <span className="text-red-600">
+                    {(applicant.missingSkills || []).join(", ") || "N/A"}
+                  </span>
+                </div>
                 <div className="pt-2">
                   <Link
                     to={`/recruiter-response/${applicant._id}`}

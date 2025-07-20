@@ -3,6 +3,8 @@ import {
   FaLaptopCode,
   FaUsers,
   FaMoneyBillWave,
+  FaBullhorn,
+  FaHeadset,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -41,6 +43,16 @@ const JobsCategory = () => {
     {
       name: "Finance & Accounting",
       icon: <FaMoneyBillWave />,
+      highlighted: false,
+    },
+    {
+      name: "Marketing & Advertising",
+      icon: <FaBullhorn />,
+      highlighted: false,
+    },
+    {
+      name: "Customer Service",
+      icon: <FaHeadset />,
       highlighted: false,
     },
   ];

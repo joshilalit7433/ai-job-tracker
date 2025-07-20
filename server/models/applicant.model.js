@@ -44,6 +44,14 @@ const ApplicantSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
+  matchedSkills:{
+    type:[String],
+    default: [],
+  },
+  missingSkills:{
+    type:[String],
+    default: [],
+  },
   respondedAt: {
     type: Date,
   }

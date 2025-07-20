@@ -1,1 +1,34 @@
 @import "tailwindcss";
+
+/* Sliding animations for Companies component */
+@keyframes slideLeftToRight {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+@keyframes slideRightToLeft {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.animate-slide-left-to-right {
+  animation: slideLeftToRight 20s linear infinite;
+}
+
+.animate-slide-right-to-left {
+  animation: slideRightToLeft 20s linear infinite;
+}
+
+/* Pause animation on hover */
+.animate-slide-left-to-right:hover,
+.animate-slide-right-to-left:hover {
+  animation-play-state: paused;
+}

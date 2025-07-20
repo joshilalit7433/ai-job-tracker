@@ -93,7 +93,8 @@ export const ApplyJobApplication = async (req, res) => {
       fullname: user.fullname,
       email: user.email,
       mobilenumber: user.mobilenumber,
-      skill_gap: missingSkills,
+      matchedSkills,
+      missingSkills,
     });
 
     return res.status(200).json({
