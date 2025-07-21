@@ -1,4 +1,4 @@
-// Login.jsx
+
 import { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate, useLocation } from "react-router-dom";
@@ -58,7 +58,7 @@ const Login = () => {
           theme: "dark",
         });
 
-        // ✅ Role-based redirection
+        //  Role-based redirection
         if (user.role === "recruiter") {
           navigate("/recruiter-dashboard");
         } else if (user.role === "admin") {

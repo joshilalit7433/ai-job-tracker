@@ -21,13 +21,13 @@ const FilterJobApplications = ({ onFilterChange }) => {
 
   const locationOptions = [
     "Bangalore",
-    "Pune", 
+    "Pune",
     "Remote",
     "New Delhi",
     "Hyderabad",
     "Ahmedabad",
     "Chennai",
-    "Mumbai"
+    "Mumbai",
   ];
 
   const [selectedFilters, setSelectedFilters] = useState({
@@ -69,7 +69,9 @@ const FilterJobApplications = ({ onFilterChange }) => {
   };
 
   const handleLocationRemove = (locationToRemove) => {
-    const updatedLocations = selectedFilters.Location.filter(loc => loc !== locationToRemove);
+    const updatedLocations = selectedFilters.Location.filter(
+      (loc) => loc !== locationToRemove
+    );
     const updated = { ...selectedFilters, Location: updatedLocations };
     setSelectedFilters(updated);
     onFilterChange(updated);
@@ -82,9 +84,10 @@ const FilterJobApplications = ({ onFilterChange }) => {
     setLocationSearch("");
   };
 
-  const filteredLocations = locationOptions.filter(location =>
-    location.toLowerCase().includes(locationSearch.toLowerCase()) &&
-    !selectedFilters.Location.includes(location)
+  const filteredLocations = locationOptions.filter(
+    (location) =>
+      location.toLowerCase().includes(locationSearch.toLowerCase()) &&
+      !selectedFilters.Location.includes(location)
   );
 
   const resetFilters = () => {
@@ -95,13 +98,18 @@ const FilterJobApplications = ({ onFilterChange }) => {
     setShowLocationDropdown(false);
   };
 
-  const hasActiveFilters = selectedFilters.Salary !== "" || selectedFilters.Location.length > 0 || selectedFilters.Company !== "";
+  const hasActiveFilters =
+    selectedFilters.Salary !== "" ||
+    selectedFilters.Location.length > 0 ||
+    selectedFilters.Company !== "";
 
   const renderFilterUI = () => (
     <>
       {filterData.map(({ filterType, filterOptions }) => (
         <div key={filterType} className="mb-6">
-          <h2 className="text-base font-semibold mb-3 text-gray-800">{filterType}</h2>
+          <h2 className="text-base font-semibold mb-3 text-gray-800">
+            {filterType}
+          </h2>
           <div className="space-y-2">
             {filterOptions.map((option) => (
               <label
@@ -145,12 +153,14 @@ const FilterJobApplications = ({ onFilterChange }) => {
               </button>
             )}
           </div>
-          
-          {/* Selected Locations Display */}
+
           {selectedFilters.Location.length > 0 && (
             <div className="mt-3 space-y-2">
               {selectedFilters.Location.map((location) => (
-                <div key={location} className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-2 rounded-lg">
+                <div
+                  key={location}
+                  className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-2 rounded-lg"
+                >
                   <MapPin className="w-4 h-4" />
                   <span className="text-sm font-medium">{location}</span>
                   <button
@@ -164,7 +174,6 @@ const FilterJobApplications = ({ onFilterChange }) => {
             </div>
           )}
 
-          {/* Location Dropdown */}
           {showLocationDropdown && (
             <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
               {filteredLocations.length > 0 ? (
@@ -180,7 +189,9 @@ const FilterJobApplications = ({ onFilterChange }) => {
                 ))
               ) : (
                 <div className="px-4 py-3 text-sm text-gray-500">
-                  {locationSearch ? "No locations found" : "All locations selected"}
+                  {locationSearch
+                    ? "No locations found"
+                    : "All locations selected"}
                 </div>
               )}
             </div>
@@ -214,19 +225,21 @@ const FilterJobApplications = ({ onFilterChange }) => {
   );
 
   return (
-    <div className="mt-16">
-      {/* Mobile Filter Button */}
-      <div className="lg:hidden mb-6">
+    <div>
+      {/* Mobile Filter Button (Centered on small devices) */}
+      <div className="lg:hidden flex justify-center px-4 py-4">
         <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
           <PopoverTrigger asChild>
-            <button
-              className="bg-white border border-gray-300 text-gray-700 px-4 py-3 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2 shadow-sm w-full"
-            >
+            <button className="bg-white border border-gray-300 text-gray-700 px-4 py-3 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2 shadow-sm w-36 ">
               <Filter className="w-4 h-4" />
               <span>Filter Jobs</span>
               {hasActiveFilters && (
                 <span className="ml-auto bg-blue-500 text-white text-xs px-2 py-1 rounded-full">
-                  {Object.values(selectedFilters).filter(v => v !== "" && v.length !== 0).length}
+                  {
+                    Object.values(selectedFilters).filter(
+                      (v) => v !== "" && v.length !== 0
+                    ).length
+                  }
                 </span>
               )}
             </button>

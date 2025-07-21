@@ -18,12 +18,12 @@ const SpecifiJobs = () => {
   const [filteredJobs, setFilteredJobs] = useState([]);
   const [filters, setFilters] = useState({
     Salary: "",
-    Location: "",
+    Location: [],
     Company: "",
   });
   const [loading, setLoading] = useState(true);
 
-  const { categoryName } = useParams(); 
+  const { categoryName } = useParams();
 
   const fetchJobApplications = async () => {
     try {
@@ -32,7 +32,6 @@ const SpecifiJobs = () => {
       );
       const data = response.data;
 
-      
       const approvedJobs = data.jobapplications.filter(
         (job) =>
           job.isApproved === true &&
@@ -49,7 +48,12 @@ const SpecifiJobs = () => {
 
   useEffect(() => {
     fetchJobApplications();
-  }, [categoryName]); 
+  }, [categoryName]);
+
+  // Scroll to top when this page mounts or categoryName changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior:"auto" });
+  }, [categoryName]);
 
   const isSalaryInRange = (salary, range) => {
     if (!range) return true;
@@ -59,14 +63,19 @@ const SpecifiJobs = () => {
   };
 
   const normalizeLocation = (location) =>
-    location.split(" ")[0].toLowerCase();
+    typeof location === "string" && location.length > 0
+      ? location.split(" ")[0].toLowerCase()
+      : "";
 
   useEffect(() => {
     const filtered = allJobs.filter((job) => {
       const matchesSalary = isSalaryInRange(job.salary, filters.Salary);
+
+      const jobLocation = normalizeLocation(job.location);
       const matchesLocation =
-        !filters.Location ||
-        normalizeLocation(job.location) === normalizeLocation(filters.Location);
+        filters.Location.length === 0 ||
+        filters.Location.map(normalizeLocation).includes(jobLocation);
+
       const matchesCompany =
         !filters.Company ||
         job.company_name.toLowerCase().includes(filters.Company.toLowerCase());
@@ -97,10 +106,10 @@ const SpecifiJobs = () => {
   };
 
   return (
-    <div className="flex bg-[#f7e9d6]">
+    <div className="flex flex-col lg:flex-row bg-[#f7e9d6] pt-20">
       <FilterJobApplications onFilterChange={handleFilterChange} />
 
-      <div className="flex-1 px-4 pb-20 pt-10 min-h-screen lg:pt-20">
+      <div className="flex-1 px-4 pb-20 pt-10 min-h-screen ">
         <h1 className="text-center text-2xl lg:text-3xl font-semibold mb-6">
           {categoryName} Jobs
         </h1>
@@ -112,7 +121,7 @@ const SpecifiJobs = () => {
             No job applications match your filters.
           </p>
         ) : (
-          <div className="lg:ml-[250px] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="lg:ml-[320px] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredJobs.map((job) => (
               <div
                 key={job._id}
@@ -123,9 +132,7 @@ const SpecifiJobs = () => {
                     src={job.image}
                     alt={job.company_name}
                     className="w-10 h-10 object-contain rounded"
-                    onError={(e) =>
-                      (e.target.src = "./images/placeholder.jpg")
-                    }
+                    onError={(e) => (e.target.src = "./images/placeholder.jpg")}
                   />
                   <span className="text-xs px-2 py-1 border border-blue-500 text-blue-600 rounded-md font-semibold">
                     {job.job_type}
@@ -150,7 +157,7 @@ const SpecifiJobs = () => {
                   {job.skills?.slice(0, 3).map((skill, idx) => (
                     <span
                       key={idx}
-                      className={`text-xs px-2 py-1 rounded-full bg-blue-100`}
+                      className="text-xs px-2 py-1 rounded-full bg-blue-100"
                     >
                       {skill}
                     </span>

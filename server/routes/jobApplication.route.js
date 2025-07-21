@@ -11,7 +11,7 @@ router.route("/update-job-application/:id").put(isAuthenticated,checkRole("recru
 router.route("/get-job-applications").get(GetJobApplication);
 router.route("/get-job-category-count").get(JobCategoryCount);
 router.route("/get-jobs-by-category/:categoryName").get(getJobApplicationByCategory);
-router.route("/get-job-application-by-id/:id").get(isAuthenticated,GetJobApplicationById);
+router.route("/get-job-application-by-id/:id").get(GetJobApplicationById);
 router.route("/delete-job-application/:id").delete(isAuthenticated,checkRole("recruiter"),DeleteJobApplication);
 router.route("/get-recruiter-posted-job-application/:recruiterid").get(isAuthenticated,checkRole("recruiter"),GetRecruiterPostedJobApplication);
 router.route("/get-user-applied-job-application").get(isAuthenticated,checkRole("user"),GetUserAppliedJobApplication);
