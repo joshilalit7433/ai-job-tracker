@@ -64,6 +64,7 @@ export default function SidebarDashboard() {
   }, []);
 
   const handleLogout = () => {
+    localStorage.setItem("justLoggedOut", "true"); 
     dispatch(logout());
     navigate("/");
     toast.success("You have successfully Logged Out.", {

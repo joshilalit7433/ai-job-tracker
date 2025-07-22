@@ -81,7 +81,7 @@ const ApplyJobForm = () => {
         { withCredentials: true }
       );
       setCoverLetter(res.data.letter);
-      toast.success("Cover letter generated!");
+      toast.success("Cover letter generated!",{position:"bottom-right"});
     } catch (error) {
       console.error("Cover letter generation failed:", error);
       toast.error("Failed to generate cover letter", {
@@ -114,7 +114,7 @@ const ApplyJobForm = () => {
       );
 
       if (res.data.success) {
-        toast.success("Resume uploaded!");
+        toast.success("Resume uploaded!",{position:"bottom-right"});
         setUploadedResumeURL(res.data.user.resume);
         dispatch(setUser(res.data.user));
       } else {
@@ -159,7 +159,7 @@ const ApplyJobForm = () => {
       );
 
       if (res.data.success) {
-        toast.success("Application submitted!");
+        toast.success("Application submitted!",{position:"bottom-right"});
         setSkillAnalysis({
           matched: res.data.matchedSkills || [],
           missing: res.data.missingSkills || [],

@@ -68,7 +68,7 @@ const EditJobApplication = () => {
     }
 
     if (Object.keys(dataToUpdate).length === 0) {
-      toast.info("No changes made.");
+      toast.info("No changes made.",{position:"bottom-right"});
       navigate("/recruiter-posted-job-applications");
       return;
     }
@@ -82,7 +82,7 @@ const EditJobApplication = () => {
       );
 
       if (res.data.success) {
-        toast.success("Job application updated successfully!");
+        toast.success("Job application updated successfully!",{position:"bottom-right"});
         navigate("/recruiter-posted-job-applications");
       } else {
         toast.error(res.data.message || "Update failed.", {
@@ -121,7 +121,7 @@ const EditJobApplication = () => {
 
       if (uploadedImage.secure_url) {
         setFormData((prev) => ({ ...prev, image: uploadedImage.secure_url }));
-        toast.success("Image uploaded!");
+        toast.success("Image uploaded!",{position:"bottom-right"});
       } else {
         throw new Error("Upload failed");
       }

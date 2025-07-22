@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import './app.css';
-import {Home} from '../src/routes/Home';
+import "./app.css";
+import { Home } from "../src/routes/Home";
 import Navbar from "./components/Navbar";
 import JobApplications from "./routes/JobApplications";
 import JobApplicationForm from "./routes/JobApplicationForm";
@@ -24,49 +24,152 @@ import RecruiterDashboard from "./components/RecruiterDashboard";
 import SpecifiJobs from "./components/SpecifiJobs";
 import { useSelector } from "react-redux";
 
-
 function App() {
   const { user } = useSelector((state) => state.auth);
   return (
     <>
       <BrowserRouter>
         {user?.role !== "recruiter" && <Navbar />}
-        <ToastContainer />
-        <div >
+        <ToastContainer
+          toastClassName="bg-black text-white rounded shadow-lg"
+          position="bottom-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
+        <div>
           <Routes>
             {/*  Public Routes (Accessible by all) */}
             <Route path="/" element={<Home />} />
             <Route path="/job-applications" element={<JobApplications />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
-            <Route path="/job-application-details/:id" element={<ViewJobApplication />} />
-            <Route path="/jobs/category/:categoryName" element={<SpecifiJobs />} />
+            <Route
+              path="/job-application-details/:id"
+              element={<ViewJobApplication />}
+            />
+            <Route
+              path="/jobs/category/:categoryName"
+              element={<SpecifiJobs />}
+            />
 
             {/*  Admin Only */}
-            <Route path="/admin-dashboard" element={<ProtectedRoute allowedRoles={["admin"]}><AdminDashboard /></ProtectedRoute>} />
+            <Route
+              path="/admin-dashboard"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
 
             {/*  User, Recruiter, Admin */}
-            <Route path="/user-profile" element={<ProtectedRoute allowedRoles={["user", "recruiter", "admin"]}><UserProfile /></ProtectedRoute>} />
-            <Route path="/edit-profile" element={<ProtectedRoute allowedRoles={["user", "recruiter", "admin"]}><EditProfile /></ProtectedRoute>} />
+            <Route
+              path="/user-profile"
+              element={
+                <ProtectedRoute allowedRoles={["user", "recruiter", "admin"]}>
+                  <UserProfile />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/edit-profile"
+              element={
+                <ProtectedRoute allowedRoles={["user", "recruiter", "admin"]}>
+                  <EditProfile />
+                </ProtectedRoute>
+              }
+            />
 
             {/*  User Only */}
-            <Route path="/get-user-applied-job-application" element={<ProtectedRoute allowedRoles={["user"]}><UserAppliedJobApplication /></ProtectedRoute>} />
-            <Route path="/apply-job-application/:id" element={<ProtectedRoute allowedRoles={["user"]}><ApplyJobApplication /></ProtectedRoute>} />
-            <Route path="/user-saved-job-application" element={<ProtectedRoute allowedRoles={["user"]}><UserSavedJobApplication /></ProtectedRoute>} />
+            <Route
+              path="/get-user-applied-job-application"
+              element={
+                <ProtectedRoute allowedRoles={["user"]}>
+                  <UserAppliedJobApplication />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/apply-job-application/:id"
+              element={
+                <ProtectedRoute allowedRoles={["user"]}>
+                  <ApplyJobApplication />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/user-saved-job-application"
+              element={
+                <ProtectedRoute allowedRoles={["user"]}>
+                  <UserSavedJobApplication />
+                </ProtectedRoute>
+              }
+            />
 
             {/*  Recruiter Only */}
-            <Route path="/job-application-form" element={<ProtectedRoute allowedRoles={["recruiter"]}><JobApplicationForm /></ProtectedRoute>} />
-            <Route path="/recruiter-posted-job-applications" element={<ProtectedRoute allowedRoles={["recruiter"]}><RecruiterPostedJobApplications /></ProtectedRoute>} />
-            <Route path="/edit-job-applications/:id" element={<ProtectedRoute allowedRoles={["recruiter"]}><EditJobApplication /></ProtectedRoute>} />
-            <Route path="/view-applicant/:jobId" element={<ProtectedRoute allowedRoles={["recruiter"]}><ViewApplicants /></ProtectedRoute>} />
-            <Route path="/notifications" element={<ProtectedRoute allowedRoles={["recruiter"]}><NotificationPanel /></ProtectedRoute>} />
-            <Route path="/recruiter-response/:id" element={<ProtectedRoute allowedRoles={["recruiter"]}><RecruiterResponse /></ProtectedRoute>} />
-            <Route path="/recruiter-dashboard" element={<ProtectedRoute allowedRoles={["recruiter"]}><RecruiterDashboard /></ProtectedRoute>} />
-
-
-
-
-
+            <Route
+              path="/job-application-form"
+              element={
+                <ProtectedRoute allowedRoles={["recruiter"]}>
+                  <JobApplicationForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/recruiter-posted-job-applications"
+              element={
+                <ProtectedRoute allowedRoles={["recruiter"]}>
+                  <RecruiterPostedJobApplications />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/edit-job-applications/:id"
+              element={
+                <ProtectedRoute allowedRoles={["recruiter"]}>
+                  <EditJobApplication />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/view-applicant/:jobId"
+              element={
+                <ProtectedRoute allowedRoles={["recruiter"]}>
+                  <ViewApplicants />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/notifications"
+              element={
+                <ProtectedRoute allowedRoles={["recruiter"]}>
+                  <NotificationPanel />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/recruiter-response/:id"
+              element={
+                <ProtectedRoute allowedRoles={["recruiter"]}>
+                  <RecruiterResponse />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/recruiter-dashboard"
+              element={
+                <ProtectedRoute allowedRoles={["recruiter"]}>
+                  <RecruiterDashboard />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </div>
       </BrowserRouter>

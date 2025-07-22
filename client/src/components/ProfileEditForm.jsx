@@ -44,7 +44,7 @@ const ProfileEditForm = ({ onClose }) => {
       dataToUpdate.mobilenumber = formData.mobilenumber;
 
     if (Object.keys(dataToUpdate).length === 0) {
-      toast.info("No changes made.");
+      toast.info("No changes made.",{position:"bottom-right"});
       return;
     }
 
@@ -71,7 +71,7 @@ const ProfileEditForm = ({ onClose }) => {
           return;
         }
 
-        toast.success("Profile updated successfully!");
+        toast.success("Profile updated successfully!",{position:"bottom-right"});
         dispatch(setUser(updatedUser));
         if (onClose) {
           onClose();

@@ -10,7 +10,7 @@ import {
   Building2,
   MapPinned,
   Clock,
-  MoveRight
+  MoveRight,
 } from "lucide-react";
 
 const AdminDashboard = () => {
@@ -24,10 +24,6 @@ const AdminDashboard = () => {
     const checkAdminAccess = async () => {
       try {
         if (!user || user.role !== "admin") {
-          toast.error("You don't have permission to access this page", {
-            position: "bottom-right",
-            theme: "dark",
-          });
           navigate("/login");
           return;
         }
@@ -80,7 +76,7 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
+    <div className="min-h-screen bg-[#f7e9d6] p-8">
       <h1 className="text-3xl font-bold text-center mb-8">Admin Dashboard</h1>
 
       {pendingJobs.length === 0 ? (
@@ -90,46 +86,77 @@ const AdminDashboard = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {pendingJobs.map((job) => (
-            <div key={job._id} className="bg-white rounded-lg shadow-lg p-6">
-                <div className="flex flex-col items-center">
-                  <p className="text-black text-lg font-bold capitalize text-center">
-                    <BriefcaseBusiness className="w-5 h-5 text-gray-600 inline-block" />{" "}
-                    {job.title}
-                  </p>
-                  <p>
-                    {" "}
-                    <Building2 className="w-5 h-5 text-gray-600 inline-block" />{" "}
-                    {job.company_name}
-                  </p>
-                  <p>
-                    {" "}
-                    <Banknote className="w-5 h-5 text-gray-600 inline-block" />{" "}
-                    {job.salary}
-                  </p>
-                  <p>
-                    {" "}
-                    <MapPinned className="w-5 h-5 text-gray-600 inline-block" />{" "}
-                    {job.location}
-                  </p>
-                  <p>
-                    {" "}
-                    <Clock className="w-5 h-5 text-gray-600 inline-block" />{" "}
-                    {job.job_type}
-                  </p>
-                  <div className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm mt-2">
-                    Status: Pending
-                  </div>
-                  <Link
-                    to={`/job-application-details/${job._id}`}
-                    className="text-blue-500 flex justify-end  "
-                  >
-                    View Details
-                    <MoveRight className="w-5 h-5 text-blue-500 inline-block ml-2 pt-1.5" />
-                  </Link>
+            <div
+              key={job._id}
+              className="bg-[#FAF6E9] border border-gray-200 hover:shadow-xl transition-all duration-300 rounded-xl p-6 relative group"
+            >
+              {/* Company Logo and Job Type */}
+              <div className="flex justify-between items-center mb-4">
+                <img
+                  src={job.image}
+                  alt={job.company_name}
+                  className="w-12 h-12 object-contain rounded-lg"
+                  onError={(e) => (e.target.src = "./images/placeholder.jpg")}
+                />
+                <span className="text-xs px-3 py-1 border border-blue-500 text-blue-600 rounded-full font-medium">
+                  {job.job_type}
+                </span>
+              </div>
 
-                  
+              {/* Job Title */}
+              <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2">
+                {job.title}
+              </h3>
+
+              {/* Company and Location */}
+              <div className="space-y-2 mb-4">
+                <p className="text-sm text-gray-600 flex items-center gap-2">
+                  <BriefcaseBusiness className="w-4 h-4 text-gray-500" />
+                  <span className="truncate">{job.company_name}</span>
+                </p>
+                <p className="text-sm text-gray-600 flex items-center gap-2">
+                  <MapPinned className="w-4 h-4 text-gray-500" />
+                  <span className="truncate">{job.location}</span>
+                </p>
+              </div>
+
+              {/* Skills */}
+              {typeof job.skills === "string" && (
+                <div className="flex gap-2 flex-wrap mb-6">
+                  {job.skills
+                    .split(",")
+                    .map((skill) => skill.trim())
+                    .filter((skill) => skill.length > 0)
+                    .slice(0, 3)
+                    .map((skill, idx) => (
+                      <span
+                        key={idx}
+                        className={`text-xs px-3 py-1 rounded-full font-medium ${
+                          idx % 2 === 0
+                            ? "bg-orange-100 text-orange-700"
+                            : "bg-green-100 text-green-700"
+                        }`}
+                      >
+                        {skill}
+                      </span>
+                    ))}
                 </div>
-              
+              )}
+
+              {/* Action Buttons */}
+              <div className="flex justify-between items-center pt-4 border-t border-gray-100">
+                <Link
+                  to={`/job-application-details/${job._id}`}
+                  className="text-blue-600 text-sm font-medium hover:text-blue-700 flex items-center gap-1 transition-colors"
+                >
+                  View Details
+                  <MoveRight className="w-4 h-4" />
+                </Link>
+
+                <div className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-xs font-medium">
+                  Status: Pending
+                </div>
+              </div>
             </div>
           ))}
         </div>

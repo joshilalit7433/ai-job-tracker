@@ -41,7 +41,7 @@ const JobApplicationForm = () => {
       );
 
       if (res.data.success) {
-        toast.success("Job posted successfully!");
+        toast.success("Job posted successfully!",{position: "bottom-right"});
         setFormData({
           title: "",
           salary: "",

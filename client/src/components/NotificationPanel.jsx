@@ -53,7 +53,7 @@ const NotificationPanel = () => {
       );
 
       if (res.data.success) {
-        toast.success("Notification removed successfully");
+        toast.success("Notification removed successfully",{position:"bottom-right"});
         setNotifications(notifications.filter((n) => n._id !== n_id));
       } else {
         toast.error(res.data.message || "Failed to delete notification",{position:"bottom-right"});

@@ -57,7 +57,7 @@ const RecruiterPostedJobApplication = () => {
       );
 
       if (res.data.success) {
-        toast.success("Job application deleted successfully!");
+        toast.success("Job application deleted successfully!",{position:"bottom-right"});
         setJobs(jobs.filter((job) => job._id !== id));
       } else {
         toast.error(res.data.message || "Failed to delete job application.", {
