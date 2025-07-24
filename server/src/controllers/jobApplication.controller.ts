@@ -1,12 +1,13 @@
+import { Request, Response } from "express";
+import { JobApplication } from "../models/jobApplication.model";
+import { Applicant } from "../models/applicant.model";
+import { io, userSocketMap } from "../index";
+import { Notification } from "../models/notification.model";
+import { User } from "../models/user.model";
+import { sendEmail } from "../utils/sendEmail";
+import { AuthRequest } from "../types/express/AuthRequest";
 
-import { JobApplication } from "../models/jobApplication.model.js";
-import { Applicant } from "../models/applicant.model.js";
-import { io, userSocketMap } from "../index.js";
-import { Notification } from "../models/notification.model.js";
-import { User } from "../models/user.model.js";
-import { sendEmail } from "../utils/sendEmail.js";
-
-export const PostJobApplication = async (req, res) => {
+export const PostJobApplication = async (req:AuthRequest, res:Response) => {
   try {
     const {
       title,
@@ -45,7 +46,7 @@ export const PostJobApplication = async (req, res) => {
     }
 
     const jobApplication = await JobApplication.create({
-      user: req.user._id,
+      user: req.user!._id,
       title,
       salary,
       location,
@@ -66,7 +67,7 @@ export const PostJobApplication = async (req, res) => {
     });
 
     await sendEmail(
-      req.user.email,
+      req.user!.email,
       "Job Application Response",
       "Your job application has been submitted and is awaiting admin approval."
     );
@@ -85,7 +86,7 @@ export const PostJobApplication = async (req, res) => {
   }
 };
 
-export const UpdateJobApplication = async (req, res) => {
+export const UpdateJobApplication = async (req:AuthRequest, res:Response) => {
   try {
     const updates = req.body;
     const jobapplicationId = req.params.id;
@@ -99,7 +100,7 @@ export const UpdateJobApplication = async (req, res) => {
       });
     }
 
-    if (jobapplication.user.toString() !== req.user._id.toString()) {
+    if (jobapplication.user.toString() !== req.user!._id.toString()) {
       return res.status(403).json({
         message: "Unauthorized to update this job application",
         success: false,
@@ -123,7 +124,7 @@ export const UpdateJobApplication = async (req, res) => {
   }
 };
 
-export const GetJobApplication = async (req, res) => {
+export const GetJobApplication = async (req: Request, res: Response) => {
   try {
     const jobapplications = await JobApplication.find();
     return res.status(200).json({ jobapplications, success: true });
@@ -136,7 +137,7 @@ export const GetJobApplication = async (req, res) => {
   }
 };
 
-export const getJobApplicationByCategory = async (req, res) => {
+export const getJobApplicationByCategory = async (req: Request, res: Response) => {
   try {
     const { categoryName } = req.params;
 
@@ -159,81 +160,65 @@ export const getJobApplicationByCategory = async (req, res) => {
 };
 
 
-export const GetJobApplicationById = async (req, res) => {
+export const GetJobApplicationById = async (req: Request, res: Response) => {
   try {
     const jobapplication = await JobApplication.findById(req.params.id);
     if (!jobapplication) {
-      return res
-        .status(404)
-        .json({ message: "Job application not found", success: false });
+      return res.status(404).json({ message: "Job application not found", success: false });
     }
     return res.status(200).json({ success: true, jobapplication });
   } catch (error) {
     console.error("GetJobApplicationById Error:", error);
-    return res
-      .status(500)
-      .json({ message: "Failed to fetch job application", success: false });
+    return res.status(500).json({ message: "Failed to fetch job application", success: false });
   }
 };
 
-export const DeleteJobApplication = async (req, res) => {
+export const DeleteJobApplication = async (req: AuthRequest, res: Response) => {
   try {
     const jobapplication = await JobApplication.findById(req.params.id);
     if (!jobapplication) {
-      return res
-        .status(404)
-        .json({ message: "Job application not found", success: false });
+      return res.status(404).json({ message: "Job application not found", success: false });
     }
 
-    if (jobapplication.user.toString() !== req.user._id.toString()) {
-      return res
-        .status(403)
-        .json({ message: "Unauthorized to delete this job", success: false });
+    if (jobapplication.user.toString() !== req.user!._id.toString()) {
+      return res.status(403).json({ message: "Unauthorized to delete this job", success: false });
     }
 
     await jobapplication.deleteOne();
-    await User.findByIdAndUpdate(req.user._id, {
+    await User.findByIdAndUpdate(req.user!._id, {
       $inc: { totalJobsPosted: -1 },
     });
 
-    return res
-      .status(200)
-      .json({ message: "Job deleted successfully", success: true });
+    return res.status(200).json({ message: "Job deleted successfully", success: true });
   } catch (error) {
     console.error("DeleteJobApplication Error:", error);
-    return res
-      .status(500)
-      .json({ message: "Server error while deleting job", success: false });
+    return res.status(500).json({ message: "Server error while deleting job", success: false });
   }
 };
 
-export const GetRecruiterPostedJobApplication = async (req, res) => {
+export const GetRecruiterPostedJobApplication = async (req: AuthRequest, res: Response) => {
   try {
-    const jobs = await JobApplication.find({ user: req.user._id });
+    const jobs = await JobApplication.find({ user: req.user!._id });
     return res.status(200).json({ jobapplications: jobs, success: true });
   } catch (error) {
     console.error("GetRecruiterPostedJobApplication Error:", error);
-    return res
-      .status(500)
-      .json({ message: "Error fetching jobs", success: false });
+    return res.status(500).json({ message: "Error fetching jobs", success: false });
   }
 };
 
 
-
-export const GetUserAppliedJobApplication = async (req, res) => {
+export const GetUserAppliedJobApplication = async (req: AuthRequest, res: Response) => {
   try {
-    const jobs = await Applicant.find({ user: req.user._id }).populate("job");
+    const jobs = await Applicant.find({ user: req.user!._id }).populate("job");
     return res.status(200).json({ appliedJobs: jobs, success: true });
   } catch (error) {
     console.error("GetUserAppliedJobApplication Error:", error);
-    return res
-      .status(500)
-      .json({ message: "Error fetching applied jobs", success: false });
+    return res.status(500).json({ message: "Error fetching applied jobs", success: false });
   }
 };
 
-export const getPendingJobs = async (req, res) => {
+
+export const getPendingJobs = async (req: Request, res: Response) => {
   try {
     const jobs = await JobApplication.find({ isApproved: false });
     return res.status(200).json({ jobs, success: true });
@@ -243,7 +228,7 @@ export const getPendingJobs = async (req, res) => {
   }
 };
 
-export const approveJob = async (req, res) => {
+export const approveJob = async (req: Request, res: Response) => {
   try {
     const job = await JobApplication.findById(req.params.id);
     if (!job)
@@ -265,7 +250,7 @@ export const approveJob = async (req, res) => {
 
     const sockets = userSocketMap.get(job.user.toString());
     if (sockets) {
-      sockets.forEach((socketId) => {
+      sockets.forEach((socketId: string) => {
         io.to(socketId).emit("jobAlert", {
           title: job.title,
           company_name: job.company_name,
@@ -274,18 +259,14 @@ export const approveJob = async (req, res) => {
       });
     }
 
-    return res
-      .status(200)
-      .json({ message: "Job approved successfully", job, success: true });
+    return res.status(200).json({ message: "Job approved successfully", job, success: true });
   } catch (error) {
     console.error("approveJob Error:", error);
-    return res
-      .status(500)
-      .json({ message: "Error approving job", success: false });
+    return res.status(500).json({ message: "Error approving job", success: false });
   }
 };
 
-export const rejectJob = async (req, res) => {
+export const rejectJob = async (req: Request, res: Response) => {
   try {
     const job = await JobApplication.findById(req.params.id);
 
@@ -301,23 +282,19 @@ export const rejectJob = async (req, res) => {
 
     await JobApplication.findByIdAndDelete(req.params.id);
 
-    return res
-      .status(200)
-      .json({ message: "Job rejected and deleted", success: true });
+    return res.status(200).json({ message: "Job rejected and deleted", success: true });
   } catch (error) {
     console.error("rejectJob Error:", error);
-    return res
-      .status(500)
-      .json({ message: "Error rejecting job", success: false });
+    return res.status(500).json({ message: "Error rejecting job", success: false });
   }
 };
 
 
-export const JobCategoryCount = async (req,res) =>{
+export const JobCategoryCount = async (req: Request, res: Response) => {
   try {
     const jobs = await JobApplication.find({ isApproved: true });
 
-    const counts = jobs.reduce((acc, job) => {
+    const counts = jobs.reduce((acc: Record<string, number>, job) => {
       acc[job.jobCategory] = (acc[job.jobCategory] || 0) + 1;
       return acc;
     }, {});
@@ -327,7 +304,7 @@ export const JobCategoryCount = async (req,res) =>{
     console.error("Error getting job counts:", error);
     res.status(500).json({ success: false, message: "Server error" });
   }
-}
+};
 
 
 

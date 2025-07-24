@@ -1,24 +1,24 @@
 import express from "express";
-import { PostJobApplication,UpdateJobApplication,GetJobApplication,getJobApplicationByCategory,GetJobApplicationById,DeleteJobApplication,GetRecruiterPostedJobApplication,GetUserAppliedJobApplication, approveJob, rejectJob, getPendingJobs,JobCategoryCount} from "../controllers/jobApplication.controller.js";
-import isAuthenticated from "../middlewares/isAutheticated.js";
-import { checkRole } from "../middlewares/checkRole.js";
+import { PostJobApplication,UpdateJobApplication,GetJobApplication,getJobApplicationByCategory,GetJobApplicationById,DeleteJobApplication,GetRecruiterPostedJobApplication,GetUserAppliedJobApplication, approveJob, rejectJob, getPendingJobs,JobCategoryCount} from "../controllers/jobApplication.controller";
+import isAuthenticated from "../middlewares/isAutheticated";
+import { checkRole } from "../middlewares/checkRole";
 
 
 const router=express.Router();
 
-router.route("/post-job-applications").post(isAuthenticated,checkRole("recruiter"),PostJobApplication);
-router.route("/update-job-application/:id").put(isAuthenticated,checkRole("recruiter"),UpdateJobApplication);
-router.route("/get-job-applications").get(GetJobApplication);
-router.route("/get-job-category-count").get(JobCategoryCount);
-router.route("/get-jobs-by-category/:categoryName").get(getJobApplicationByCategory);
-router.route("/get-job-application-by-id/:id").get(GetJobApplicationById);
-router.route("/delete-job-application/:id").delete(isAuthenticated,checkRole("recruiter"),DeleteJobApplication);
-router.route("/get-recruiter-posted-job-application/:recruiterid").get(isAuthenticated,checkRole("recruiter"),GetRecruiterPostedJobApplication);
-router.route("/get-user-applied-job-application").get(isAuthenticated,checkRole("user"),GetUserAppliedJobApplication);
+router.post("/post-job-applications",isAuthenticated,checkRole("recruiter"),PostJobApplication);
+router.put("/update-job-application/:id",isAuthenticated,checkRole("recruiter"),UpdateJobApplication);
+router.get("/get-job-applications",GetJobApplication);
+router.get("/get-job-category-count",JobCategoryCount);
+router.get("/get-jobs-by-category/:categoryName",getJobApplicationByCategory);
+router.get("/get-job-application-by-id/:id",GetJobApplicationById);
+router.delete("/delete-job-application/:id",isAuthenticated,checkRole("recruiter"),DeleteJobApplication);
+router.get("/get-recruiter-posted-job-application/:recruiterid",isAuthenticated,checkRole("recruiter"),GetRecruiterPostedJobApplication);
+router.get("/get-user-applied-job-application",isAuthenticated,checkRole("user"),GetUserAppliedJobApplication);
 
-router.route("/pending-jobs").get(isAuthenticated,checkRole("admin"), getPendingJobs);
-router.route("/approve-job/:id").put(isAuthenticated,checkRole("admin"), approveJob);
-router.route("/reject-job/:id").delete(isAuthenticated,checkRole("admin"), rejectJob);
+router.get("/pending-jobs",isAuthenticated,checkRole("admin"), getPendingJobs);
+router.put("/approve-job/:id",isAuthenticated,checkRole("admin"), approveJob);
+router.delete("/reject-job/:id",isAuthenticated,checkRole("admin"), rejectJob);
 
 
 
