@@ -1,13 +1,13 @@
 import jwt from "jsonwebtoken";
+import { Response, NextFunction } from "express";
+import { AuthRequest } from "../types/express/AuthRequest.js";
 import { User } from "../models/user.model.js";
 
-const isAuthenticated = async (req, res, next) => {
+const isAuthenticated = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-
     let token = req.cookies.token;
 
- 
-    if (!token && req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+    if (!token && req.headers.authorization?.startsWith("Bearer")) {
       token = req.headers.authorization.split(" ")[1];
     }
 
@@ -18,8 +18,9 @@ const isAuthenticated = async (req, res, next) => {
       });
     }
 
-  
-    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    const decoded = jwt.verify(token, process.env.SECRET_KEY!) as {
+      userid: string;
+    };
 
     const user = await User.findById(decoded.userid).select(
       "_id fullname email mobilenumber role resume cover_letter"
@@ -43,7 +44,7 @@ const isAuthenticated = async (req, res, next) => {
     };
 
     next();
-  } catch (error) {
+  } catch (error: any) {
     return res.status(401).json({
       message: "Authentication failed",
       success: false,

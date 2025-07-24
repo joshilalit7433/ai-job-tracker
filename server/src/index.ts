@@ -1,21 +1,28 @@
 import express from "express";
 import cookieParser from "cookie-parser";
-import path from "path";
-import { fileURLToPath } from "url";
 import cors from "cors";
 import http from "http";
+import path from "path";
+import { fileURLToPath } from "url";
 import dotenv from "dotenv";
 import { Server } from "socket.io";
 import jwt from "jsonwebtoken";
 
-import connectdb from "./utils/db.js";
-import userRoute from "../server/routes/user.route.js";
-import JobApplicationRoute from "../server/routes/jobApplication.route.js";
-import ApplicantRoute from "../server/routes/applicant.route.js";
-import NotificationRoute from "../server/routes/notification.route.js";
-import RecruiterDashboardRoute from "../server/routes/recruiterDashboard.route.js";
+import connectdb from "./utils/db";
+import userRoute from "./routes/user.route";
+import JobApplicationRoute from "./routes/jobApplication.route";
+import ApplicantRoute from "./routes/applicant.route";
+import NotificationRoute from "./routes/notification.route";
+import RecruiterDashboardRoute from "./routes/recruiterDashboard.route";
 
+// Load env variables
 dotenv.config();
+
+// Validate required env variables
+const SECRET_KEY = process.env.SECRET_KEY;
+if (!SECRET_KEY) {
+  throw new Error("SECRET_KEY is missing from .env");
+}
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
@@ -32,18 +39,18 @@ app.use(
   })
 );
 
-// DB connection
+// Connect to MongoDB
 connectdb();
 
-// Routes
+// API Routes
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/job-application", JobApplicationRoute);
 app.use("/api/v1/applicant", ApplicantRoute);
 app.use("/api/v1/notifications", NotificationRoute);
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/v1/recruiter", RecruiterDashboardRoute);
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// HTTP & Socket Server
+// HTTP + WebSocket server
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
@@ -53,7 +60,7 @@ const io = new Server(server, {
 });
 
 // Track sockets per user
-const userSocketMap = new Map();
+const userSocketMap = new Map<string, Set<string>>();
 
 io.on("connection", (socket) => {
   console.log("🔌 Connected:", socket.id);
@@ -62,13 +69,15 @@ io.on("connection", (socket) => {
 
   if (token) {
     try {
-      const decoded = jwt.verify(token, process.env.SECRET_KEY);
+      const decoded = jwt.verify(token, SECRET_KEY) as { userid: string };
+
       const userId = decoded.userid;
 
       if (!userSocketMap.has(userId)) {
         userSocketMap.set(userId, new Set());
       }
-      userSocketMap.get(userId).add(socket.id);
+
+      userSocketMap.get(userId)!.add(socket.id);
 
       console.log(` Mapped user ${userId} to socket ${socket.id}`);
 
@@ -92,7 +101,7 @@ io.on("connection", (socket) => {
 
 const PORT = process.env.PORT || 8000;
 server.listen(PORT, () => {
-  console.log(` Server running on port ${PORT}`);
+  console.log(` Server running on http://localhost:${PORT}`);
 });
 
 export { io, userSocketMap };

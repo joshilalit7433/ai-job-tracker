@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 import dotenv from "dotenv";
 import { CohereClient } from "cohere-ai";
-
+import { fileURLToPath } from "url";
 import { Applicant } from "../models/applicant.model.js";
 import { JobApplication } from "../models/jobApplication.model.js";
 import { User } from "../models/user.model.js";
@@ -14,8 +14,11 @@ dotenv.config();
 
 const cohere = new CohereClient({ token: process.env.COHERE_API_KEY });
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const skillReference = JSON.parse(
-  fs.readFileSync(path.join("data", "skills_reference.json"), "utf-8")
+  fs.readFileSync(path.join(__dirname, "../data/skills_reference.json"), "utf-8")
 );
 
 const normalizeSkill = (skill) =>
