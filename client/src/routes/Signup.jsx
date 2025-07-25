@@ -8,10 +8,10 @@ import { Mail, Lock, Phone, User } from "lucide-react";
 
 const Signup = () =>{
     const initialvalues={
-    fullname: "",
+    fullName: "",
     email: "",
     password: "",
-    mobilenumber: "",
+    mobileNumber: "",
     role: "",
     };
 
@@ -32,9 +32,9 @@ const Signup = () =>{
         setsubmit(true);
 
         const formData= new FormData();
-        formData.append("fullname",formvalues.fullname);
+        formData.append("fullName",formvalues.fullName);
         formData.append("email",formvalues.email);
-        formData.append("mobilenumber",formvalues.mobilenumber);
+        formData.append("mobileNumber",formvalues.mobileNumber);
         formData.append("password",formvalues.password);
         formData.append("role",formvalues.role);
 
@@ -84,8 +84,8 @@ const Signup = () =>{
     const errors = {};
     const regx = /^\w+([.-]?\w+)@\w+([.-]?\w+)(\.\w{2,3})+$/i;
 
-    if (!values.fullname) {
-      errors.fullname = "Full name is required";
+    if (!values.fullName) {
+      errors.fullName = "Full name is required";
     }
 
     if (!values.email) {
@@ -100,13 +100,13 @@ const Signup = () =>{
       errors.password = "Password should not be less than 4 characters";
     }
 
-    if (!values.mobilenumber) {
-      errors.mobilenumber = "Mobile number is required";
+    if (!values.mobileNumber) {
+      errors.mobileNumber = "Mobile number is required";
     } else if (
-      values.mobilenumber.length < 10 ||
-      values.mobilenumber.length > 11
+      values.mobileNumber.length < 10 ||
+      values.mobileNumber.length > 11
     ) {
-      errors.mobilenumber = "Invalid mobile number";
+      errors.mobileNumber = "Invalid mobile number";
     }
 
     if (!values.role) {
@@ -140,13 +140,13 @@ const Signup = () =>{
                 type="text"
                 onChange={handleChange}
                 placeholder="Full Name"
-                name="fullname"
+                name="fullName"
                 className="bg-transparent w-full text-[#131D4F] focus:outline-none text-sm sm:text-base"
-                value={formvalues.fullname}
+                value={formvalues.fullName}
               />
             </div>
             <p className="text-black text-xs sm:text-sm mt-1">
-              {formerrors.fullname}
+              {formerrors.fullName}
             </p>
           </div>
 
@@ -199,13 +199,13 @@ const Signup = () =>{
                 type="number"
                 onChange={handleChange}
                 placeholder="Mobile Number"
-                name="mobilenumber"
+                name="mobileNumber"
                 className="bg-transparent w-full text-[#131D4F] focus:outline-none text-sm sm:text-base"
-                value={formvalues.mobilenumber}
+                value={formvalues.mobileNumber}
               />
             </div>
             <p className="text-[#131D4F] text-xs sm:text-sm mt-1">
-              {formerrors.mobilenumber}
+              {formerrors.mobileNumber}
             </p>
           </div>
 

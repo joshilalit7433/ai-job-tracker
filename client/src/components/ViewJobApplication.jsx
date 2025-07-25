@@ -121,7 +121,7 @@ const ViewJobApplication = () => {
           <div className="flex items-center gap-4">
             <img
               src={jobApplication.image}
-              alt={jobApplication.company_name}
+              alt={jobApplication.companyName}
               className="w-14 h-14 object-contain rounded border"
               onError={(e) => (e.target.src = "/images/placeholder.jpg")}
             />
@@ -130,12 +130,12 @@ const ViewJobApplication = () => {
                 {jobApplication.title}
               </h1>
               <p className="text-blue-600 text-sm font-medium">
-                {jobApplication.company_name}
+                {jobApplication.companyName}
               </p>
             </div>
           </div>
           <span className="text-xs px-3 py-1 border border-blue-500 text-blue-600 rounded-md font-semibold">
-            {jobApplication.job_type}
+            {jobApplication.jobType}
           </span>
         </div>
 

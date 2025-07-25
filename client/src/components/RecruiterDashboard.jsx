@@ -136,7 +136,7 @@ export default function SidebarDashboard() {
     },
   ];
 
-  const firstName = user?.fullname?.split(" ")[0] || "Recruiter";
+  const firstName = user?.fullName?.split(" ")[0] || "Recruiter";
   const userEmail = user?.email || "recruiter@example.com";
 
   return (
@@ -178,7 +178,7 @@ export default function SidebarDashboard() {
               </div>
               <div>
                 <p className="font-semibold text-[#131D4F]">
-                  {user?.fullname || "Recruiter"}
+                  {user?.fullName || "Recruiter"}
                 </p>
                 <p className="text-xs text-gray-500">{userEmail}</p>
               </div>

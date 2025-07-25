@@ -2,14 +2,14 @@
 import { Document } from "mongoose";
 
 export interface IUser extends Document {
-  fullname: string;
+  fullName: string;
   email: string;
   password: string;
-  mobilenumber: number;
+  mobileNumber: number;
   role: "user" | "recruiter" | "admin";
   resume?: string;
-  cover_letter?: string;
-  resume_analysis?: string;
+  coverLetter?: string;
+  resumeAnalysis?: string;
   savedJobs: string[]; 
   totalJobsPosted: number;
   createdAt?: Date;

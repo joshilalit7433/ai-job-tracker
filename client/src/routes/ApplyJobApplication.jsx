@@ -135,7 +135,7 @@ const ApplyJobForm = () => {
     setSkillAnalysis(null);
 
     const finalResume = uploadedResumeURL || user?.resume;
-    const finalCoverLetter = coverLetter || user?.cover_letter;
+    const finalCoverLetter = coverLetter || user?.coverLetter;
 
     if (!finalResume || !finalCoverLetter) {
       toast.error("Resume and cover letter are required", {
@@ -150,7 +150,7 @@ const ApplyJobForm = () => {
         `${JOB_APPLICANT_API_END_POINT}/apply/${id}`,
         {
           resume: finalResume,
-          cover_letter: finalCoverLetter,
+          coverLetter: finalCoverLetter,
         },
         {
           withCredentials: true,

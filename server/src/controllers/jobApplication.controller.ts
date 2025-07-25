@@ -13,8 +13,8 @@ export const PostJobApplication = async (req:AuthRequest, res:Response) => {
       title,
       salary,
       location,
-      company_name,
-      job_type,
+      companyName,
+      jobType,
       benefits,
       experience,
       responsibilities,
@@ -29,8 +29,8 @@ export const PostJobApplication = async (req:AuthRequest, res:Response) => {
       !title ||
       !salary ||
       !location ||
-      !company_name ||
-      !job_type ||
+      !companyName ||
+      !jobType ||
       !benefits ||
       !experience ||
       !responsibilities ||
@@ -50,8 +50,8 @@ export const PostJobApplication = async (req:AuthRequest, res:Response) => {
       title,
       salary,
       location,
-      company_name,
-      job_type,
+      companyName,
+      jobType,
       benefits,
       experience,
       responsibilities,
@@ -244,7 +244,7 @@ export const approveJob = async (req: Request, res: Response) => {
     await Notification.create({
       user: job.user.toString(),
       title: job.title,
-      company_name: job.company_name,
+      companyName: job.companyName,
       location: job.location,
     });
 
@@ -253,7 +253,7 @@ export const approveJob = async (req: Request, res: Response) => {
       sockets.forEach((socketId: string) => {
         io.to(socketId).emit("jobAlert", {
           title: job.title,
-          company_name: job.company_name,
+          companyName: job.companyName,
           location: job.location,
         });
       });

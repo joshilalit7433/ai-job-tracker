@@ -94,12 +94,12 @@ const AdminDashboard = () => {
               <div className="flex justify-between items-center mb-4">
                 <img
                   src={job.image}
-                  alt={job.company_name}
+                  alt={job.companyName}
                   className="w-12 h-12 object-contain rounded-lg"
                   onError={(e) => (e.target.src = "./images/placeholder.jpg")}
                 />
                 <span className="text-xs px-3 py-1 border border-blue-500 text-blue-600 rounded-full font-medium">
-                  {job.job_type}
+                  {job.jobType}
                 </span>
               </div>
 
@@ -112,7 +112,7 @@ const AdminDashboard = () => {
               <div className="space-y-2 mb-4">
                 <p className="text-sm text-gray-600 flex items-center gap-2">
                   <BriefcaseBusiness className="w-4 h-4 text-gray-500" />
-                  <span className="truncate">{job.company_name}</span>
+                  <span className="truncate">{job.companyName}</span>
                 </p>
                 <p className="text-sm text-gray-600 flex items-center gap-2">
                   <MapPinned className="w-4 h-4 text-gray-500" />

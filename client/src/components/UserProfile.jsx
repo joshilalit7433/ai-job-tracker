@@ -25,9 +25,9 @@ const UserProfile = () => {
 
           <div className="flex flex-col items-center">
             <div className="w-28 h-28 bg-gradient-to-tr from-blue-500 to-purple-400 text-white rounded-full flex items-center justify-center text-4xl font-bold shadow-lg border-4 border-white">
-              {user?.fullname?.charAt(0) || "U"}
+              {user?.fullName?.charAt(0) || "U"}
             </div>
-            <h1 className="text-3xl font-bold mt-4 text-[#131D4F]">{user?.fullname || "Unknown User"}</h1>
+            <h1 className="text-3xl font-bold mt-4 text-[#131D4F]">{user?.fullName || "Unknown User"}</h1>
             <p className="text-gray-500 mt-1">{user?.email}</p>
           </div>
 
@@ -41,7 +41,7 @@ const UserProfile = () => {
                 <p className="text-sm text-gray-600">Email</p>
                 <p className="text-gray-900 font-medium">{user?.email}</p>
                 <p className="text-sm text-gray-600">Mobile</p>
-                <p className="text-gray-900 font-medium">{user?.mobilenumber || "Not Provided"}</p>
+                <p className="text-gray-900 font-medium">{user?.mobileNumber || "Not Provided"}</p>
               </div>
             </div>
 
@@ -95,11 +95,11 @@ const UserProfile = () => {
                   <p className="text-sm text-gray-600">No resume uploaded yet.</p>
                 )}
 
-                {user?.cover_letter ? (
+                {user?.coverLetter ? (
                   <div className="mt-3">
                     <p className="text-sm text-gray-600">Cover Letter:</p>
                     <p className="text-sm text-gray-800 bg-gray-100 p-3 rounded shadow whitespace-pre-wrap">
-                      {user.cover_letter}
+                      {user.coverLetter}
                     </p>
                   </div>
                 ) : (

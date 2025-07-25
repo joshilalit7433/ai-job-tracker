@@ -7,8 +7,8 @@ const JobApplicationSchema = new Schema<IJobApplication>(
     title: { type: String, required: true },
     salary: { type: Number, required: true },
     location: { type: String, required: true },
-    company_name: { type: String, required: true },
-    job_type: {
+    companyName: { type: String, required: true },
+    jobType: {
       type: String,
       enum: ["part-time", "full-time"],
       default: "full-time",

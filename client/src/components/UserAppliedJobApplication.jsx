@@ -74,7 +74,7 @@ const UserAppliedJobApplication = () => {
                   </h3>
                   <p className="text-gray-700">
                     <Building2 className="w-5 h-5 text-gray-500 inline-block mr-1" />
-                    {job.company_name}
+                    {job.companyName}
                   </p>
                   <p className="text-gray-700">
                     <Banknote className="w-5 h-5 text-gray-500 inline-block mr-1" />
@@ -86,7 +86,7 @@ const UserAppliedJobApplication = () => {
                   </p>
                   <p className="text-gray-700">
                     <Clock className="w-5 h-5 text-gray-500 inline-block mr-1" />
-                    {job.job_type}
+                    {job.jobType}
                   </p>
                   <Link
                     to={`/job-application-details/${job._id}`}

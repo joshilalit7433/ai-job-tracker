@@ -88,13 +88,13 @@ const ViewApplicants = () => {
                     className="hover:bg-gray-50 transition"
                   >
                     <td className="px-6 py-4 text-gray-800 font-medium capitalize">
-                      {applicant.fullname}
+                      {applicant.fullName}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-700">
                       {applicant.email}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-700">
-                      {applicant.mobilenumber}
+                      {applicant.mobileNumber}
                     </td>
                     <td className="px-6 py-4 text-sm">
                       <a
@@ -108,7 +108,7 @@ const ViewApplicants = () => {
                       </a>
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-700 max-w-xs whitespace-pre-wrap break-words">
-                      {applicant.cover_letter || "N/A"}
+                      {applicant.coverLetter || "N/A"}
                     </td>
                     <td className="px-6 py-4 text-sm text-green-700">
                       {(applicant.matchedSkills || []).join(", ") || "N/A"}
@@ -139,7 +139,7 @@ const ViewApplicants = () => {
               >
                 <div>
                   <span className="font-semibold text-gray-800">Name:</span>{" "}
-                  {applicant.fullname}
+                  {applicant.fullName}
                 </div>
                 <div>
                   <span className="font-semibold text-gray-800">Email:</span>{" "}
@@ -147,7 +147,7 @@ const ViewApplicants = () => {
                 </div>
                 <div>
                   <span className="font-semibold text-gray-800">Mobile:</span>{" "}
-                  {applicant.mobilenumber}
+                  {applicant.mobileNumber}
                 </div>
                 <div>
                   <span className="font-semibold text-gray-800">Resume:</span>{" "}
@@ -165,7 +165,7 @@ const ViewApplicants = () => {
                     Cover Letter:
                   </span>
                   <div className="mt-1 text-sm text-gray-700 whitespace-pre-wrap break-words">
-                    {applicant.cover_letter || "N/A"}
+                    {applicant.coverLetter || "N/A"}
                   </div>
                 </div>
                 <div>

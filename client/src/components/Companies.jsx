@@ -39,10 +39,10 @@ const Companies = () => {
             <div key={company._id} className="flex flex-col items-center mx-8 min-w-[120px]">
               <img
                 src={company.image}
-                alt={company.company_name}
+                alt={company.companyName}
                 className="h-16 object-contain mb-2"
               />
-              <p className="text-sm text-center">{company.company_name}</p>
+              <p className="text-sm text-center">{company.companyName}</p>
             </div>
           ))}
           {/* Duplicate for seamless loop */}
@@ -50,10 +50,10 @@ const Companies = () => {
             <div key={`duplicate-${company._id}`} className="flex flex-col items-center mx-8 min-w-[120px]">
               <img
                 src={company.image}
-                alt={company.company_name}
+                alt={company.companyName}
                 className="h-16 object-contain mb-2"
               />
-              <p className="text-sm text-center">{company.company_name}</p>
+              <p className="text-sm text-center">{company.companyName}</p>
             </div>
           ))}
         </div>
@@ -66,10 +66,10 @@ const Companies = () => {
             <div key={company._id} className="flex flex-col items-center mx-8 min-w-[120px]">
               <img
                 src={company.image}
-                alt={company.company_name}
+                alt={company.companyName}
                 className="h-16 object-contain mb-2"
               />
-              <p className="text-sm text-center">{company.company_name}</p>
+              <p className="text-sm text-center">{company.companyName}</p>
             </div>
           ))}
           {/* Duplicate for seamless loop */}
@@ -77,10 +77,10 @@ const Companies = () => {
             <div key={`duplicate-${company._id}`} className="flex flex-col items-center mx-8 min-w-[120px]">
               <img
                 src={company.image}
-                alt={company.company_name}
+                alt={company.companyName}
                 className="h-16 object-contain mb-2"
               />
-              <p className="text-sm text-center">{company.company_name}</p>
+              <p className="text-sm text-center">{company.companyName}</p>
             </div>
           ))}
         </div>

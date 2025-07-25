@@ -108,13 +108,13 @@ const RecruiterPostedJobApplication = () => {
                 <h3 className="text-2xl font-bold text-blue-700 capitalize group-hover:text-blue-800 transition">
                   {job.title}
                 </h3>
-                <p className="text-gray-600 font-medium text-base">{job.company_name}</p>
+                <p className="text-gray-600 font-medium text-base">{job.companyName}</p>
               </div>
 
               <div className="grid grid-cols-1 gap-1 text-sm text-gray-700 mb-4">
                 <p><span className="font-semibold text-[#131D4F]">Salary:</span> {job.salary}</p>
                 <p><span className="font-semibold text-[#131D4F]">Location:</span> {job.location}</p>
-                <p><span className="font-semibold text-[#131D4F]">Type:</span> {job.job_type}</p>
+                <p><span className="font-semibold text-[#131D4F]">Type:</span> {job.jobType}</p>
                 <p><span className="font-semibold text-[#131D4F]">Experience:</span> {job.experience}</p>
                 <p><span className="font-semibold text-[#131D4F]">Benefits:</span> {job.benefits}</p>
                 <p><span className="font-semibold text-[#131D4F]">Responsibilities:</span> {job.responsibilities}</p>

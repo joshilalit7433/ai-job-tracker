@@ -23,7 +23,7 @@ const isAuthenticated = async (req: AuthRequest, res: Response, next: NextFuncti
     };
 
     const user = await User.findById(decoded.userid).select(
-      "_id fullname email mobilenumber role resume cover_letter"
+      "_id fullName email mobileNumber role resume coverLetter"
     );
 
     if (!user) {
@@ -35,12 +35,12 @@ const isAuthenticated = async (req: AuthRequest, res: Response, next: NextFuncti
 
     req.user = {
       _id: user._id,
-      fullname: user.fullname,
+      fullName: user.fullName,
       email: user.email,
-      mobilenumber: user.mobilenumber,
+      mobileNumber: user.mobileNumber,
       role: user.role,
       resume: user.resume,
-      cover_letter: user.cover_letter,
+      coverLetter: user.coverLetter,
     };
 
     next();

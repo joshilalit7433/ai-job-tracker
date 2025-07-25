@@ -84,7 +84,7 @@ const UserSavedJobApplication = () => {
                   </h3>
                   <p className="text-gray-700 mb-1 flex items-center gap-2">
                     <Building2 className="w-4 h-4 text-gray-500" />
-                    {job.company_name}
+                    {job.companyName}
                   </p>
                   <p className="text-gray-700 mb-1 flex items-center gap-2">
                     <MapPinned className="w-4 h-4 text-gray-500" />

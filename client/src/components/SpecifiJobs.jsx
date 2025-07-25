@@ -78,7 +78,7 @@ const SpecifiJobs = () => {
 
       const matchesCompany =
         !filters.Company ||
-        job.company_name.toLowerCase().includes(filters.Company.toLowerCase());
+        job.companyName.toLowerCase().includes(filters.Company.toLowerCase());
 
       return matchesSalary && matchesLocation && matchesCompany;
     });
@@ -130,12 +130,12 @@ const SpecifiJobs = () => {
                 <div className="flex justify-between items-center mb-3">
                   <img
                     src={job.image}
-                    alt={job.company_name}
+                    alt={job.companyName}
                     className="w-10 h-10 object-contain rounded"
                     onError={(e) => (e.target.src = "./images/placeholder.jpg")}
                   />
                   <span className="text-xs px-2 py-1 border border-blue-500 text-blue-600 rounded-md font-semibold">
-                    {job.job_type}
+                    {job.jobType}
                   </span>
                 </div>
 
@@ -145,7 +145,7 @@ const SpecifiJobs = () => {
 
                 <p className="text-sm text-gray-600 mb-1">
                   <BriefcaseBusiness className="w-5 h-5 text-gray-600 inline-block mr-2" />
-                  {job.company_name}
+                  {job.companyName}
                 </p>
 
                 <p className="text-sm text-gray-600 mb-1">

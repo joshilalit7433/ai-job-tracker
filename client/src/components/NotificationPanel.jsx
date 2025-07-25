@@ -90,7 +90,7 @@ const NotificationPanel = () => {
 
                 <div className="flex items-center gap-2 text-gray-700">
                   <Building2 className="w-4 h-4" />
-                  <span>{n.company_name}</span>
+                  <span>{n.companyName}</span>
                 </div>
 
                 <div className="flex items-center gap-2 text-gray-600 text-sm mt-1">

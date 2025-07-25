@@ -14,8 +14,8 @@ const EditJobApplication = () => {
     title: "",
     salary: "",
     location: "",
-    company_name: "",
-    job_type: "",
+    companyName: "",
+    jobType: "",
     benefits: "",
     experience: "",
     responsibilities: "",
@@ -148,7 +148,7 @@ const EditJobApplication = () => {
             { label: "Title", name: "title", type: "text" },
             { label: "Salary", name: "salary", type: "number" },
             { label: "Location", name: "location", type: "text" },
-            { label: "Company Name", name: "company_name", type: "text" },
+            { label: "Company Name", name: "companyName", type: "text" },
             { label: "Benefits", name: "benefits", type: "text" },
             { label: "Experience", name: "experience", type: "text" },
             {
@@ -175,8 +175,8 @@ const EditJobApplication = () => {
           <div className="mb-4">
             <label className="block text-sm font-medium mb-1">Job Type</label>
             <select
-              name="job_type"
-              value={formData.job_type}
+              name="jobType"
+              value={formData.jobType}
               onChange={handleChange}
               className="w-full border border-gray-300 rounded-md p-2"
             >

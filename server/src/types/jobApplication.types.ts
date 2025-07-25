@@ -5,8 +5,8 @@ export interface IJobApplication extends Document {
   title: string;
   salary: number;
   location: string;
-  company_name: string;
-  job_type: "part-time" | "full-time";
+  companyName: string;
+  jobType: "part-time" | "full-time";
   benefits?: string;
   experience: string;
   responsibilities: string;

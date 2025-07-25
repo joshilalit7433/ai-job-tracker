@@ -136,10 +136,10 @@ const Navbar = () => {
                     className="flex items-center space-x-2"
                   >
                     <div className="w-9 h-9 bg-white text-[#131D4F] rounded-full flex justify-center items-center font-semibold">
-                      {user.fullname?.charAt(0)}
+                      {user.fullName?.charAt(0)}
                     </div>
                     <span className="hidden md:block text-sm font-medium">
-                      {user.fullname?.split(" ")[0]}
+                      {user.fullName?.split(" ")[0]}
                     </span>
                     <ChevronDown className="w-4 h-4" />
                   </Button>
@@ -199,10 +199,10 @@ const Navbar = () => {
               <div className="bg-white rounded-lg p-4 mb-6 shadow-sm">
                 <div className="flex items-center space-x-3">
                   <div className="w-12 h-12 bg-purple-600 text-white rounded-full flex items-center justify-center font-semibold text-lg">
-                    {user.fullname?.charAt(0)}
+                    {user.fullName?.charAt(0)}
                   </div>
                   <div>
-                    <h3 className="font-semibold text-sm">{user.fullname}</h3>
+                    <h3 className="font-semibold text-sm">{user.fullName}</h3>
                     <p className="text-xs text-gray-500">{user.email}</p>
                   </div>
                 </div>

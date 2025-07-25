@@ -8,7 +8,7 @@ const notificationSchema = new mongoose.Schema(
       required: true,
     },
     title: String,
-    company_name: String,
+    companyName: String,
     location: String,
     isRead: {
       type: Boolean,

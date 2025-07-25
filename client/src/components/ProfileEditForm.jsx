@@ -12,9 +12,9 @@ const ProfileEditForm = ({ onClose }) => {
   const dispatch = useDispatch();
 
   const [formData, setFormData] = useState({
-    fullname: "",
+    fullName: "",
     email: "",
-    mobilenumber: "",
+    mobileNumber: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -22,9 +22,9 @@ const ProfileEditForm = ({ onClose }) => {
   useEffect(() => {
     if (user) {
       setFormData({
-        fullname: user.fullname || "",
+        fullName: user.fullName || "",
         email: user.email || "",
-        mobilenumber: user.mobilenumber || "",
+        mobileNumber: user.mobileNumber || "",
       });
     }
   }, [user]);
@@ -38,10 +38,10 @@ const ProfileEditForm = ({ onClose }) => {
     e.preventDefault();
 
     const dataToUpdate = {};
-    if (formData.fullname !== user.fullname) dataToUpdate.fullname = formData.fullname;
+    if (formData.fullName !== user.fullName) dataToUpdate.fullName = formData.fullName;
     if (formData.email !== user.email) dataToUpdate.email = formData.email;
-    if (formData.mobilenumber !== user.mobilenumber)
-      dataToUpdate.mobilenumber = formData.mobilenumber;
+    if (formData.mobileNumber !== user.mobileNumber)
+      dataToUpdate.mobileNumber = formData.mobileNumber;
 
     if (Object.keys(dataToUpdate).length === 0) {
       toast.info("No changes made.",{position:"bottom-right"});
@@ -105,8 +105,8 @@ const ProfileEditForm = ({ onClose }) => {
         </label>
         <input
           type="text"
-          name="fullname"
-          value={formData.fullname}
+          name="fullName"
+          value={formData.fullName}
           onChange={handleChange}
           className="w-full border border-gray-300 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white/80"
           placeholder="Enter new name"
@@ -133,8 +133,8 @@ const ProfileEditForm = ({ onClose }) => {
         </label>
         <input
           type="text"
-          name="mobilenumber"
-          value={formData.mobilenumber}
+          name="mobileNumber"
+          value={formData.mobileNumber}
           onChange={handleChange}
           className="w-full border border-gray-300 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white/80"
           placeholder="Enter new number"

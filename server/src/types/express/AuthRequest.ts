@@ -2,12 +2,12 @@ import { Request } from "express";
 
 export interface AuthUser {
   _id: string;
-  fullname: string;
+  fullName: string;
   email: string;
-  mobilenumber: number;
+  mobileNumber: number;
   role: string;
   resume?: string;
-  cover_letter?: string;
+  coverLetter?: string;
 }
 
 export interface AuthRequest extends Request {

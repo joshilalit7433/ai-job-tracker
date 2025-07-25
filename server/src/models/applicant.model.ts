@@ -1,17 +1,18 @@
-import mongoose from "mongoose";
+import {Schema,model} from "mongoose";
+import { IApplicant } from "../types/applicant.types";
 
-const ApplicantSchema = new mongoose.Schema({
+const ApplicantSchema = new Schema<IApplicant>({
   job: {
-    type: mongoose.Schema.Types.ObjectId,
+    type:Schema.Types.ObjectId,
     ref: "JobApplication",
     required: true,
   },
   user: {
-    type: mongoose.Schema.Types.ObjectId,
+    type:Schema.Types.ObjectId,
     ref: "User",
     required: true,
   },
-  fullname: {
+  fullName: {
     type: String,
     required: true,
   },
@@ -19,7 +20,7 @@ const ApplicantSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  mobilenumber: {
+  mobileNumber: {
     type: Number,
     required: true,
   },
@@ -36,7 +37,7 @@ const ApplicantSchema = new mongoose.Schema({
     enum: ["pending", "interview", "rejected", "shortlisted","hired"],
     default: "pending",
   },
-  cover_letter: {
+  coverLetter: {
     type: String,
     required: true,
   },
@@ -57,4 +58,4 @@ const ApplicantSchema = new mongoose.Schema({
   }
 },{timestamps:true});
 
-export const Applicant = mongoose.model("Applicant", ApplicantSchema);
+export const Applicant =model<IApplicant>("Applicant", ApplicantSchema);

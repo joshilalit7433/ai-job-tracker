@@ -10,9 +10,9 @@ import { AuthRequest } from "../types/express/AuthRequest";
 
 export const register = async (req: Request, res: Response) => {
   try {
-    const { fullname, email, password, mobilenumber, role } = req.body;
+    const { fullName, email, password, mobileNumber, role } = req.body;
 
-    if (!fullname || !email || !password || !mobilenumber || !role) {
+    if (!fullName || !email || !password || !mobileNumber || !role) {
       return res.status(400).json({ message: "All fields are required", success: false });
     }
 
@@ -23,7 +23,7 @@ export const register = async (req: Request, res: Response) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await User.create({ fullname, email, password: hashedPassword, mobilenumber, role });
+    await User.create({ fullName, email, password: hashedPassword, mobileNumber, role });
 
     return res.status(201).json({ message: "Account created successfully", success: true });
   } catch (error) {
@@ -57,9 +57,9 @@ export const login = async (req: Request, res: Response) => {
 
     const userData = {
       _id: user._id,
-      fullname: user.fullname,
+      fullName: user.fullName,
       email: user.email,
-      mobilenumber: user.mobilenumber,
+      mobileNumber: user.mobileNumber,
       role: user.role,
       createdAt: user.createdAt,
     };
@@ -72,7 +72,7 @@ export const login = async (req: Request, res: Response) => {
         sameSite: "lax",
         secure: false,
       })
-      .json({ message: `Welcome back ${user.fullname}`, user: userData, token, success: true });
+      .json({ message: `Welcome back ${user.fullName}`, user: userData, token, success: true });
   } catch (error) {
     console.error("Login Error:", error);
     return res.status(500).json({ message: "Server error", success: false });
@@ -91,14 +91,14 @@ export const logout = async (_req: Request, res: Response) => {
 
 export const updateProfile = async (req: AuthRequest, res: Response) => {
   try {
-    const { fullname, email, mobilenumber } = req.body;
+    const { fullName, email, mobileNumber } = req.body;
     const user = await User.findById(req.user?._id);
 
     if (!user) return res.status(404).json({ message: "User not found", success: false });
 
-    if (fullname) user.fullname = fullname;
+    if (fullName) user.fullName = fullName;
     if (email) user.email = email;
-    if (mobilenumber) user.mobilenumber = mobilenumber;
+    if (mobileNumber) user.mobileNumber = mobileNumber;
 
     await user.save();
 
@@ -106,9 +106,9 @@ export const updateProfile = async (req: AuthRequest, res: Response) => {
       message: "Profile updated successfully",
       user: {
         _id: user._id,
-        fullname: user.fullname,
+        fullName: user.fullName,
         email: user.email,
-        mobilenumber: user.mobilenumber,
+        mobileNumber: user.mobileNumber,
         createdAt: user.createdAt,
       },
       success: true,
