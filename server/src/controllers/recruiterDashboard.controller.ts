@@ -1,12 +1,13 @@
-import { User } from "../models/user.model.js";
-import { JobApplication } from "../models/jobApplication.model.js";
-import { Applicant } from "../models/applicant.model.js";
+import {  Response } from "express";
+import { JobApplication } from "../models/jobApplication.model";
+import { Applicant } from "../models/applicant.model";
+import { AuthRequest } from "../types/express/AuthRequest"; 
 
-export const RecruiterDashboard = async (req, res) => {
+export const RecruiterDashboard = async (req: AuthRequest, res: Response) => {
   try {
-    const recruiterId = req.user._id;
+    const recruiterId = req.user!._id;
 
-    // Fetch jobs posted by recruiter
+    // Get recruiter's posted jobs
     const jobs = await JobApplication.find({ user: recruiterId });
     const jobIds = jobs.map((job) => job._id);
 
@@ -16,7 +17,7 @@ export const RecruiterDashboard = async (req, res) => {
     const interviews = await Applicant.countDocuments({ job: { $in: jobIds }, status: "interview" });
     const hired = await Applicant.countDocuments({ job: { $in: jobIds }, status: "hired" });
 
-    // Bar Chart Data: Applications per Job
+    // Bar Chart Data
     const barData = await Applicant.aggregate([
       { $match: { job: { $in: jobIds } } },
       {
@@ -41,7 +42,7 @@ export const RecruiterDashboard = async (req, res) => {
       },
     ]);
 
-    // Line Chart Data: Applications over time
+    // Line Chart Data
     const lineData = await Applicant.aggregate([
       { $match: { job: { $in: jobIds } } },
       {

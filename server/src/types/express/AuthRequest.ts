@@ -10,6 +10,12 @@ export interface AuthUser {
   coverLetter?: string;
 }
 
-export interface AuthRequest extends Request {
+
+export interface AuthRequest<
+  Params = Record<string, any>,
+  ResBody = any,
+  ReqBody = any,
+  ReqQuery = any
+> extends Request<Params, ResBody, ReqBody, ReqQuery> {
   user?: AuthUser;
 }

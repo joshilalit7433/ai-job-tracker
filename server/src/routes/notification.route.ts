@@ -4,7 +4,7 @@ import isAuthenticated from "../middlewares/isAutheticated.js";
 
 const router = express.Router();
 
-router.route("/").get(isAuthenticated,getNotifications);
-router.route("/clear/:id").delete(isAuthenticated,removeNotification);
+router.get("/",isAuthenticated,getNotifications);
+router.delete("/clear/:id",isAuthenticated,removeNotification);
 
 export default router;

@@ -1,15 +1,22 @@
-import mongoose from "mongoose";
+import { model,Schema } from "mongoose";
+import { INotification } from "../types/notification.types";
 
-const notificationSchema = new mongoose.Schema(
+const notificationSchema = new Schema<INotification>(
   {
     user: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
-    title: String,
-    companyName: String,
-    location: String,
+    title: {
+      type: String,
+    },
+    companyName: {
+      type: String,
+    },
+    location: {
+      type: String,
+    },
     isRead: {
       type: Boolean,
       default: false,
@@ -18,4 +25,5 @@ const notificationSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export const Notification = mongoose.model("Notification", notificationSchema);
+export const Notification = model<INotification>("Notification", notificationSchema);
+

@@ -11,7 +11,7 @@ const UserSchema = new Schema<IUser>(
     resume: { type: String },
     coverLetter: { type: String },
     resumeAnalysis: { type: String, default: "" },
-    savedJobs: [{ type: mongoose.Schema.Types.ObjectId, ref: "JobApplication" }],
+    savedJobs: [{ type:Schema.Types.ObjectId, ref: "JobApplication" }],
     totalJobsPosted: { type: Number, default: 0 },
   },
   { timestamps: true }

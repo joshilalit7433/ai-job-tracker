@@ -6,11 +6,11 @@ import  { checkRole } from "../middlewares/checkRole.js";
 
 const router=express.Router();
 
-router.route("/apply/:id").post(isAuthenticated,checkRole("user"),upload.single("resume"),ApplyJobApplication);
-router.route("/get-job-applicants-for-recruiter/:jobId").get(isAuthenticated,checkRole("recruiter"),GetApplicantsForSpecificJob);
-router.route("/is-applied/:id").get(isAuthenticated,checkRole("user"),checkIfApplied);
-router.route("/response-to-applicant/:id").post(isAuthenticated,checkRole("recruiter"),respondToApplicant);
-router.route("/generate-cover-letter/:id").get(isAuthenticated,checkRole("user"),GenerateCoverLetter);
+router.post("/apply/:id",isAuthenticated,checkRole("user"),upload.single("resume"),ApplyJobApplication);
+router.get("/get-job-applicants-for-recruiter/:jobId",isAuthenticated,checkRole("recruiter"),GetApplicantsForSpecificJob);
+router.get("/is-applied/:id",isAuthenticated,checkRole("user"),checkIfApplied);
+router.post("/response-to-applicant/:id",isAuthenticated,checkRole("recruiter"),respondToApplicant);
+router.get("/generate-cover-letter/:id",isAuthenticated,checkRole("user"),GenerateCoverLetter);
 
 
 
