@@ -12,7 +12,7 @@ export const getNotifications = async (req: AuthRequest, res: Response) => {
     }
 
     const notifications = await Notification.find({ user: userId }).sort({ createdAt: -1 });
-    res.json({ success: true, notifications });
+    res.json({ success: true,data:notifications });
   } catch (err) {
     console.error("Error fetching notifications:", err);
     res.status(500).json({ success: false, message: "Failed to fetch notifications" });

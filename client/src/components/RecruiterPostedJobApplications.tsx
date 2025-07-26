@@ -1,36 +1,34 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
-import { JOB_APPLICATION_API_END_POINT } from "../utils/constant.js";
-import { Pencil, MoveRight } from "lucide-react";
+import { JOB_APPLICATION_API_END_POINT } from "../utils/constant";
+import { Pencil, MoveRight, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { Trash2 } from "lucide-react";
 import { toast } from "react-toastify";
+import { RootState } from "../redux/store";
+import { JobApplication, User } from "../types/models";
+import { ApiResponse } from "../types/apiResponse";
 
 const RecruiterPostedJobApplication = () => {
-  const { user } = useSelector((store) => store.auth);
-  const [jobs, setJobs] = useState([]);
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(true);
+  const user = useSelector((store: RootState) => store.auth.user) as User | null;
+  const [jobs, setJobs] = useState<JobApplication[]>([]);
+  const [error, setError] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await axios.get(
-          `${JOB_APPLICATION_API_END_POINT}/get-recruiter-posted-job-application/${user?._id}`,
-          {
-            withCredentials: true,
-          }
-        );
+        const response = await axios.get<ApiResponse<JobApplication[]>>(`${JOB_APPLICATION_API_END_POINT}/get-recruiter-posted-job-application/${user?._id}`, {
+          withCredentials: true,
+        });
         const data = response.data;
 
         if (data.success) {
-          console.log("Jobs fetched successfully:", data.jobapplications);
-          setJobs(data.jobapplications || []);
-
+          console.log("Jobs fetched successfully:", data);
+          setJobs(data.data || []);
           setLoading(false);
         }
-      } catch (err) {
+      } catch (err: any) {
         console.error("Error fetching jobs:", err.message);
         setError("Failed to fetch jobs.");
         setLoading(false);
@@ -42,22 +40,16 @@ const RecruiterPostedJobApplication = () => {
     }
   }, [user]);
 
-  const handleDelete = async (id) => {
-    if (
-      !window.confirm("Are you sure you want to delete this job application?")
-    )
-      return;
+  const handleDelete = async (id: string) => {
+    if (!window.confirm("Are you sure you want to delete this job application?")) return;
 
     try {
-      const res = await axios.delete(
-        `${JOB_APPLICATION_API_END_POINT}/delete-job-application/${id}`,
-        {
-          withCredentials: true,
-        }
-      );
+      const res = await axios.delete(`${JOB_APPLICATION_API_END_POINT}/delete-job-application/${id}`, {
+        withCredentials: true,
+      });
 
       if (res.data.success) {
-        toast.success("Job application deleted successfully!",{position:"bottom-right"});
+        toast.success("Job application deleted successfully!", { position: "bottom-right" });
         setJobs(jobs.filter((job) => job._id !== id));
       } else {
         toast.error(res.data.message || "Failed to delete job application.", {
@@ -95,10 +87,9 @@ const RecruiterPostedJobApplication = () => {
               <div className="absolute top-6 right-6">
                 <span
                   className={`px-3 py-1 rounded-full text-xs font-semibold shadow-sm transition-all duration-200
-                    ${job.status === "active"
+                    ${job.status === "open"
                       ? "bg-green-50 text-green-600 border border-green-100"
-                      : "bg-red-50 text-red-500 border border-red-100"}
-                  `}
+                      : "bg-red-50 text-red-500 border border-red-100"}`}
                 >
                   {job.status}
                 </span>
@@ -118,7 +109,7 @@ const RecruiterPostedJobApplication = () => {
                 <p><span className="font-semibold text-[#131D4F]">Experience:</span> {job.experience}</p>
                 <p><span className="font-semibold text-[#131D4F]">Benefits:</span> {job.benefits}</p>
                 <p><span className="font-semibold text-[#131D4F]">Responsibilities:</span> {job.responsibilities}</p>
-                <p><span className="font-semibold text-[#131D4F]">Skills:</span> {job.skills}</p>
+                <p><span className="font-semibold text-[#131D4F]">Skills:</span> {job.skills.join(", ")}</p>
                 <p><span className="font-semibold text-[#131D4F]">Qualification:</span> {job.qualification}</p>
               </div>
 

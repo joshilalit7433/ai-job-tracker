@@ -10,9 +10,19 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { JOB_APPLICATION_API_END_POINT } from "../utils/constant";
 
+interface Category {
+  name: string;
+  icon: JSX.Element;
+  highlighted: boolean;
+}
+
+interface CategoryCounts {
+  [key: string]: number;
+}
+
 const JobsCategory = () => {
   const navigate = useNavigate();
-  const [categoryCounts, setCategoryCounts] = useState({});
+  const [categoryCounts, setCategoryCounts] = useState<CategoryCounts>({});
 
   const fetchCategoryCounts = async () => {
     try {
@@ -29,7 +39,7 @@ const JobsCategory = () => {
     fetchCategoryCounts();
   }, []);
 
-  const categories = [
+  const categories: Category[] = [
     {
       name: "Information Technology (IT)",
       icon: <FaLaptopCode />,
@@ -57,7 +67,7 @@ const JobsCategory = () => {
     },
   ];
 
-  const handleCategoryClick = (categoryName) => {
+  const handleCategoryClick = (categoryName: string) => {
     navigate(`/jobs/category/${encodeURIComponent(categoryName)}`);
   };
 

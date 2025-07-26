@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./app.css";
-import { Home } from "../src/routes/Home";
+import { Home } from "./routes/Home";
 import Navbar from "./components/Navbar";
 import JobApplications from "./routes/JobApplications";
 import JobApplicationForm from "./routes/JobApplicationForm";
@@ -22,10 +22,10 @@ import NotificationPanel from "./components/NotificationPanel";
 import RecruiterResponse from "./components/RecruiterResponse";
 import RecruiterDashboard from "./components/RecruiterDashboard";
 import SpecifiJobs from "./components/SpecifiJobs";
-import { useSelector } from "react-redux";
+import { useAppSelector } from "./redux/hooks";
 
 function App() {
-  const { user } = useSelector((state) => state.auth);
+  const { user } = useAppSelector((state) => state.auth);
   return (
     <>
       <BrowserRouter>

@@ -127,7 +127,7 @@ export const UpdateJobApplication = async (req:AuthRequest, res:Response) => {
 export const GetJobApplication = async (req: Request, res: Response) => {
   try {
     const jobapplications = await JobApplication.find();
-    return res.status(200).json({ jobapplications, success: true });
+    return res.status(200).json({ data:jobapplications, success: true });
   } catch (error) {
     console.error("GetJobApplication Error:", error);
     return res.status(500).json({
@@ -199,7 +199,7 @@ export const DeleteJobApplication = async (req: AuthRequest, res: Response) => {
 export const GetRecruiterPostedJobApplication = async (req: AuthRequest, res: Response) => {
   try {
     const jobs = await JobApplication.find({ user: req.user!._id });
-    return res.status(200).json({ jobapplications: jobs, success: true });
+    return res.status(200).json({ data: jobs, success: true });
   } catch (error) {
     console.error("GetRecruiterPostedJobApplication Error:", error);
     return res.status(500).json({ message: "Error fetching jobs", success: false });

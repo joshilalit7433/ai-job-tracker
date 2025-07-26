@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Menu,
@@ -27,6 +27,26 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const isLoginOrSignup = ["/login", "/signup"].includes(location.pathname);
   const isRecruiter = user?.role === "recruiter";
+
+  // Logout function
+  const handleLogout = () => {
+    localStorage.removeItem("token"); 
+    dispatch(logout());
+    navigate("/");
+    toast.success("You have successfully Logged Out.", {
+      position: "bottom-right",
+      autoClose: 3000,
+      theme: "dark",
+    });
+  };
+
+  // Auto logout if user state is empty but token exists (token might be expired or Redux was reset)
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!user && token) {
+      handleLogout();
+    }
+  }, [user]);
 
   const links = useMemo(() => {
     if (user?.role === "admin")
@@ -58,17 +78,6 @@ const Navbar = () => {
     ];
   }, [user]);
 
-  const handleLogout = () => {
-    localStorage.setItem("justLoggedOut", "true"); 
-    dispatch(logout());
-    navigate("/");
-    toast.success("You have successfully Logged Out.", {
-      position: "bottom-right",
-      autoClose: 3000,
-      theme: "dark",
-    });
-  };
-
   const renderLinks = () =>
     links.map(({ id, name, link, icon: Icon }) => (
       <Link
@@ -85,6 +94,7 @@ const Navbar = () => {
   return (
     <nav className="bg-[#f7e9d6] fixed top-0 left-0 right-0 z-50">
       <div className="max-w-7xl mx-auto px-4 lg:px-16 py-4 flex justify-between items-center">
+        {/* Brand */}
         <Link
           to={
             isRecruiter
@@ -102,7 +112,7 @@ const Navbar = () => {
           <span className="text-orange-600">Aims</span>
         </Link>
 
-        {/* Center links */}
+        {/* Center Links */}
         {!isLoginOrSignup && !isRecruiter && (
           <div className="hidden lg:flex space-x-6 text-sm font-medium text-[#131D4F]">
             {(user
@@ -163,6 +173,7 @@ const Navbar = () => {
           </div>
         )}
 
+        {/* Mobile Menu Toggle */}
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           className="lg:hidden text-[#131D4F]"
@@ -171,6 +182,7 @@ const Navbar = () => {
         </button>
       </div>
 
+      {/* Mobile Menu */}
       {isMenuOpen && (
         <div className="lg:hidden fixed inset-0 z-50">
           <div className="absolute left-0 top-0 w-80 h-full bg-[#f7e9d6] shadow-xl p-6">

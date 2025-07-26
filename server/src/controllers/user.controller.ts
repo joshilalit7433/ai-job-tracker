@@ -104,11 +104,12 @@ export const updateProfile = async (req: AuthRequest, res: Response) => {
 
     return res.status(200).json({
       message: "Profile updated successfully",
-      user: {
+      data: {
         _id: user._id,
         fullName: user.fullName,
         email: user.email,
         mobileNumber: user.mobileNumber,
+        role: user.role,
         createdAt: user.createdAt,
       },
       success: true,

@@ -11,17 +11,20 @@ import {
 } from "lucide-react";
 import { NOTIFICATION_API_END_POINT } from "../utils/constant";
 import { toast } from "react-toastify";
+import { Notification } from "../types/models";
+import { ApiResponse } from "../types/apiResponse";
 
 const NotificationPanel = () => {
-  const [notifications, setNotifications] = useState([]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
 
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const res = await axios.get(`${NOTIFICATION_API_END_POINT}`, {
-          withCredentials: true,
-        });
-        setNotifications(res.data.notifications);
+        const res = await axios.get<ApiResponse<Notification[]>>(
+          `${NOTIFICATION_API_END_POINT}`,
+          { withCredentials: true }
+        );
+        setNotifications(res.data.data);
       } catch (err) {
         console.error("Failed to fetch notifications", err);
       }
@@ -30,43 +33,41 @@ const NotificationPanel = () => {
     fetchNotifications();
   }, []);
 
-  const formatDate = (isoString) => {
+  const formatDate = (isoString: string) => {
     const date = new Date(isoString);
     return date.toLocaleDateString();
   };
 
-  const formatTime = (isoString) => {
+  const formatTime = (isoString: string) => {
     const date = new Date(isoString);
     return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   };
 
-  const handleDelete = async (n_id) => {
-    if (!window.confirm("Are you sure you want to remove this notification?"))
-      return;
+  const handleDelete = async (n_id: string) => {
+    if (!window.confirm("Are you sure you want to remove this notification?")) return;
 
     try {
-      const res = await axios.delete(
+      const res = await axios.delete<{ success: boolean; message?: string }>(
         `${NOTIFICATION_API_END_POINT}/clear/${n_id}`,
-        {
-          withCredentials: true,
-        }
+        { withCredentials: true }
       );
 
       if (res.data.success) {
-        toast.success("Notification removed successfully",{position:"bottom-right"});
+        toast.success("Notification removed successfully", { position: "bottom-right" });
         setNotifications(notifications.filter((n) => n._id !== n_id));
       } else {
-        toast.error(res.data.message || "Failed to delete notification",{position:"bottom-right"});
+        toast.error(res.data.message || "Failed to delete notification", {
+          position: "bottom-right",
+        });
       }
     } catch {
-      toast.error("Something went wrong while deleting.",{position:"bottom-right"});
+      toast.error("Something went wrong while deleting.", { position: "bottom-right" });
     }
   };
 
   return (
-    <div className="bg-[#f7e9d6]  min-h-screen px-4 py-8">
+    <div className="bg-[#f7e9d6] min-h-screen px-4 py-8">
       <div className="max-w-5xl mx-auto">
-
         <div className="flex items-center gap-3 mb-6 mt-[60px]">
           <Bell className="text-blue-600 w-6 h-6" />
           <h2 className="text-2xl font-bold text-gray-800">Job Notifications</h2>
