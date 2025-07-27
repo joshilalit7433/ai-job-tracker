@@ -66,6 +66,7 @@ export const RecruiterDashboard = async (req: AuthRequest, res: Response) => {
     res.status(200).json({
       message: "Recruiter dashboard data fetched successfully",
       success: true,
+      data:{
       totalJobsPosted: jobs.length,
       totalApplicants,
       shortlisted,
@@ -73,6 +74,7 @@ export const RecruiterDashboard = async (req: AuthRequest, res: Response) => {
       hired,
       barData,
       lineData,
+      }
     });
   } catch (error) {
     console.error("RecruiterDashboard Error:", error);

@@ -1,65 +1,58 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { toast } from "react-toastify";
-import { JOB_APPLICATION_API_END_POINT } from "../utils/constant.js";
+import { JOB_APPLICATION_API_END_POINT } from "../utils/constant";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import {
   BriefcaseBusiness,
-  Banknote,
-  Building2,
   MapPinned,
-  Clock,
   MoveRight,
 } from "lucide-react";
+import { JobApplication } from "../types/models";
+import { ApiResponse } from "../types/apiResponse";
+import { RootState } from "../redux/store"; 
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
-  const [pendingJobs, setPendingJobs] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [pendingJobs, setPendingJobs] = useState<JobApplication[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  const { user } = useSelector((store) => store.auth);
+  const { user } = useSelector((store: RootState) => store.auth);
 
   useEffect(() => {
     const checkAdminAccess = async () => {
-      try {
-        if (!user || user.role !== "admin") {
-          navigate("/login");
-          return;
-        }
-
-        fetchPendingJobs();
-      } catch (error) {
-        toast.error(error, {
-          position: "bottom-right",
-          theme: "dark",
-        });
+      if (!user || user.role !== "admin") {
         navigate("/login");
+        return;
       }
+
+      fetchPendingJobs();
     };
 
     const fetchPendingJobs = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(
+        const response = await axios.get<ApiResponse<JobApplication[]>>(
           `${JOB_APPLICATION_API_END_POINT}/pending-jobs`,
           { withCredentials: true }
         );
-        setPendingJobs(response.data.jobs);
-        setLoading(false);
+        setPendingJobs(response.data.data);
       } catch (error) {
-        if (error.response && error.response.status === 403) {
+        const err = error as AxiosError;
+        if (err.response && err.response.status === 403) {
           toast.error("Access denied. Only admins can view this page", {
             position: "bottom-right",
             theme: "dark",
           });
           navigate("/login");
         } else {
-          toast.error("Failed to fetch pending turf requests", {
+          toast.error("Failed to fetch pending job requests", {
             position: "bottom-right",
             theme: "dark",
           });
         }
+      } finally {
         setLoading(false);
       }
     };
@@ -81,7 +74,7 @@ const AdminDashboard = () => {
 
       {pendingJobs.length === 0 ? (
         <div className="text-center text-xl text-gray-500 mt-10">
-          No pending jobs requests available
+          No pending job requests available
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -96,7 +89,9 @@ const AdminDashboard = () => {
                   src={job.image}
                   alt={job.companyName}
                   className="w-12 h-12 object-contain rounded-lg"
-                  onError={(e) => (e.target.src = "./images/placeholder.jpg")}
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = "./images/placeholder.jpg";
+                  }}
                 />
                 <span className="text-xs px-3 py-1 border border-blue-500 text-blue-600 rounded-full font-medium">
                   {job.jobType}
@@ -123,7 +118,7 @@ const AdminDashboard = () => {
               {/* Skills */}
               {typeof job.skills === "string" && (
                 <div className="flex gap-2 flex-wrap mb-6">
-                  {job.skills
+                  {(job.skills as string)
                     .split(",")
                     .map((skill) => skill.trim())
                     .filter((skill) => skill.length > 0)

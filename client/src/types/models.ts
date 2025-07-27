@@ -48,6 +48,7 @@ export interface Applicant {
   missingSkills: string[];
   respondedAt?: Date;
 
+
 }
 
 
@@ -61,3 +62,22 @@ export interface Notification{
   createdAt: string;
 }
 
+export interface BarData {
+  job: string;
+  applications: number;
+}
+
+export interface LineData {
+  time: string;
+  applications: number;
+}
+
+export interface DashboardStats {
+  totalJobsPosted: number;
+  totalApplicants: number;
+  shortlisted: number;
+  interviews: number;
+  hired: number;
+  barData: BarData[];
+  lineData: LineData[];
+}

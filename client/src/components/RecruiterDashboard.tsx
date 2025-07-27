@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import {
   BarChart,
@@ -15,24 +16,41 @@ import {
   Users,
   CheckCircle,
   CalendarCheck,
-  LayoutDashboard,
   Bell,
   FileText,
   LogOut,
   Menu,
   X,
-  User,
-  Settings,
+  UserRound,
 } from "lucide-react";
 import { RECRUITER_DASHBOARD_API_END_POINT } from "../utils/constant";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../redux/authSlice";
-import { toast } from "react-toastify";
+import { RootState } from "../redux/store";
+import { User,DashboardStats } from "../types/models";
+import { ApiResponse } from "../types/apiResponse";
 
-export default function SidebarDashboard() {
-  const [dashboardStats, setDashboardStats] = useState({
+
+
+interface NavLink {
+  icon: React.ReactNode;
+  label: string;
+  path: string;
+}
+
+interface StatItem {
+  icon: React.ReactNode;
+  label: string;
+  value: number;
+  color: string;
+  bgColor: string;
+  iconColor: string;
+}
+
+export default function SidebarDashboard(){
+  const [dashboardStats, setDashboardStats] = useState<DashboardStats>({
     totalJobsPosted: 0,
     totalApplicants: 0,
     shortlisted: 0,
@@ -41,93 +59,62 @@ export default function SidebarDashboard() {
     barData: [],
     lineData: [],
   });
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { user } = useSelector((state) => state.auth);
+  const user = useSelector((state: RootState) => state.auth.user as User | null);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const response = await axios.get(
-          `${RECRUITER_DASHBOARD_API_END_POINT}/recruiter-dashboard`,
-          { withCredentials: true }
-        );
-        setDashboardStats(response.data);
+        const response = await axios.get<ApiResponse<DashboardStats>>(`${RECRUITER_DASHBOARD_API_END_POINT}/recruiter-dashboard`, {
+          withCredentials: true,
+        });
+        setDashboardStats(response.data.data);
       } catch (error) {
         console.error("Dashboard fetch error:", error);
       }
     };
-
     fetchDashboardData();
   }, []);
 
-  const handleLogout = () => {
-    localStorage.setItem("justLoggedOut", "true"); 
+  const handleLogout = (): void => {
+    localStorage.setItem("justLoggedOut", "true");
     dispatch(logout());
     navigate("/");
   };
 
-  const navLinks = [
-    {
-      icon: <Bell className="w-5 h-5" />,
-      label: "Job Notifications",
-      path: "/notifications",
-    },
-    {
-      icon: <User className="w-5 h-5" />,
-      label: "Profile",
-      path: "/user-profile",
-    },
+  const navLinks: NavLink[] = [
+    { icon: <Bell className="w-5 h-5" />, label: "Job Notifications", path: "/notifications" },
+    { icon: <UserRound className="w-5 h-5" />, label: "Profile", path: "/user-profile" },
   ];
 
-  const addJobButton = {
-    icon: <FileText className="w-5 h-5" />,
-    label: "Add a New Job",
-    path: "/job-application-form",
+  const addJobButton: NavLink = {
+    icon: <FileText className="w-5 h-5" />, label: "Add a New Job", path: "/job-application-form",
   };
 
-  const stats = [
+  const stats: StatItem[] = [
     {
-      icon: <Briefcase className="w-6 h-6" />,
-      label: "Total Jobs",
-      value: dashboardStats.totalJobsPosted,
-      color: "from-blue-500 to-blue-600",
-      bgColor: "bg-blue-50",
-      iconColor: "text-blue-600",
+      icon: <Briefcase className="w-6 h-6" />, label: "Total Jobs", value: dashboardStats.totalJobsPosted,
+      color: "from-blue-500 to-blue-600", bgColor: "bg-blue-50", iconColor: "text-blue-600",
     },
     {
-      icon: <Users className="w-6 h-6" />,
-      label: "Total Applicants",
-      value: dashboardStats.totalApplicants,
-      color: "from-green-500 to-green-600",
-      bgColor: "bg-green-50",
-      iconColor: "text-green-600",
+      icon: <Users className="w-6 h-6" />, label: "Total Applicants", value: dashboardStats.totalApplicants,
+      color: "from-green-500 to-green-600", bgColor: "bg-green-50", iconColor: "text-green-600",
     },
     {
-      icon: <CheckCircle className="w-6 h-6" />,
-      label: "Shortlisted",
-      value: dashboardStats.shortlisted,
-      color: "from-purple-500 to-purple-600",
-      bgColor: "bg-purple-50",
-      iconColor: "text-purple-600",
+      icon: <CheckCircle className="w-6 h-6" />, label: "Shortlisted", value: dashboardStats.shortlisted,
+      color: "from-purple-500 to-purple-600", bgColor: "bg-purple-50", iconColor: "text-purple-600",
     },
     {
-      icon: <CalendarCheck className="w-6 h-6" />,
-      label: "Interviews",
-      value: dashboardStats.interviews,
-      color: "from-orange-500 to-orange-600",
-      bgColor: "bg-orange-50",
-      iconColor: "text-orange-600",
+      icon: <CalendarCheck className="w-6 h-6" />, label: "Interviews", value: dashboardStats.interviews,
+      color: "from-orange-500 to-orange-600", bgColor: "bg-orange-50", iconColor: "text-orange-600",
     },
     {
-      icon: <CalendarCheck className="w-6 h-6" />,
-      label: "Hired",
-      value: dashboardStats.hired,
-      color: "from-emerald-500 to-emerald-600",
-      bgColor: "bg-emerald-50",
-      iconColor: "text-emerald-600",
+      icon: <CalendarCheck className="w-6 h-6" />, label: "Hired", value: dashboardStats.hired,
+      color: "from-emerald-500 to-emerald-600", bgColor: "bg-emerald-50", iconColor: "text-emerald-600",
     },
   ];
 
@@ -136,8 +123,7 @@ export default function SidebarDashboard() {
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-[#f7e9d6] to-[#f0e6d0] text-[#131D4F]">
-      {/* Mobile Menu Button - Right side for small/medium devices */}
-      <div className="lg:hidden fixed top-4 right-4 z-50">
+       <div className="lg:hidden fixed top-4 right-4 z-50">
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
           className="p-2 bg-white rounded-lg shadow-lg border border-gray-200"
@@ -169,7 +155,7 @@ export default function SidebarDashboard() {
           <div className="mb-8 p-4 bg-white rounded-xl border border-gray-200">
             <div className="flex items-center gap-3 mb-3">
               <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                <User className="w-5 h-5 text-white" />
+                <UserRound className="w-5 h-5 text-white" />
               </div>
               <div>
                 <p className="font-semibold text-[#131D4F]">
@@ -380,3 +366,11 @@ export default function SidebarDashboard() {
     </div>
   );
 }
+
+
+
+
+
+
+
+

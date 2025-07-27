@@ -12,30 +12,42 @@ import {
 } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import FilterJobApplications from "../components/FilterJobApplications";
+import { JobApplication } from "../types/models";
+import { ApiResponse } from "../types/apiResponse";
+
+interface Filters {
+  Salary: string;
+  Location: string[];
+  Company: string;
+}
+
+interface RouteParams extends Record<string, string | undefined> {
+  categoryName?: string;
+}
 
 const SpecifiJobs = () => {
-  const [allJobs, setAllJobs] = useState([]);
-  const [filteredJobs, setFilteredJobs] = useState([]);
-  const [filters, setFilters] = useState({
+  const [allJobs, setAllJobs] = useState<JobApplication[]>([]);
+  const [filteredJobs, setFilteredJobs] = useState<JobApplication[]>([]);
+  const [filters, setFilters] = useState<Filters>({
     Salary: "",
     Location: [],
     Company: "",
   });
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  const { categoryName } = useParams();
+  const { categoryName } = useParams<RouteParams>();
 
   const fetchJobApplications = async () => {
     try {
-      const response = await axios.get(
+      const response = await axios.get<ApiResponse<JobApplication[]>>(
         `${JOB_APPLICATION_API_END_POINT}/get-job-applications`
       );
       const data = response.data;
 
-      const approvedJobs = data.jobapplications.filter(
+      const approvedJobs = data.data.filter(
         (job) =>
           job.isApproved === true &&
-          job.jobCategory === decodeURIComponent(categoryName)
+          job.jobCategory === decodeURIComponent(categoryName || "")
       );
       setAllJobs(approvedJobs);
       setFilteredJobs(approvedJobs);
@@ -50,19 +62,18 @@ const SpecifiJobs = () => {
     fetchJobApplications();
   }, [categoryName]);
 
-  // Scroll to top when this page mounts or categoryName changes
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior:"auto" });
+    window.scrollTo({ top: 0, behavior: "auto" });
   }, [categoryName]);
 
-  const isSalaryInRange = (salary, range) => {
+  const isSalaryInRange = (salary: number, range: string): boolean => {
     if (!range) return true;
     if (range === "1200000+") return salary >= 1200000;
     const [min, max] = range.split("-").map(Number);
     return salary >= min && salary <= max;
   };
 
-  const normalizeLocation = (location) =>
+  const normalizeLocation = (location: string): string =>
     typeof location === "string" && location.length > 0
       ? location.split(" ")[0].toLowerCase()
       : "";
@@ -86,7 +97,7 @@ const SpecifiJobs = () => {
     setFilteredJobs(filtered);
   }, [filters, allJobs]);
 
-  const handleSaveJob = async (jobId) => {
+  const handleSaveJob = async (jobId: string) => {
     try {
       const res = await axios.post(
         `${USER_API_END_POINT}/saved-job/${jobId}`,
@@ -101,7 +112,7 @@ const SpecifiJobs = () => {
     }
   };
 
-  const handleFilterChange = (updatedFilters) => {
+  const handleFilterChange = (updatedFilters: Filters) => {
     setFilters(updatedFilters);
   };
 
@@ -132,7 +143,10 @@ const SpecifiJobs = () => {
                     src={job.image}
                     alt={job.companyName}
                     className="w-10 h-10 object-contain rounded"
-                    onError={(e) => (e.target.src = "./images/placeholder.jpg")}
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src =
+                        "./images/placeholder.jpg";
+                    }}
                   />
                   <span className="text-xs px-2 py-1 border border-blue-500 text-blue-600 rounded-md font-semibold">
                     {job.jobType}

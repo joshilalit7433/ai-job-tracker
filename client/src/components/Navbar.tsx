@@ -1,10 +1,10 @@
-import { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Menu,
   X,
   ChevronDown,
-  User,
+  UserRound,
   Bell,
   LogOut,
   Briefcase,
@@ -18,9 +18,18 @@ import {
 } from "../components/ui/popover";
 import { Button } from "../components/ui/button";
 import { toast } from "react-toastify";
+import { RootState } from "../redux/store";
+import { User  } from "../types/models";
+
+interface NavLink {
+  id: number;
+  name: string;
+  link: string;
+  icon: React.ElementType;
+}
 
 const Navbar = () => {
-  const { user } = useSelector((store) => store.auth);
+  const user = useSelector((store: RootState) => store.auth.user) as User | null;
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
@@ -28,9 +37,8 @@ const Navbar = () => {
   const isLoginOrSignup = ["/login", "/signup"].includes(location.pathname);
   const isRecruiter = user?.role === "recruiter";
 
-  // Logout function
   const handleLogout = () => {
-    localStorage.removeItem("token"); 
+    localStorage.removeItem("token");
     dispatch(logout());
     navigate("/");
     toast.success("You have successfully Logged Out.", {
@@ -40,7 +48,6 @@ const Navbar = () => {
     });
   };
 
-  // Auto logout if user state is empty but token exists (token might be expired or Redux was reset)
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!user && token) {
@@ -48,33 +55,18 @@ const Navbar = () => {
     }
   }, [user]);
 
-  const links = useMemo(() => {
+  const links: NavLink[] = useMemo(() => {
     if (user?.role === "admin")
       return [
         { id: 1, name: "Dashboard", link: "/admin-dashboard", icon: Briefcase },
       ];
     if (user?.role === "user")
       return [
-        {
-          id: 1,
-          name: "Job Applications",
-          link: "/job-applications",
-          icon: Briefcase,
-        },
-        {
-          id: 2,
-          name: "Saved Jobs",
-          link: "/user-saved-job-application",
-          icon: Bell,
-        },
+        { id: 1, name: "Job Applications", link: "/job-applications", icon: Briefcase },
+        { id: 2, name: "Saved Jobs", link: "/user-saved-job-application", icon: Bell },
       ];
     return [
-      {
-        id: 1,
-        name: "Job Applications",
-        link: "/job-applications",
-        icon: Briefcase,
-      },
+      { id: 1, name: "Job Applications", link: "/job-applications", icon: Briefcase },
     ];
   }, [user]);
 
@@ -94,7 +86,6 @@ const Navbar = () => {
   return (
     <nav className="bg-[#f7e9d6] fixed top-0 left-0 right-0 z-50">
       <div className="max-w-7xl mx-auto px-4 lg:px-16 py-4 flex justify-between items-center">
-        {/* Brand */}
         <Link
           to={
             isRecruiter
@@ -112,21 +103,18 @@ const Navbar = () => {
           <span className="text-orange-600">Aims</span>
         </Link>
 
-        {/* Center Links */}
         {!isLoginOrSignup && !isRecruiter && (
           <div className="hidden lg:flex space-x-6 text-sm font-medium text-[#131D4F]">
-            {(user
-              ? links
-              : [{ id: 0, name: "Job Applications", link: "/job-applications" }]
-            ).map(({ id, name, link }) => (
-              <Link key={id} to={link} className="hover:underline">
-                {name}
-              </Link>
-            ))}
+            {(user ? links : [{ id: 0, name: "Job Applications", link: "/job-applications" }]).map(
+              ({ id, name, link }) => (
+                <Link key={id} to={link} className="hover:underline">
+                  {name}
+                </Link>
+              )
+            )}
           </div>
         )}
 
-        {/* Right profile/login */}
         {!isRecruiter && (
           <div className="hidden lg:flex items-center space-x-3">
             {!user ? (
@@ -141,10 +129,7 @@ const Navbar = () => {
             ) : (
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    className="flex items-center space-x-2"
-                  >
+                  <Button variant="ghost" className="flex items-center space-x-2">
                     <div className="w-9 h-9 bg-white text-[#131D4F] rounded-full flex justify-center items-center font-semibold">
                       {user.fullName?.charAt(0)}
                     </div>
@@ -155,10 +140,7 @@ const Navbar = () => {
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-40 p-2 bg-white rounded-md shadow-lg">
-                  <Link
-                    to="/user-profile"
-                    className="block px-4 py-2 text-sm hover:bg-gray-100 rounded"
-                  >
+                  <Link to="/user-profile" className="block px-4 py-2 text-sm hover:bg-gray-100 rounded">
                     Profile
                   </Link>
                   <button
@@ -173,16 +155,11 @@ const Navbar = () => {
           </div>
         )}
 
-        {/* Mobile Menu Toggle */}
-        <button
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="lg:hidden text-[#131D4F]"
-        >
+        <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="lg:hidden text-[#131D4F]">
           {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
 
-      {/* Mobile Menu */}
       {isMenuOpen && (
         <div className="lg:hidden fixed inset-0 z-50">
           <div className="absolute left-0 top-0 w-80 h-full bg-[#f7e9d6] shadow-xl p-6">
@@ -238,7 +215,7 @@ const Navbar = () => {
                   onClick={() => setIsMenuOpen(false)}
                   className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:text-purple-600 rounded-lg hover:bg-white transition"
                 >
-                  <User size={20} />
+                  <UserRound size={20} />
                   <span className="font-medium">Profile</span>
                 </Link>
               )}
@@ -248,7 +225,7 @@ const Navbar = () => {
                   onClick={() => setIsMenuOpen(false)}
                   className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:text-purple-600 rounded-lg hover:bg-white transition"
                 >
-                  <User size={20} />
+                  <UserRound size={20} />
                   <span className="font-medium">Login</span>
                 </Link>
               )}

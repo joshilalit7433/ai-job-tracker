@@ -148,7 +148,7 @@ export const getJobApplicationByCategory = async (req: Request, res: Response) =
 
     return res.status(200).json({
       success: true,
-      jobapplications: jobs,
+      data: jobs,
     });
   } catch (error) {
     console.error("getJobsByCategory Error:", error);
@@ -221,7 +221,7 @@ export const GetUserAppliedJobApplication = async (req: AuthRequest, res: Respon
 export const getPendingJobs = async (req: Request, res: Response) => {
   try {
     const jobs = await JobApplication.find({ isApproved: false });
-    return res.status(200).json({ jobs, success: true });
+    return res.status(200).json({ data:jobs, success: true });
   } catch (error) {
     console.error("getPendingJobs Error:", error);
     return res.status(500).json({ message: "Server error", success: false });

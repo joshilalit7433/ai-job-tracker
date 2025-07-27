@@ -19,7 +19,7 @@ export const store = configureStore({
   reducer: persistedReducer,
 });
 
-// ✅ Correctly typed RootState and AppDispatch
+
 export type RootState = ReturnType<typeof rootReducer>;
 export type AppDispatch = typeof store.dispatch;
 
