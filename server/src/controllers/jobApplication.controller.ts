@@ -166,7 +166,7 @@ export const GetJobApplicationById = async (req: Request, res: Response) => {
     if (!jobapplication) {
       return res.status(404).json({ message: "Job application not found", success: false });
     }
-    return res.status(200).json({ success: true, jobapplication });
+    return res.status(200).json({ success: true,data: jobapplication });
   } catch (error) {
     console.error("GetJobApplicationById Error:", error);
     return res.status(500).json({ message: "Failed to fetch job application", success: false });
@@ -259,7 +259,7 @@ export const approveJob = async (req: Request, res: Response) => {
       });
     }
 
-    return res.status(200).json({ message: "Job approved successfully", job, success: true });
+    return res.status(200).json({ message: "Job approved successfully", data:job, success: true });
   } catch (error) {
     console.error("approveJob Error:", error);
     return res.status(500).json({ message: "Error approving job", success: false });
@@ -294,17 +294,26 @@ export const JobCategoryCount = async (req: Request, res: Response) => {
   try {
     const jobs = await JobApplication.find({ isApproved: true });
 
-    const counts = jobs.reduce((acc: Record<string, number>, job) => {
+    const counts: Record<string, number> = jobs.reduce((acc, job) => {
       acc[job.jobCategory] = (acc[job.jobCategory] || 0) + 1;
       return acc;
-    }, {});
+    }, {} as Record<string, number>);
 
-    res.json({ success: true, counts });
+    res.status(200).json({
+      success: true,
+      message: "Category job counts fetched successfully",
+      data: counts,
+    });
   } catch (error) {
     console.error("Error getting job counts:", error);
-    res.status(500).json({ success: false, message: "Server error" });
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+      data: null,
+    });
   }
 };
+
 
 
 

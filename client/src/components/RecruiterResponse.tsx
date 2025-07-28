@@ -13,31 +13,13 @@ const RecruiterResponse = () => {
   const [message, setMessage] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
-  useEffect(() => {
-    const fetchRecruiterResponse = async () => {
-      try {
-        const response = await axios.get<ApiResponse<Applicant>>(
-          `${JOB_APPLICANT_API_END_POINT}/response-to-applicant/${applicantId}`,
-          { withCredentials: true }
-        );
-        const data = response.data;
-        if (data.success && data.data) {
-          setRecruiterResponse(data.data.recruiterResponse || "");
-          setStatus(data.data.status || "");
-        }
-      } catch (error) {
-        console.error("Error fetching recruiter response:", error);
-      }
-    };
 
-    if (applicantId) fetchRecruiterResponse();
-  }, [applicantId]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post<ApiResponse<unknown>>(
+      const response = await axios.post<ApiResponse<Applicant>>(
         `${JOB_APPLICANT_API_END_POINT}/response-to-applicant/${applicantId}`,
         { recruiterResponse, status },
         { withCredentials: true }
@@ -46,8 +28,14 @@ const RecruiterResponse = () => {
       const data = response.data;
       if (data.success) {
         toast.success("Response sent successfully!", {position: "bottom-right"});
+        setStatus("");
+        setRecruiterResponse("");
+
       } else {
         toast.error("Error in sending Response ", {position: "bottom-right"});
+        setStatus("");
+        setRecruiterResponse("");
+
       }
     } catch (error) {
       console.error("Error sending recruiter response:", error);

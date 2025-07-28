@@ -15,39 +15,34 @@ import {
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
+import { RootState } from "../redux/store";
+import { JobApplication, Applicant } from "../types/models";
+import { ApiResponse } from "../types/apiResponse";
 
 const ViewJobApplication = () => {
-  const [jobApplication, setJobApplication] = useState(null);
+  const [jobApplication, setJobApplication] = useState<JobApplication>();
   const [loading, setLoading] = useState(true);
   const { id } = useParams();
-  const { user } = useSelector((store) => store.auth);
+  const user = useSelector((state: RootState) => state.auth.user);
   const navigate = useNavigate();
-  const [hasApplied, setHasApplied] = useState(false);
-  const [applyMessage, setApplyMessage] = useState("");
-  const [applicationStatus, setApplicationStatus] = useState("");
-  const [recruiterResponse, setRecruiterResponse] = useState("");
-  const [appliedAt, setAppliedAt] = useState("");
+  const [hasApplied, setHasApplied] = useState<Applicant | null>(null);
 
   useEffect(() => {
     const fetchJobApplication = async () => {
       try {
-        const response = await axios.get(
+        const response = await axios.get<ApiResponse<JobApplication>>(
           `${JOB_APPLICATION_API_END_POINT}/get-job-application-by-id/${id}`,
           { withCredentials: true }
         );
-        setJobApplication(response.data?.jobapplication || null);
+        setJobApplication(response.data.data);
         setLoading(false);
 
         if (user && user.role === "user") {
-          const appliedRes = await axios.get(
+          const appliedRes = await axios.get<ApiResponse<Applicant>>(
             `${JOB_APPLICANT_API_END_POINT}/is-applied/${id}`,
             { withCredentials: true }
           );
-          setHasApplied(appliedRes.data.applied);
-          setApplyMessage(appliedRes.data.message);
-          setApplicationStatus(appliedRes.data.status || "");
-          setRecruiterResponse(appliedRes.data.recruiterResponse || "");
-          setAppliedAt(appliedRes.data.appliedAt || "");
+          setHasApplied(appliedRes.data.data);
         }
       } catch (error) {
         console.error("Error fetching job application:", error);
@@ -68,7 +63,7 @@ const ViewJobApplication = () => {
 
   const handleApprove = async () => {
     try {
-      await axios.put(
+      await axios.put<ApiResponse<JobApplication>>(
         `${JOB_APPLICATION_API_END_POINT}/approve-job/${id}`,
         {},
         { withCredentials: true }
@@ -79,7 +74,7 @@ const ViewJobApplication = () => {
       });
       navigate("/admin-dashboard");
     } catch (error) {
-      toast.error(error.message || "Failed to approve job", {
+      toast.error("Failed to approve job", {
         position: "bottom-right",
         theme: "dark",
       });
@@ -88,7 +83,7 @@ const ViewJobApplication = () => {
 
   const handleReject = async () => {
     try {
-      await axios.delete(`${JOB_APPLICATION_API_END_POINT}/reject-job/${id}`, {
+      await axios.delete<ApiResponse<null>>(`${JOB_APPLICATION_API_END_POINT}/reject-job/${id}`, {
         withCredentials: true,
       });
       toast.success("Job rejected successfully!", {
@@ -97,7 +92,7 @@ const ViewJobApplication = () => {
       });
       navigate("/admin-dashboard");
     } catch (error) {
-      toast.error(error.message || "Failed to reject job", {
+      toast.error("Failed to reject job", {
         position: "bottom-right",
         theme: "dark",
       });
@@ -123,7 +118,9 @@ const ViewJobApplication = () => {
               src={jobApplication.image}
               alt={jobApplication.companyName}
               className="w-14 h-14 object-contain rounded border"
-              onError={(e) => (e.target.src = "/images/placeholder.jpg")}
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = "./images/placeholder.jpg";
+              }}
             />
             <div>
               <h1 className="text-2xl font-bold text-blue-800">
@@ -178,7 +175,7 @@ const ViewJobApplication = () => {
           </p>
         </div>
 
-        {jobApplication.skills &&
+        {jobApplication.skills   &&
         (Array.isArray(jobApplication.skills) ||
           typeof jobApplication.skills === "string") ? (
           <div className="space-y-2">
@@ -186,8 +183,8 @@ const ViewJobApplication = () => {
             <div className="flex flex-wrap gap-2">
               {(Array.isArray(jobApplication.skills)
                 ? jobApplication.skills
-                : jobApplication.skills.split(",").map((s) => s.trim())
-              ).map((skill, index) => (
+                : (jobApplication.skills as string).split(",").map((s:string) => s.trim())
+              ).map((skill:string, index:number) => (
                 <span
                   key={index}
                   className="inline-block bg-blue-100 text-blue-800 text-xs px-3 py-1 rounded-full"
@@ -201,21 +198,21 @@ const ViewJobApplication = () => {
           <p className="text-sm text-gray-500">No skills listed.</p>
         )}
 
-        {user?.role === "user" && hasApplied && (
+        {user?.role === "user" && hasApplied?.applied && (
           <div className="p-4 rounded-xl border shadow bg-white space-y-3 border-gray-200">
             <div className="text-lg font-semibold text-green-700">
-              ✅ {applyMessage}
+              ✅ {hasApplied.message}
             </div>
 
-            {applicationStatus && (
+            {hasApplied.status && (
               <div className="flex items-center gap-2 text-sm font-medium">
-                {applicationStatus === "shortlisted" && (
+                {hasApplied.status === "shortlisted" && (
                   <>
                     <span className="text-yellow-600">📝 Shortlisted</span>
                     <span className="text-gray-600">(Await next steps)</span>
                   </>
                 )}
-                {applicationStatus === "interview" && (
+                {hasApplied.status === "interview" && (
                   <>
                     <span className="text-blue-600">
                       📅 Interview Scheduled
@@ -225,7 +222,7 @@ const ViewJobApplication = () => {
                     </span>
                   </>
                 )}
-                {applicationStatus === "hired" && (
+                {hasApplied.status === "hired" && (
                   <>
                     <span className="text-green-600">
                       🎉 You’ve been Hired!
@@ -233,7 +230,7 @@ const ViewJobApplication = () => {
                     <span className="text-gray-600">(Congrats!)</span>
                   </>
                 )}
-                {applicationStatus === "rejected" && (
+                {hasApplied.status === "rejected" && (
                   <>
                     <span className="text-red-600">❌ Not Selected</span>
                     <span className="text-gray-600">
@@ -241,7 +238,7 @@ const ViewJobApplication = () => {
                     </span>
                   </>
                 )}
-                {["pending"].includes(applicationStatus) && (
+                {hasApplied.status === "pending" && (
                   <>
                     <span className="text-gray-700">⏳ Under Review</span>
                   </>
@@ -249,18 +246,18 @@ const ViewJobApplication = () => {
               </div>
             )}
 
-            {recruiterResponse && (
+            {hasApplied.recruiterResponse && (
               <div className="bg-gray-50 border border-gray-200 p-3 rounded-md text-sm text-gray-800 italic">
                 <strong className="block text-gray-600 mb-1">
                   Recruiter Response:
                 </strong>
-                {recruiterResponse}
+                {hasApplied.recruiterResponse}
               </div>
             )}
 
-            {appliedAt && (
+            {hasApplied.appliedAt && (
               <div className="text-xs text-gray-500">
-                Applied on: {dayjs(appliedAt).format("MMMM D, YYYY")}
+                Applied on: {dayjs(hasApplied.appliedAt).format("MMMM D, YYYY")}
               </div>
             )}
           </div>

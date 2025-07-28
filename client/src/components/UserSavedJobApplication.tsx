@@ -11,22 +11,34 @@ import {
   Trash2,
 } from "lucide-react";
 import { toast } from "react-toastify";
+import { JobApplication } from "../types/models";
+import { RootState } from "../redux/store";
+import { ApiResponse } from "../types/apiResponse";
 
 const UserSavedJobApplication = () => {
-  const { user } = useSelector((store) => store.auth);
-  const [savedJobs, setSavedJobs] = useState([]);
+  const user = useSelector((state: RootState) => state.auth.user);
+  const [savedJobs, setSavedJobs] = useState<JobApplication[]>([]); 
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchSavedJobs = async () => {
+      setLoading(true);
       try {
-        const res = await axios.get(`${USER_API_END_POINT}/get-saved-job`, {
-          withCredentials: true,
-        });
+        const res = await axios.get<ApiResponse<JobApplication[]>>(
+          `${USER_API_END_POINT}/get-saved-job`,
+          {
+            withCredentials: true,
+          }
+        );
         if (res.data.success) {
-          setSavedJobs(res.data.savedJobs);
+          setSavedJobs(res.data.data);
         }
       } catch (err) {
         console.error("Error fetching saved jobs:", err);
+        setError("Failed to fetch saved jobs.");
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -35,7 +47,7 @@ const UserSavedJobApplication = () => {
     }
   }, [user]);
 
-  const handleDelete = async (jobId) => {
+  const handleDelete = async (jobId: string) => {
     if (!window.confirm("Are you sure you want to remove this saved job?"))
       return;
 
@@ -48,34 +60,46 @@ const UserSavedJobApplication = () => {
       );
 
       if (res.data.success) {
-        toast.success("Job application removed from saved list!",{position:"bottom-right"});
+        toast.success("Job removed from saved list!", {
+          position: "bottom-right",
+        });
         setSavedJobs((prev) => prev.filter((job) => job._id !== jobId));
       } else {
-        toast.error(res.data.message || "Failed to delete job application.",{position:"bottom-right"});
+        toast.error(res.data.message || "Failed to delete saved job.", {
+          position: "bottom-right",
+        });
       }
     } catch (err) {
-      console.error("Error deleting job application:", err);
-      toast.error("Something went wrong while deleting.",{position:"bottom-right"});
+      console.error("Error deleting job:", err);
+      toast.error("Something went wrong while deleting.", {
+        position: "bottom-right",
+      });
     }
   };
 
   return (
-    <div className="min-h-screen py-10 px-4 sm:px-6 lg:px-20 bg-[#f7e9d6]">
-      <div className="max-w-6xl mx-auto ">
-        <h2 className="text-3xl font-bold text-center text-blue-700 mb-10">
-          Your Saved Jobs
-        </h2>
+    <div className="bg-[#f7e9d6] min-h-screen py-10 px-4">
+      <div className="max-w-6xl mx-auto mt-[90px]">
+        <h1 className="text-2xl md:text-3xl font-bold text-center text-gray-800 mb-8">
+          Your Saved Job Applications
+        </h1>
 
-        {savedJobs.length === 0 ? (
-          <p className="text-center text-gray-600 text-lg">
-            You haven't saved any jobs yet.
+        {loading ? (
+          <p className="text-center text-lg text-gray-700">
+            Loading saved jobs...
+          </p>
+        ) : error ? (
+          <p className="text-center text-lg text-red-600">{error}</p>
+        ) : savedJobs.length === 0 ? (
+          <p className="text-center text-lg text-gray-700">
+            No saved job applications found.
           </p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 ">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {savedJobs.map((job) => (
               <div
                 key={job._id}
-                className="bg-[#FAF6E9] rounded-xl shadow-lg p-6 flex flex-col justify-between hover:shadow-2xl transition duration-300"
+                className="bg-[#FAF6E9] rounded-xl shadow-md hover:shadow-xl transition duration-300 overflow-hidden p-5 space-y-3"
               >
                 <div>
                   <h3 className="text-xl font-semibold mb-2 text-blue-600 flex items-center gap-2">
@@ -91,8 +115,8 @@ const UserSavedJobApplication = () => {
                     {job.location}
                   </p>
                   <p className="text-gray-700 mb-4 flex items-center gap-2">
-                    <Banknote className="w-4 h-4 text-gray-500" />₹ {job.salary}
-                    /year
+                    <Banknote className="w-4 h-4 text-gray-500" />
+                    ₹ {job.salary} /year
                   </p>
                 </div>
 

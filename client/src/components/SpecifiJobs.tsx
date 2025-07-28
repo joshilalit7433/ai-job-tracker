@@ -14,6 +14,7 @@ import { Link, useParams } from "react-router-dom";
 import FilterJobApplications from "../components/FilterJobApplications";
 import { JobApplication } from "../types/models";
 import { ApiResponse } from "../types/apiResponse";
+import { toast } from "react-toastify";
 
 interface Filters {
   Salary: string;
@@ -99,13 +100,16 @@ const SpecifiJobs = () => {
 
   const handleSaveJob = async (jobId: string) => {
     try {
-      const res = await axios.post(
+      const res = await axios.post<ApiResponse<JobApplication>>(
         `${USER_API_END_POINT}/saved-job/${jobId}`,
         {},
         { withCredentials: true }
       );
       if (res.data.success) {
-        alert("Job saved successfully!");
+        toast.success("Job saved successfully!", { position: "bottom-right" });
+      }
+      else{
+        toast.error("failed to save job.", { position: "bottom-right" });
       }
     } catch (error) {
       console.error("Failed to save job:", error);

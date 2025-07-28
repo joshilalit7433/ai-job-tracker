@@ -9,6 +9,8 @@ import {
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { JOB_APPLICATION_API_END_POINT } from "../utils/constant";
+import { ApiResponse } from "../types/apiResponse";
+
 
 interface Category {
   name: string;
@@ -16,24 +18,25 @@ interface Category {
   highlighted: boolean;
 }
 
-interface CategoryCounts {
-  [key: string]: number;
-}
+
 
 const JobsCategory = () => {
   const navigate = useNavigate();
-  const [categoryCounts, setCategoryCounts] = useState<CategoryCounts>({});
+const [categoryCounts, setCategoryCounts] = useState<Record<string, number>>({});
 
   const fetchCategoryCounts = async () => {
-    try {
-      const res = await axios.get(`${JOB_APPLICATION_API_END_POINT}/get-job-category-count`);
-      if (res.data.success) {
-        setCategoryCounts(res.data.counts);
-      }
-    } catch (error) {
-      console.error("Error fetching category counts:", error);
+  try {
+    const res = await axios.get<ApiResponse<Record<string, number>>>(
+      `${JOB_APPLICATION_API_END_POINT}/get-job-category-count`
+    );
+    if (res.data.success) {
+      setCategoryCounts(res.data.data); 
     }
-  };
+  } catch (error) {
+    console.error("Error fetching category counts:", error);
+  }
+};
+
 
   useEffect(() => {
     fetchCategoryCounts();

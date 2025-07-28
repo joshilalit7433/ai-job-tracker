@@ -139,11 +139,13 @@ export const checkIfApplied = async (req: AuthRequest, res: Response) => {
 
     return res.status(200).json({
       success: true,
+      data:{
       applied: true,
       message: "You have already applied for this job.",
       status: applicant.status,
       recruiterResponse: applicant.recruiterResponse || "",
       appliedAt: applicant.appliedAt,
+      }
     });
   } catch (error) {
     console.error("Error in checkIfApplied:", error);
@@ -197,24 +199,30 @@ export const respondToApplicant = async (req: AuthRequest, res: Response) => {
 
     await sendEmail(applicant.email, "Job Application Response", finalResponse);
 
-    await Applicant.findByIdAndUpdate(applicantId, {
-      recruiterResponse: finalResponse,
-      status,
-      respondedAt: new Date(),
-    });
+    const updated = await Applicant.findByIdAndUpdate(
+      applicantId,
+      {
+        recruiterResponse: finalResponse,
+        status,
+        respondedAt: new Date(),
+      },
+      { new: true }
+    );
 
     return res.status(200).json({
-      message: "Response sent successfully",
       success: true,
+      message: "Response sent successfully",
+      data:updated
     });
   } catch (error) {
     console.error("Error sending recruiter response:", error);
     return res.status(500).json({
-      message: "Server error while sending recruiter response",
       success: false,
+      message: "Server error while sending recruiter response",
     });
   }
 };
+
 
 
 //  Generate AI-based cover letter

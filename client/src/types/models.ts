@@ -8,7 +8,7 @@ export interface User {
   resume: string;
   coverLetter: string;
   resumeAnalysis: string;
-  savedJobs: string[];
+  savedJobs: JobApplication[];
   totalJobsPosted: number;
   createdAt: Date;
 }
@@ -42,6 +42,8 @@ export interface Applicant {
   mobileNumber: number;
   resume: string;
   appliedAt: Date;
+  applied: boolean;
+  message:string;
   status: 'pending' | 'interview' | 'rejected' | 'shortlisted' | 'hired';
   coverLetter: string;
   recruiterResponse: string;
