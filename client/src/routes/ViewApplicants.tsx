@@ -79,6 +79,9 @@ const ViewApplicants = () => {
                   <th className="px-6 py-3 text-left text-base font-semibold text-gray-800">
                     Action
                   </th>
+                  <th className="px-6 py-3 text-left text-base font-semibold text-gray-800">
+                    Status
+                  </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-100">
@@ -124,6 +127,9 @@ const ViewApplicants = () => {
                         Respond
                       </Link>
                     </td>
+                    <td className="px-6 py-4">
+                      {applicant.status}
+                      </td>
                   </tr>
                 ))}
               </tbody>

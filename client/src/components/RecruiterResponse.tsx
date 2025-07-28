@@ -1,28 +1,29 @@
 import axios from "axios";
-import { useState, useEffect } from "react";
-import { JOB_APPLICANT_API_END_POINT } from "../utils/constant";
+import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { useParams } from "react-router-dom";
+import { Applicant } from "../types/models";
+import { ApiResponse } from "../types/apiResponse";
+import { JOB_APPLICANT_API_END_POINT } from "../utils/constant";
+import { toast } from "react-toastify";
 
 const RecruiterResponse = () => {
-  const [recruiterResponse, setRecruiterResponse] = useState("");
-  const [status, setStatus] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
-  const { id: applicantId } = useParams();
+  const { id: applicantId } = useParams<{ id: string }>();
+  const [recruiterResponse, setRecruiterResponse] = useState<string>("");
+  const [status, setStatus] = useState<string>("");
+  const [message, setMessage] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchRecruiterResponse = async () => {
       try {
-        const response = await axios.get(
+        const response = await axios.get<ApiResponse<Applicant>>(
           `${JOB_APPLICANT_API_END_POINT}/response-to-applicant/${applicantId}`,
           { withCredentials: true }
         );
         const data = response.data;
-        if (data.success) {
-          setRecruiterResponse(data.recruiterResponse || "");
-          setStatus(data.status || "");
-        } else {
-          console.error("Failed to fetch recruiter response:", data.message);
+        if (data.success && data.data) {
+          setRecruiterResponse(data.data.recruiterResponse || "");
+          setStatus(data.data.status || "");
         }
       } catch (error) {
         console.error("Error fetching recruiter response:", error);
@@ -32,11 +33,11 @@ const RecruiterResponse = () => {
     if (applicantId) fetchRecruiterResponse();
   }, [applicantId]);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post(
+      const response = await axios.post<ApiResponse<unknown>>(
         `${JOB_APPLICANT_API_END_POINT}/response-to-applicant/${applicantId}`,
         { recruiterResponse, status },
         { withCredentials: true }
@@ -44,15 +45,13 @@ const RecruiterResponse = () => {
 
       const data = response.data;
       if (data.success) {
-        setMessage("Response sent successfully!");
-        setRecruiterResponse("");
-        setStatus("");
+        toast.success("Response sent successfully!", {position: "bottom-right"});
       } else {
-        setMessage("Failed to send response.");
+        toast.error("Error in sending Response ", {position: "bottom-right"});
       }
     } catch (error) {
       console.error("Error sending recruiter response:", error);
-      setMessage("An error occurred while sending response.");
+      toast.error("An error occurred while sending response.",{position: "bottom-right"});
     } finally {
       setLoading(false);
     }
@@ -65,15 +64,14 @@ const RecruiterResponse = () => {
           Respond to Applicant
         </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-6 ">
-          {/* Status Selector */}
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="block text-sm font-semibold mb-2 text-gray-700">
               Application Status
             </label>
             <select
               value={status}
-              onChange={(e) => setStatus(e.target.value)}
+              onChange={(e: ChangeEvent<HTMLSelectElement>) => setStatus(e.target.value)}
               required
               className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
@@ -86,14 +84,13 @@ const RecruiterResponse = () => {
             </select>
           </div>
 
-          {/* Message Area */}
           <div>
             <label className="block text-sm font-semibold mb-2 text-gray-700">
               Message
             </label>
             <textarea
               value={recruiterResponse}
-              onChange={(e) => setRecruiterResponse(e.target.value)}
+              onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setRecruiterResponse(e.target.value)}
               rows={6}
               required
               placeholder="Write your response here..."
@@ -101,7 +98,6 @@ const RecruiterResponse = () => {
             ></textarea>
           </div>
 
-          {/* Submit Button */}
           <div className="text-center">
             <button
               type="submit"
@@ -112,13 +108,10 @@ const RecruiterResponse = () => {
             </button>
           </div>
 
-          {/* Message Display */}
           {message && (
             <p
               className={`text-center text-sm mt-2 ${
-                message.includes("success")
-                  ? "text-green-600"
-                  : "text-red-600"
+                message.includes("success") ? "text-green-600" : "text-red-600"
               }`}
             >
               {message}

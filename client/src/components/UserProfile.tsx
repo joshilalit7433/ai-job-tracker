@@ -5,9 +5,10 @@ import { Pencil, Dock, Contact, NotepadText, X } from "lucide-react";
 import { BACKEND_BASE_URL } from "../utils/constant";
 import { useState } from "react";
 import ProfileEditForm from "./ProfileEditForm";
+import { RootState } from "../redux/store";
 
 const UserProfile = () => {
-  const { user } = useSelector((store) => store.auth);
+  const user = useSelector((state: RootState) => state.auth.user);
   const [showEdit, setShowEdit] = useState(false);
 
   return (
@@ -53,7 +54,7 @@ const UserProfile = () => {
               <div className="space-y-2">
                 <p className="text-sm text-gray-600">Member Since</p>
                 <p className="text-gray-900 font-medium">
-                  {dayjs(user.createdAt).format("MMMM D, YYYY")}
+                  {dayjs(user?.createdAt).format("MMMM D, YYYY")}
                 </p>
                 <p className="text-sm text-gray-600">Account Type</p>
                 <p className="text-gray-900 font-medium capitalize">

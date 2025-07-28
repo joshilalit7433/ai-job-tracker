@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
-import { JOB_APPLICATION_API_END_POINT } from "../utils/constant.js";
+import { JOB_APPLICATION_API_END_POINT } from "../utils/constant";
 import {
   BriefcaseBusiness,
   Building2,
@@ -11,10 +11,13 @@ import {
   MoveRight,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { RootState } from "../redux/store";
+import { Applicant } from "../types/models";
+import { ApiResponse } from "../types/apiResponse";
 
 const UserAppliedJobApplication = () => {
-  const { user } = useSelector((store) => store.auth);
-  const [jobs, setJobs] = useState([]);
+  const { user } = useSelector((store: RootState) => store.auth);
+  const [jobs, setJobs] = useState<Applicant[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -22,15 +25,14 @@ const UserAppliedJobApplication = () => {
     const fetchJobApplications = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(
+        const response = await axios.get<ApiResponse<Applicant[]>>(
           `${JOB_APPLICATION_API_END_POINT}/get-user-applied-job-application`,
           {
             withCredentials: true,
           }
         );
-        setJobs(response.data.appliedJobs || []);
-      } catch (err) {
-        console.error("Error fetching job applications:", err.message);
+        setJobs(response.data.data || []);
+      } catch (error) {
         setError("Failed to fetch job applications.");
       } finally {
         setLoading(false);

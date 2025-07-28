@@ -23,8 +23,10 @@ import RecruiterResponse from "./components/RecruiterResponse";
 import RecruiterDashboard from "./components/RecruiterDashboard";
 import SpecifiJobs from "./components/SpecifiJobs";
 import { useAppSelector } from "./redux/hooks";
+import useAuth from "./useAuth";
 
 function App() {
+  useAuth(); 
   const { user } = useAppSelector((state) => state.auth);
   return (
     <>

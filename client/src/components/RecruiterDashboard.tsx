@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import {
   BarChart,
@@ -29,10 +28,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../redux/authSlice";
 import { RootState } from "../redux/store";
-import { User,DashboardStats } from "../types/models";
+import { User, DashboardStats } from "../types/models";
 import { ApiResponse } from "../types/apiResponse";
-
-
+import { toast } from "react-toastify";
 
 interface NavLink {
   icon: React.ReactNode;
@@ -49,7 +47,7 @@ interface StatItem {
   iconColor: string;
 }
 
-export default function SidebarDashboard(){
+export default function SidebarDashboard() {
   const [dashboardStats, setDashboardStats] = useState<DashboardStats>({
     totalJobsPosted: 0,
     totalApplicants: 0,
@@ -64,14 +62,19 @@ export default function SidebarDashboard(){
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const user = useSelector((state: RootState) => state.auth.user as User | null);
+  const user = useSelector(
+    (state: RootState) => state.auth.user as User | null
+  );
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const response = await axios.get<ApiResponse<DashboardStats>>(`${RECRUITER_DASHBOARD_API_END_POINT}/recruiter-dashboard`, {
-          withCredentials: true,
-        });
+        const response = await axios.get<ApiResponse<DashboardStats>>(
+          `${RECRUITER_DASHBOARD_API_END_POINT}/recruiter-dashboard`,
+          {
+            withCredentials: true,
+          }
+        );
         setDashboardStats(response.data.data);
       } catch (error) {
         console.error("Dashboard fetch error:", error);
@@ -81,40 +84,75 @@ export default function SidebarDashboard(){
   }, []);
 
   const handleLogout = (): void => {
-    localStorage.setItem("justLoggedOut", "true");
+    localStorage.removeItem("token");
     dispatch(logout());
     navigate("/");
+    toast.success("You have successfully Logged Out.", {
+      position: "bottom-right",
+      autoClose: 3000,
+      theme: "dark",
+    });
   };
 
   const navLinks: NavLink[] = [
-    { icon: <Bell className="w-5 h-5" />, label: "Job Notifications", path: "/notifications" },
-    { icon: <UserRound className="w-5 h-5" />, label: "Profile", path: "/user-profile" },
+    {
+      icon: <Bell className="w-5 h-5" />,
+      label: "Job Notifications",
+      path: "/notifications",
+    },
+    {
+      icon: <UserRound className="w-5 h-5" />,
+      label: "Profile",
+      path: "/user-profile",
+    },
   ];
 
   const addJobButton: NavLink = {
-    icon: <FileText className="w-5 h-5" />, label: "Add a New Job", path: "/job-application-form",
+    icon: <FileText className="w-5 h-5" />,
+    label: "Add a New Job",
+    path: "/job-application-form",
   };
 
   const stats: StatItem[] = [
     {
-      icon: <Briefcase className="w-6 h-6" />, label: "Total Jobs", value: dashboardStats.totalJobsPosted,
-      color: "from-blue-500 to-blue-600", bgColor: "bg-blue-50", iconColor: "text-blue-600",
+      icon: <Briefcase className="w-6 h-6" />,
+      label: "Total Jobs",
+      value: dashboardStats.totalJobsPosted,
+      color: "from-blue-500 to-blue-600",
+      bgColor: "bg-blue-50",
+      iconColor: "text-blue-600",
     },
     {
-      icon: <Users className="w-6 h-6" />, label: "Total Applicants", value: dashboardStats.totalApplicants,
-      color: "from-green-500 to-green-600", bgColor: "bg-green-50", iconColor: "text-green-600",
+      icon: <Users className="w-6 h-6" />,
+      label: "Total Applicants",
+      value: dashboardStats.totalApplicants,
+      color: "from-green-500 to-green-600",
+      bgColor: "bg-green-50",
+      iconColor: "text-green-600",
     },
     {
-      icon: <CheckCircle className="w-6 h-6" />, label: "Shortlisted", value: dashboardStats.shortlisted,
-      color: "from-purple-500 to-purple-600", bgColor: "bg-purple-50", iconColor: "text-purple-600",
+      icon: <CheckCircle className="w-6 h-6" />,
+      label: "Shortlisted",
+      value: dashboardStats.shortlisted,
+      color: "from-purple-500 to-purple-600",
+      bgColor: "bg-purple-50",
+      iconColor: "text-purple-600",
     },
     {
-      icon: <CalendarCheck className="w-6 h-6" />, label: "Interviews", value: dashboardStats.interviews,
-      color: "from-orange-500 to-orange-600", bgColor: "bg-orange-50", iconColor: "text-orange-600",
+      icon: <CalendarCheck className="w-6 h-6" />,
+      label: "Interviews",
+      value: dashboardStats.interviews,
+      color: "from-orange-500 to-orange-600",
+      bgColor: "bg-orange-50",
+      iconColor: "text-orange-600",
     },
     {
-      icon: <CalendarCheck className="w-6 h-6" />, label: "Hired", value: dashboardStats.hired,
-      color: "from-emerald-500 to-emerald-600", bgColor: "bg-emerald-50", iconColor: "text-emerald-600",
+      icon: <CalendarCheck className="w-6 h-6" />,
+      label: "Hired",
+      value: dashboardStats.hired,
+      color: "from-emerald-500 to-emerald-600",
+      bgColor: "bg-emerald-50",
+      iconColor: "text-emerald-600",
     },
   ];
 
@@ -123,7 +161,7 @@ export default function SidebarDashboard(){
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-[#f7e9d6] to-[#f0e6d0] text-[#131D4F]">
-       <div className="lg:hidden fixed top-4 right-4 z-50">
+      <div className="lg:hidden fixed top-4 right-4 z-50">
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
           className="p-2 bg-white rounded-lg shadow-lg border border-gray-200"
@@ -141,14 +179,22 @@ export default function SidebarDashboard(){
         className={`
           fixed top-0 left-0 z-40 w-64 lg:w-80 h-screen bg-[#FAF6E9] border-r border-gray-300 pt-10 flex flex-col
           transform transition-transform duration-300 ease-in-out
-          ${sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
+          ${
+            sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+          }
         `}
       >
         {/* Logo */}
         <div className="flex items-center space-x-2 mb-10 px-4">
-          <span className="bg-gradient-to-tr from-purple-500 to-orange-400 w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-xl">T</span>
-          <span className="text-[#5e2b14] text-2xl font-bold tracking-wide">Target</span>
-          <span className="text-orange-600 text-2xl font-bold tracking-wide">Aims</span>
+          <span className="bg-gradient-to-tr from-purple-500 to-orange-400 w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-xl">
+            T
+          </span>
+          <span className="text-[#5e2b14] text-2xl font-bold tracking-wide">
+            Target
+          </span>
+          <span className="text-orange-600 text-2xl font-bold tracking-wide">
+            Aims
+          </span>
         </div>
         <div className="flex-1 flex flex-col">
           {/* Profile Section */}
@@ -220,7 +266,9 @@ export default function SidebarDashboard(){
       <main className="flex-1 p-4 lg:p-10 pt-8 bg-gradient-to-br from-[#f7e9d6] to-[#f0e6d0] min-h-screen text-[#131D4F] lg:ml-64 xl:ml-80">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl font-bold mb-2">Welcome back, {firstName}</h2>
-          <p className="text-gray-500 mb-8">Measure your advertising ROI and report website traffic.</p>
+          <p className="text-gray-500 mb-8">
+            Measure your advertising ROI and report website traffic.
+          </p>
 
           {/* Stats */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 lg:gap-6 mb-8 lg:mb-10">
@@ -294,7 +342,7 @@ export default function SidebarDashboard(){
                       borderColor: "#e2e8f0",
                       borderRadius: "12px",
                       boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
-                      color: '#131D4F',
+                      color: "#131D4F",
                     }}
                   />
                   <Bar
@@ -334,7 +382,7 @@ export default function SidebarDashboard(){
                       borderColor: "#e2e8f0",
                       borderRadius: "12px",
                       boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
-                      color: '#131D4F',
+                      color: "#131D4F",
                     }}
                   />
                   <Line
@@ -366,11 +414,3 @@ export default function SidebarDashboard(){
     </div>
   );
 }
-
-
-
-
-
-
-
-

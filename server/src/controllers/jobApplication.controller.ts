@@ -210,9 +210,9 @@ export const GetRecruiterPostedJobApplication = async (req: AuthRequest, res: Re
 export const GetUserAppliedJobApplication = async (req: AuthRequest, res: Response) => {
   try {
     const jobs = await Applicant.find({ user: req.user!._id }).populate("job");
-    return res.status(200).json({ appliedJobs: jobs, success: true });
+    return res.status(200).json({ data: jobs, success: true });
   } catch (error) {
-    console.error("GetUserAppliedJobApplication Error:", error);
+    console.error("Get User Applied JobApplication Error:", error);
     return res.status(500).json({ message: "Error fetching applied jobs", success: false });
   }
 };

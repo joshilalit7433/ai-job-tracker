@@ -1,8 +1,9 @@
 import { ReactNode, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { RootState } from "../redux/store"; // adjust path if needed
+import { RootState } from "../redux/store";
+import { clearJustLoggedOut } from "../redux/authSlice";
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -14,13 +15,14 @@ const ProtectedRoute = ({
   allowedRoles = [],
 }: ProtectedRouteProps) => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth.user);
+  const justLoggedOut = useSelector(
+    (state: RootState) => state.auth.justLoggedOut
+  );
   const [isAllowed, setIsAllowed] = useState(false);
 
   useEffect(() => {
-    const justLoggedOut = localStorage.getItem("justLoggedOut");
-
     const checkAccess = () => {
       if (!user) {
         if (!justLoggedOut) {
@@ -28,7 +30,7 @@ const ProtectedRoute = ({
             position: "bottom-right",
           });
         } else {
-          localStorage.removeItem("justLoggedOut");
+          dispatch(clearJustLoggedOut());
         }
 
         navigate("/", { replace: true });
@@ -42,10 +44,10 @@ const ProtectedRoute = ({
       }
     };
 
-    const timeout = setTimeout(checkAccess, 300); 
+    const timeout = setTimeout(checkAccess, 300);
 
     return () => clearTimeout(timeout);
-  }, [user, allowedRoles, navigate]);
+  }, [user, justLoggedOut, allowedRoles, navigate, dispatch]);
 
   return isAllowed ? <>{children}</> : null;
 };

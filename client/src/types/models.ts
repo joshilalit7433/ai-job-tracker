@@ -10,6 +10,7 @@ export interface User {
   resumeAnalysis: string;
   savedJobs: string[];
   totalJobsPosted: number;
+  createdAt: Date;
 }
 
 
@@ -34,7 +35,7 @@ export interface JobApplication {
 
 export interface Applicant {
   _id: string;
-  job: string; 
+  job: JobApplication; 
   user: string;
   fullName: string;
   email: string;

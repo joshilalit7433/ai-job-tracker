@@ -79,7 +79,7 @@ export const login = async (req: Request, res: Response) => {
   }
 };
 
-export const logout = async (_req: Request, res: Response) => {
+export const logout = async (req: Request, res: Response) => {
   
   try {
     res.clearCookie("token").status(200).json({ message: "Logged out successfully", success: true });
@@ -88,6 +88,17 @@ export const logout = async (_req: Request, res: Response) => {
     res.status(500).json({ message: "Server error", success: false });
   }
 };
+
+export const GetUser = async (req: AuthRequest, res: Response) =>{
+  try {
+    const user=req.user;
+    res.status(200).json({success:true,user});
+    
+  } catch (error) {
+    res.status(403).json({success:false,message:"Unauthorized access"});
+    
+  }
+}
 
 export const updateProfile = async (req: AuthRequest, res: Response) => {
   try {
