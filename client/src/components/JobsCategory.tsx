@@ -6,6 +6,8 @@ import {
   FaBullhorn,
   FaHeadset,
 } from "react-icons/fa";
+import { MdOutlineDashboard } from "react-icons/md";
+import { FiPenTool } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { JOB_APPLICATION_API_END_POINT } from "../utils/constant";
@@ -67,6 +69,17 @@ const [categoryCounts, setCategoryCounts] = useState<Record<string, number>>({})
       name: "Customer Service",
       icon: <FaHeadset />,
       highlighted: false,
+    },
+    {
+      name: "Product Management",
+      icon: <MdOutlineDashboard />,
+      highlighted: false,
+    },
+    {
+      name:"Design & Creative",
+      icon: <FiPenTool />,
+      highlighted: false
+
     },
   ];
 

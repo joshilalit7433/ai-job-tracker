@@ -1,11 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, ChangeEvent, FormEvent } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { JOB_APPLICATION_API_END_POINT } from "../utils/constant";
+import { ApiResponse } from "../types/apiResponse";
+import { JobApplication } from "../types/models";
+
+
+interface JobApplicationFormData {
+  title: string;
+  salary: string;
+  location: string;
+  companyName: string;
+  jobType: string;
+  benefits: string;
+  experience: string;
+  responsibilities: string;
+  skills: string;
+  qualification: string;
+  image: string;
+  jobCategory: string;
+}
 
 const JobApplicationForm = () => {
-  const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
+  const [loading, setLoading] = useState<boolean>(false);
+  const [formData, setFormData] = useState<JobApplicationFormData>({
     title: "",
     salary: "",
     location: "",
@@ -20,28 +38,28 @@ const JobApplicationForm = () => {
     jobCategory: "",
   });
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      setLoading(true);
-      const res = await axios.post(
+      const res = await axios.post<ApiResponse<JobApplication>>(
         `${JOB_APPLICATION_API_END_POINT}/post-job-applications`,
         {
           ...formData,
+          salary: Number(formData.salary),
           skills: formData.skills.split(',').map((s) => s.trim()),
         },
         { withCredentials: true }
       );
 
       if (res.data.success) {
-        toast.success("Job posted successfully!",{position: "bottom-right"});
+        toast.success("Job posted successfully!", { position: "bottom-right" });
         setFormData({
           title: "",
           salary: "",
@@ -67,8 +85,8 @@ const JobApplicationForm = () => {
     }
   };
 
-  const handleFileUpload = async (e) => {
-    const file = e.target.files[0];
+  const handleFileUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (!file) return;
 
     setLoading(true);
@@ -77,18 +95,15 @@ const JobApplicationForm = () => {
     data.append("upload_preset", "target");
 
     try {
-      const res = await fetch(
-        "https://api.cloudinary.com/v1_1/dogh78y3a/image/upload",
-        {
-          method: "POST",
-          body: data,
-        }
-      );
+      const res = await fetch("https://api.cloudinary.com/v1_1/dogh78y3a/image/upload", {
+        method: "POST",
+        body: data,
+      });
 
       const uploadedImage = await res.json();
       if (uploadedImage.secure_url) {
         setFormData((prev) => ({ ...prev, image: uploadedImage.secure_url }));
-        toast.success("Image uploaded!",{position: "bottom-right"});
+        toast.success("Image uploaded!", { position: "bottom-right" });
       } else {
         throw new Error("Upload failed");
       }
@@ -106,9 +121,7 @@ const JobApplicationForm = () => {
         onSubmit={handleSubmit}
         className="bg-[#FAF6E9] shadow-lg rounded-xl p-8 w-full max-w-5xl"
       >
-        <h2 className="text-2xl font-semibold text-center mb-6">
-          Post a New Job
-        </h2>
+        <h2 className="text-2xl font-semibold text-center mb-6">Post a New Job</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {[
@@ -118,11 +131,7 @@ const JobApplicationForm = () => {
             { label: "Company Name", name: "companyName", type: "text" },
             { label: "Benefits", name: "benefits", type: "text" },
             { label: "Experience", name: "experience", type: "text" },
-            {
-              label: "Responsibilities",
-              name: "responsibilities",
-              type: "text",
-            },
+            { label: "Responsibilities", name: "responsibilities", type: "text" },
             { label: "Skills", name: "skills", type: "text" },
             { label: "Qualification", name: "qualification", type: "text" },
           ].map(({ label, name, type }) => (
@@ -131,7 +140,7 @@ const JobApplicationForm = () => {
               <input
                 type={type}
                 name={name}
-                value={formData[name]}
+                value={formData[name as keyof JobApplicationFormData]}
                 onChange={handleChange}
                 className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder={`Enter ${label.toLowerCase()}`}
@@ -176,8 +185,6 @@ const JobApplicationForm = () => {
               <option value="Design & Creative">Design & Creative</option>
             </select>
           </div>
-
-          
 
           <div className="mb-4">
             <label className="block text-sm font-medium mb-1">Upload Image</label>

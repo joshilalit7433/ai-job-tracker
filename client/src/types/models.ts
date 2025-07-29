@@ -84,3 +84,14 @@ export interface DashboardStats {
   barData: BarData[];
   lineData: LineData[];
 }
+
+
+export interface AppliedStatus {
+  applied: boolean;
+  message: string;
+  status?: Applicant["status"];
+  recruiterResponse?: string;
+  appliedAt?: Date;
+}
+
+

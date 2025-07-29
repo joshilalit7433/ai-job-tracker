@@ -8,7 +8,7 @@ export const RecruiterDashboard = async (req: AuthRequest, res: Response) => {
     const recruiterId = req.user!._id;
 
     // Get recruiter's posted jobs
-    const jobs = await JobApplication.find({ user: recruiterId });
+    const jobs = await JobApplication.find({ user: recruiterId,isApproved: true });
     const jobIds = jobs.map((job) => job._id);
 
     // Stats

@@ -1,16 +1,34 @@
 import axios from "axios";
-import { JOB_APPLICATION_API_END_POINT } from "../utils/constant.js";
-import { useEffect, useState } from "react";
+import { JOB_APPLICATION_API_END_POINT } from "../utils/constant";
+import { useEffect, useState, ChangeEvent, FormEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import { ApiResponse } from "../types/apiResponse";
+import { JobApplication } from "../types/models";
+
+interface EditJobApplicationFormData {
+  title: string;
+  salary: string;
+  location: string;
+  companyName: string;
+  jobType: string;
+  benefits: string;
+  experience: string;
+  responsibilities: string;
+  skills: string;
+  qualification: string;
+  image: string;
+  jobCategory: string;
+  status: string;
+}
 
 const EditJobApplication = () => {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
-  const [jobData, setJobData] = useState(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [jobData, setJobData] = useState<JobApplication | null>(null);
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<EditJobApplicationFormData>({
     title: "",
     salary: "",
     location: "",
@@ -23,21 +41,37 @@ const EditJobApplication = () => {
     qualification: "",
     status: "",
     image: "",
+    jobCategory: "",
   });
 
   useEffect(() => {
     const fetchJob = async () => {
       try {
-        const res = await axios.get(
+        const res = await axios.get<ApiResponse<JobApplication>>(
           `${JOB_APPLICATION_API_END_POINT}/get-job-application-by-id/${id}`,
-          {
-            withCredentials: true,
-          }
+          { withCredentials: true }
         );
 
         if (res.data.success) {
-          setFormData(res.data.jobapplication);
-          setJobData(res.data.jobapplication);
+          const job = res.data.data;
+
+          setFormData({
+            title: job.title,
+            salary: String(job.salary),
+            location: job.location,
+            companyName: job.companyName,
+            jobType: job.jobType,
+            benefits: job.benefits,
+            experience: job.experience,
+            responsibilities: job.responsibilities,
+            skills: job.skills.join(", "),
+            qualification: job.qualification,
+            image: job.image,
+            jobCategory: job.jobCategory,
+            status: job.status,
+          });
+
+          setJobData(job);
         } else {
           toast.error("Failed to fetch job details.", {
             position: "bottom-right",
@@ -52,37 +86,43 @@ const EditJobApplication = () => {
     if (id) fetchJob();
   }, [id]);
 
-  const handleChange = (e) => {
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const dataToUpdate = {};
+    const dataToUpdate: Partial<EditJobApplicationFormData> = {};
+
     for (let key in formData) {
-      if (formData[key] !== jobData[key]) {
-        dataToUpdate[key] = formData[key];
+      const typedKey = key as keyof EditJobApplicationFormData;
+      if (formData[typedKey] !== jobData?.[typedKey]) {
+        dataToUpdate[typedKey] = formData[typedKey];
       }
     }
 
     if (Object.keys(dataToUpdate).length === 0) {
-      toast.info("No changes made.",{position:"bottom-right"});
+      toast.info("No changes made.", { position: "bottom-right" });
       navigate("/recruiter-posted-job-applications");
       return;
     }
 
     try {
       setLoading(true);
-      const res = await axios.put(
+      const res = await axios.put<ApiResponse<JobApplication>>(
         `${JOB_APPLICATION_API_END_POINT}/update-job-application/${id}`,
         dataToUpdate,
         { withCredentials: true }
       );
 
       if (res.data.success) {
-        toast.success("Job application updated successfully!",{position:"bottom-right"});
+        toast.success(res.data.message || "Job application updated!", {
+          position: "bottom-right",
+        });
         navigate("/recruiter-posted-job-applications");
       } else {
         toast.error(res.data.message || "Update failed.", {
@@ -99,8 +139,8 @@ const EditJobApplication = () => {
     }
   };
 
-  const handleFileUpload = async (e) => {
-    const file = e.target.files[0];
+  const handleFileUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (!file) return;
 
     setLoading(true);
@@ -121,7 +161,7 @@ const EditJobApplication = () => {
 
       if (uploadedImage.secure_url) {
         setFormData((prev) => ({ ...prev, image: uploadedImage.secure_url }));
-        toast.success("Image uploaded!",{position:"bottom-right"});
+        toast.success("Image uploaded!", { position: "bottom-right" });
       } else {
         throw new Error("Upload failed");
       }
@@ -151,11 +191,7 @@ const EditJobApplication = () => {
             { label: "Company Name", name: "companyName", type: "text" },
             { label: "Benefits", name: "benefits", type: "text" },
             { label: "Experience", name: "experience", type: "text" },
-            {
-              label: "Responsibilities",
-              name: "responsibilities",
-              type: "text",
-            },
+            { label: "Responsibilities", name: "responsibilities", type: "text" },
             { label: "Skills", name: "skills", type: "text" },
             { label: "Qualification", name: "qualification", type: "text" },
           ].map(({ label, name, type }) => (
@@ -164,7 +200,7 @@ const EditJobApplication = () => {
               <input
                 type={type}
                 name={name}
-                value={formData[name]}
+                value={formData[name as keyof EditJobApplicationFormData]}
                 onChange={handleChange}
                 className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder={`Enter ${label.toLowerCase()}`}

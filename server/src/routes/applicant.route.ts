@@ -1,8 +1,8 @@
 import express from "express";
-import { ApplyJobApplication,GetApplicantsForSpecificJob,checkIfApplied,respondToApplicant,GenerateCoverLetter } from "../controllers/applicant.controller.js";
-import isAuthenticated from "../middlewares/isAutheticated.js";
-import { upload } from "../middlewares/upload.js"; 
-import  { checkRole } from "../middlewares/checkRole.js";
+import { ApplyJobApplication,GetApplicantsForSpecificJob,checkIfApplied,respondToApplicant,GenerateCoverLetter } from "../controllers/applicant.controller";
+import isAuthenticated from "../middlewares/isAutheticated";
+import { upload } from "../middlewares/upload"; 
+import  { checkRole } from "../middlewares/checkRole";
 
 const router=express.Router();
 

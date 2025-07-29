@@ -74,7 +74,7 @@ export const PostJobApplication = async (req:AuthRequest, res:Response) => {
 
     return res.status(201).json({
       message: "Job application submitted. Awaiting admin approval.",
-      jobApplication,
+      data:jobApplication,
       success: true,
     });
   } catch (error) {
@@ -112,7 +112,7 @@ export const UpdateJobApplication = async (req:AuthRequest, res:Response) => {
 
     return res.status(200).json({
       message: "Job application updated successfully",
-      jobapplication,
+      data:jobapplication,
       success: true,
     });
   } catch (error) {
@@ -198,7 +198,7 @@ export const DeleteJobApplication = async (req: AuthRequest, res: Response) => {
 
 export const GetRecruiterPostedJobApplication = async (req: AuthRequest, res: Response) => {
   try {
-    const jobs = await JobApplication.find({ user: req.user!._id });
+    const jobs = await JobApplication.find({ user: req.user!._id ,isApproved: true});
     return res.status(200).json({ data: jobs, success: true });
   } catch (error) {
     console.error("GetRecruiterPostedJobApplication Error:", error);

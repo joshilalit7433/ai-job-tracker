@@ -3,54 +3,65 @@ import axios from "axios";
 import {
   JOB_APPLICANT_API_END_POINT,
   USER_API_END_POINT,
-} from "../utils/constant.js";
+} from "../utils/constant";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../redux/authSlice";
 import { useParams } from "react-router-dom";
+import { RootState } from "../redux/store";
+import { Applicant, User, AppliedStatus } from "../types/models";
+import { ApiResponse } from "../types/apiResponse";
+
+interface SkillAnalysis {
+  matched: string[];
+  missing: string[];
+}
 
 const ApplyJobForm = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
-  const { user } = useSelector((store) => store.auth);
-  const fileInputRef = useRef(null);
+  const user = useSelector((state: RootState) => state.auth.user);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const [coverLetter, setCoverLetter] = useState<string>("");
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
+  const [uploadedResumeURL, setUploadedResumeURL] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [message, setMessage] = useState<string>("");
+  const [skillAnalysis, setSkillAnalysis] = useState<SkillAnalysis | null>(
+    null
+  );
+  const [generating, setGenerating] = useState<boolean>(false);
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+  const [uploadSuccess, setUploadSuccess] = useState<boolean>(false);
 
-  const [coverLetter, setCoverLetter] = useState("");
-  const [resumeFile, setResumeFile] = useState(null);
-  const [uploadedResumeURL, setUploadedResumeURL] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
-  const [skillAnalysis, setSkillAnalysis] = useState(null);
-  const [generating, setGenerating] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
-
-  
   useEffect(() => {
-  const checkIfAlreadyApplied = async () => {
-    try {
-      const res = await axios.get(
-        `${JOB_APPLICANT_API_END_POINT}/is-applied/${id}`,
-        { withCredentials: true }
-      );
+    if (user) {
+      const storedResume = localStorage.getItem("uploadedResumeURL");
+      const storedCover = localStorage.getItem("coverLetter");
+      if (storedResume) setUploadedResumeURL(storedResume);
+      if (storedCover) setCoverLetter(storedCover);
+    }
+  }, [user]);
 
-      if (res.data.success && res.data.applied) {
-        setIsSubmitted(true);
-      } else {
+  useEffect(() => {
+    const checkIfAlreadyApplied = async () => {
+      try {
+        const res = await axios.get<ApiResponse<AppliedStatus>>(
+          `${JOB_APPLICANT_API_END_POINT}/is-applied/${id}`,
+          { withCredentials: true }
+        );
+
+        setIsSubmitted(res.data.success && res.data.data?.applied);
+      } catch (err) {
+        console.error("Error checking if already applied:", err);
         setIsSubmitted(false);
       }
-    } catch (err) {
-      console.error("Error checking if already applied:", err);
-    }
-  };
+    };
 
-  if (user && id) {
-    checkIfAlreadyApplied();
-  }
-}, [id, user]);
+    if (user && id) checkIfAlreadyApplied();
+  }, [id, user]);
 
-
-  
   useEffect(() => {
     localStorage.setItem("coverLetter", coverLetter);
   }, [coverLetter]);
@@ -59,11 +70,14 @@ const ApplyJobForm = () => {
     localStorage.setItem("uploadedResumeURL", uploadedResumeURL);
   }, [uploadedResumeURL]);
 
-  const handleResumeChange = (e) => {
-    const file = e.target.files[0];
-    setResumeFile(file);
-    setUploadedResumeURL("");
-    localStorage.removeItem("uploadedResumeURL");
+  const handleResumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setResumeFile(file);
+      setUploadedResumeURL("");
+      setUploadSuccess(false);
+      localStorage.removeItem("uploadedResumeURL");
+    }
   };
 
   const handleGenerateCoverLetter = async () => {
@@ -76,12 +90,14 @@ const ApplyJobForm = () => {
 
     try {
       setGenerating(true);
-      const res = await axios.get(
+      const res = await axios.get<ApiResponse<string>>(
         `${JOB_APPLICANT_API_END_POINT}/generate-cover-letter/${id}`,
         { withCredentials: true }
       );
-      setCoverLetter(res.data.letter);
-      toast.success("Cover letter generated!",{position:"bottom-right"});
+      setCoverLetter(res.data.data);
+      toast.success("Cover letter generated!", {
+        position: "bottom-right",
+      });
     } catch (error) {
       console.error("Cover letter generation failed:", error);
       toast.error("Failed to generate cover letter", {
@@ -104,7 +120,7 @@ const ApplyJobForm = () => {
 
     try {
       setLoading(true);
-      const res = await axios.post(
+      const res = await axios.post<ApiResponse<User>>(
         `${USER_API_END_POINT}/upload-resume`,
         formData,
         {
@@ -114,9 +130,10 @@ const ApplyJobForm = () => {
       );
 
       if (res.data.success) {
-        toast.success("Resume uploaded!",{position:"bottom-right"});
-        setUploadedResumeURL(res.data.user.resume);
-        dispatch(setUser(res.data.user));
+        toast.success("Resume uploaded!", { position: "bottom-right" });
+        setUploadedResumeURL(res.data.data.resume);
+        dispatch(setUser(res.data.data));
+        setUploadSuccess(true);
       } else {
         toast.error("Resume upload failed", { position: "bottom-right" });
       }
@@ -128,7 +145,7 @@ const ApplyJobForm = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setMessage("");
     setLoading(true);
@@ -146,7 +163,13 @@ const ApplyJobForm = () => {
     }
 
     try {
-      const res = await axios.post(
+      const res = await axios.post<
+        ApiResponse<{
+          matchedSkills: string[];
+          missingSkills: string[];
+          coverLetter: string;
+        }>
+      >(
         `${JOB_APPLICANT_API_END_POINT}/apply/${id}`,
         {
           resume: finalResume,
@@ -158,31 +181,33 @@ const ApplyJobForm = () => {
         }
       );
 
-      if (res.data.success) {
-        toast.success("Application submitted!",{position:"bottom-right"});
+      if (res.data.success && res.data.data) {
+        const { matchedSkills, missingSkills, coverLetter } = res.data.data;
+
+        toast.success("Application submitted!", {
+          position: "bottom-right",
+        });
+
         setSkillAnalysis({
-          matched: res.data.matchedSkills || [],
-          missing: res.data.missingSkills || [],
+          matched: matchedSkills,
+          missing: missingSkills,
         });
 
         setCoverLetter("");
         setUploadedResumeURL("");
         setResumeFile(null);
 
-       
         localStorage.setItem(`job_${id}_submitted`, "true");
         localStorage.removeItem("coverLetter");
         localStorage.removeItem("uploadedResumeURL");
         setIsSubmitted(true);
-
-        
       } else {
         setMessage(res.data.message || "Something went wrong.");
         toast.error(res.data.message || "Something went wrong.", {
           position: "bottom-right",
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error submitting:", error);
       setMessage(error.response?.data?.message || "Server error.");
       toast.error(error.response?.data?.message || "Error applying.", {
@@ -203,7 +228,7 @@ const ApplyJobForm = () => {
           Apply for this Job
         </h2>
 
-        
+        {/* Resume Upload */}
         <div>
           <label className="block text-sm font-medium text-gray-800 mb-1">
             Upload Resume
@@ -223,36 +248,36 @@ const ApplyJobForm = () => {
               </span>
               <button
                 type="button"
-                onClick={() => fileInputRef.current.click()}
+                onClick={() => fileInputRef.current?.click()}
                 className="ml-2 text-blue-600 hover:text-blue-800"
               >
                 Browse
               </button>
             </div>
           </div>
-          {!uploadedResumeURL ? (
+          {resumeFile && !uploadedResumeURL ? (
             <button
               type="button"
               onClick={handleResumeUpload}
-              disabled={loading || !resumeFile}
+              disabled={loading}
               className="mt-2 text-blue-600 hover:underline text-sm"
             >
               {loading ? "Uploading..." : "Upload Resume"}
             </button>
-          ) : (
+          ) : uploadSuccess ? (
             <p className="text-green-600 font-semibold mt-2">
               Resume Uploaded Successfully
             </p>
-          )}
+          ) : null}
         </div>
 
-        
+        {/* Cover Letter */}
         <div>
           <label className="block text-sm font-medium text-gray-800 mb-1">
             Cover Letter
           </label>
           <textarea
-            rows="6"
+            rows={6}
             value={coverLetter}
             onChange={(e) => setCoverLetter(e.target.value)}
             className="w-full px-4 py-2 border rounded-md text-sm"
@@ -268,7 +293,7 @@ const ApplyJobForm = () => {
           </button>
         </div>
 
-        
+        {/* Submit Button */}
         <div className="text-center">
           <button
             type="submit"
@@ -291,7 +316,7 @@ const ApplyJobForm = () => {
           <p className="text-center text-sm text-red-600 mt-2">{message}</p>
         )}
 
-      
+        {/* Skill Analysis */}
         {skillAnalysis && (
           <div className="mt-6">
             <h3 className="text-lg font-semibold text-gray-800">

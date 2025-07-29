@@ -277,13 +277,13 @@ const ViewJobApplication = () => {
             <>
               <button
                 onClick={handleApprove}
-                className="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
+                className=" cursor-pointer px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
               >
                 Approve Job
               </button>
               <button
                 onClick={handleReject}
-                className="px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+                className=" cursor-pointer px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
               >
                 Reject Job
               </button>

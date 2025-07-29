@@ -142,8 +142,7 @@ export const UploadResume = async (req: AuthRequest, res: Response) => {
 
     return res.status(200).json({
       message: "Resume uploaded successfully",
-      resume: user.resume,
-      user,
+      data: user,
       success: true,
     });
   } catch (error) {

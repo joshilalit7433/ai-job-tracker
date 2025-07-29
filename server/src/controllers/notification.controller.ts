@@ -1,6 +1,6 @@
 import { Response } from "express";
-import { Notification } from "../models/notification.model.js";
-import { AuthRequest } from "../types/user.types.js";
+import { Notification } from "../models/notification.model";
+import { AuthRequest } from "../types/user.types";
 
 // get Notifications
 export const getNotifications = async (req: AuthRequest, res: Response) => {
