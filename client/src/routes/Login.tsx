@@ -10,6 +10,10 @@ import "react-toastify/dist/ReactToastify.css";
 import { connectSocket } from "../utils/socket";
 import { ApiResponse } from "../types/apiResponse";
 import { User } from "../types/models";
+import { signInWithGoogle, auth } from "../firebase";
+import { GoogleAuthProvider } from "firebase/auth";
+import { BACKEND_BASE_URL } from "../utils/constant";
+
 
 interface LoginForm {
   email: string;
@@ -123,6 +127,45 @@ const Login = () => {
     return errors;
   };
 
+
+  const handleGoogleSignIn = async () => {
+    try {
+      const result = await signInWithGoogle();
+      const idToken = await result.user.getIdToken();
+
+      // Send token to your backend
+      const response = await axios.post<ApiResponse<User>>(`${USER_API_END_POINT}/google`, {
+        idToken,
+      });
+
+      if (response.data.success  && response.data.data && response.data.token) {
+        const user = response.data.data;
+        dispatch(setUser(user));
+        localStorage.setItem("token", response.data.token);
+        connectSocket();
+
+        toast.success(response.data.message, {
+          position: "bottom-right",
+          autoClose: 5000,
+          theme: "dark",
+        });
+
+        // Role-based redirection
+        if (user.role === "recruiter") {
+          navigate("/recruiter-dashboard");
+        } else if (user.role === "admin") {
+          navigate("/admin-dashboard");
+        } else {
+          navigate(redirectPath);
+        }
+      }
+
+
+    } catch (err) {
+      console.error("Google Sign-in failed", err);
+    }
+  };
+
   return (
     <div className="flex justify-center items-center min-h-screen bg-[#f7e9d6] px-4">
       <form
@@ -167,12 +210,7 @@ const Login = () => {
           <p className="text-[#131D4F] text-sm">{formerrors.password}</p>
         </div>
 
-        {/* Forgot Password */}
-        <div className="flex justify-between text-[#131D4F] text-sm mb-6">
-          <Link to="/forgot-password" className="underline">
-            Forgot Password?
-          </Link>
-        </div>
+
 
         {/* Submit */}
         <div className="flex justify-center">
@@ -180,6 +218,16 @@ const Login = () => {
             LOGIN
           </button>
         </div>
+
+         <div className="flex justify-center">
+          <button onClick={handleGoogleSignIn} className="text-[#131D4F] underline cursor-pointer">
+            Continue with Google
+          </button>
+        </div>
+
+        
+
+
 
         {/* Signup */}
         <div className="text-center mt-4">

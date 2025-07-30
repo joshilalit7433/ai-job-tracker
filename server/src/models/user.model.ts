@@ -5,8 +5,8 @@ const UserSchema = new Schema<IUser>(
   {
     fullName: { type: String, required: true },
     email: { type: String, required: true },
-    password: { type: String, required: true },
-    mobileNumber: { type: Number, required: true },
+    password: { type: String },
+    mobileNumber: { type: Number },
     role: { type: String, enum: ["user", "recruiter", "admin"], required: true },
     resume: { type: String },
     coverLetter: { type: String },

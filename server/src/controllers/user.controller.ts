@@ -5,7 +5,58 @@ import jwt from "jsonwebtoken";
 import { User } from "../models/user.model";
 import { JobApplication } from "../models/jobApplication.model";
 import { AuthRequest } from "../types/express/AuthRequest";
+import admin from "utils/firebase";
 
+
+export const googleAuth = async (req: Request, res: Response) => {
+  try {
+    const { idToken } = req.body;
+
+    const decoded = await admin.auth().verifyIdToken(idToken);
+    const { email, name, picture, uid } = decoded;
+
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      user = await User.create({
+        fullName: name,
+        email,
+        avatar: picture,
+        firebaseUID: uid,
+        role: "applicant", 
+        mobileNumber: "", 
+      });
+    }
+
+    const token = jwt.sign(
+      { userid: user._id, role: user.role },
+      process.env.SECRET_KEY as string,
+      { expiresIn: "1d" }
+    );
+
+    const userData = {
+      _id: user._id,
+      fullName: user.fullName,
+      email: user.email,
+      mobileNumber: user.mobileNumber,
+      role: user.role,
+      createdAt: user.createdAt,
+    };
+
+    return res
+      .status(200)
+      .cookie("token", token, {
+        maxAge: 24 * 60 * 60 * 1000,
+        httpOnly: true,
+        sameSite: "lax",
+        secure: false,
+      })
+      .json({ message: `Welcome ${user.fullName}`, data: userData, token, success: true });
+  } catch (error) {
+    console.error("Google Auth Error:", error);
+    return res.status(500).json({ message: "Google login failed", success: false });
+  }
+};
 
 
 export const register = async (req: Request, res: Response) => {

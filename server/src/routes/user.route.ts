@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  googleAuth,
   register,
   login,
   logout,
@@ -16,6 +17,7 @@ import { checkRole } from "../middlewares/checkRole";
 
 const router = express.Router();
 
+router.post("/google",googleAuth);
 router.post("/register", register);
 router.post("/login", login);
 router.get("/logout", logout);
