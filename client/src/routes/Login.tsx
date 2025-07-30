@@ -1,14 +1,27 @@
-
 import { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { USER_API_END_POINT } from "../utils/constant.js";
+import { USER_API_END_POINT } from "../utils/constant";
 import { setUser } from "../redux/authSlice";
 import { Mail, Lock } from "lucide-react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { connectSocket } from "../utils/socket";
+import { ApiResponse } from "../types/apiResponse";
+import { User } from "../types/models";
+
+interface LoginForm {
+  email: string;
+  password: string;
+}
+
+interface LoginResponse {
+  user: User;
+  token: string;
+  message: string;
+  success: boolean;
+}
 
 const Login = () => {
   const navigate = useNavigate();
@@ -17,37 +30,42 @@ const Login = () => {
 
   const redirectPath = location.state?.from || "/";
 
-  const initialvalues = {
+  const initialvalues: LoginForm = {
     email: "",
     password: "",
-    role: "",
   };
 
-  const [formvalues, setformvalues] = useState(initialvalues);
-  const [formerrors, setformerrors] = useState({});
-  const [submit, setsubmit] = useState(false);
+  const [formvalues, setFormvalues] = useState<LoginForm>(initialvalues);
+  const [formerrors, setFormerrors] = useState<Partial<LoginForm>>({});
+  const [submit, setSubmit] = useState(false);
 
-  const handleChange = (e) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ): void => {
     const { name, value } = e.target;
-    setformvalues({ ...formvalues, [name]: value });
+    setFormvalues({ ...formvalues, [name]: value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const errors = validate(formvalues);
-    setformerrors(errors);
-    setsubmit(true);
+    setFormerrors(errors);
+    setSubmit(true);
 
     if (Object.keys(errors).length > 0) return;
 
     try {
-      const response = await axios.post(`${USER_API_END_POINT}/login`, formvalues, {
-        headers: { "Content-Type": "application/json" },
-        withCredentials: true,
-      });
+      const response = await axios.post<ApiResponse<User>>(
+        `${USER_API_END_POINT}/login`,
+        formvalues,
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        }
+      );
 
-      if (response.data.success) {
-        const user = response.data.user;
+      if (response.data.success  && response.data.data && response.data.token) {
+        const user = response.data.data;
         dispatch(setUser(user));
         localStorage.setItem("token", response.data.token);
         connectSocket();
@@ -58,7 +76,7 @@ const Login = () => {
           theme: "dark",
         });
 
-        //  Role-based redirection
+        // Role-based redirection
         if (user.role === "recruiter") {
           navigate("/recruiter-dashboard");
         } else if (user.role === "admin") {
@@ -66,36 +84,41 @@ const Login = () => {
         } else {
           navigate(redirectPath);
         }
-
       } else {
-        toast.error(response.data.message || "Login failed. Please try again.", {
+        toast.error(
+          response.data.message || "Login failed. Please try again.",
+          {
+            position: "bottom-right",
+            autoClose: 5000,
+            theme: "dark",
+          }
+        );
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(
+        "An error occurred. Please check your credentials and try again.",
+        {
           position: "bottom-right",
           autoClose: 5000,
           theme: "dark",
-        });
-      }
-
-    } catch (error) {
-      console.log(error);
-      toast.error("An error occurred. Please check your credentials and try again.", {
-        position: "bottom-right",
-        autoClose: 5000,
-        theme: "dark",
-      });
+        }
+      );
     }
   };
 
-  const validate = (values) => {
-    const errors = {};
-    const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+  const validate = (values: LoginForm): Partial<LoginForm> => {
+    const errors: Partial<LoginForm> = {};
+    const emailRegex =
+      /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
 
-    if (!values.email) errors.email = "email is required";
-    else if (!emailRegex.test(values.email)) errors.email = "This is not a valid email format";
+    if (!values.email) errors.email = "Email is required";
+    else if (!emailRegex.test(values.email))
+      errors.email = "Invalid email format";
 
-    if (!values.password) errors.password = "password is required";
-    else if (values.password.length < 4) errors.password = "password should not be less than 4 characters";
-
-    if (!values.role) errors.role = "role is required";
+    if (!values.password) errors.password = "Password is required";
+    else if (values.password.length < 4)
+      errors.password = "Password must be at least 4 characters";
 
     return errors;
   };
@@ -142,29 +165,6 @@ const Login = () => {
             />
           </div>
           <p className="text-[#131D4F] text-sm">{formerrors.password}</p>
-        </div>
-
-        {/* Role */}
-        <div className="mb-4">
-          <label className="text-sm text-[#131D4F]">Role:</label>
-          <div className="flex items-center space-x-4 mt-2">
-            {["user", "recruiter", "admin"].map((role) => (
-              <div key={role} className="flex items-center">
-                <input
-                  type="radio"
-                  id={role}
-                  name="role"
-                  value={role}
-                  onChange={handleChange}
-                  className="mr-2"
-                />
-                <label htmlFor={role} className="text-[#131D4F] capitalize">
-                  {role}
-                </label>
-              </div>
-            ))}
-          </div>
-          <p className="text-[#131D4F] text-sm">{formerrors.role}</p>
         </div>
 
         {/* Forgot Password */}

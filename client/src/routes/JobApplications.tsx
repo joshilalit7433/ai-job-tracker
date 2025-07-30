@@ -2,14 +2,21 @@ import React, { useState } from "react";
 import JobApplication from "../routes/JobApplication"; // child that shows jobs
 import FilterJobApplications from "../components/FilterJobApplications";
 
-const JobApplications = () => {
-  const [filters, setFilters] = useState({
+
+interface Filters {
+  Salary: string;
+  Location: string[];
+  Company: string;
+}
+
+const JobApplications: React.FC = () => {
+  const [filters, setFilters] = useState<Filters>({
     Salary: "",
     Location: [],
     Company: "",
   });
 
-  const handleFilterChange = (updatedFilters) => {
+  const handleFilterChange = (updatedFilters: Filters) => {
     setFilters(updatedFilters);
   };
 

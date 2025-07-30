@@ -1,48 +1,53 @@
 import axios from "axios";
-import {
-  JOB_APPLICATION_API_END_POINT,
-  USER_API_END_POINT,
-} from "../utils/constant";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   BriefcaseBusiness,
-  Banknote,
-  Building2,
   MapPinned,
-  Clock,
   BookMarked,
   MoveRight,
 } from "lucide-react";
 
-import { Link } from "react-router-dom";
+import {
+  JOB_APPLICATION_API_END_POINT,
+  USER_API_END_POINT,
+} from "../utils/constant";
 
-const JobApplications = ({ filters }) => {
-  const [jobApplications, setJobApplications] = useState([]);
+import { ApiResponse } from "../types/apiResponse"; 
+import { JobApplication } from "../types/models";
+import { toast } from "react-toastify";
+
+interface JobApplicationsProps {
+  filters: {
+    Salary?: string;
+    Location?: string[];
+    Company?: string;
+  };
+}
+
+const JobApplications: React.FC<JobApplicationsProps> = ({ filters }) => {
+  const [jobApplications, setJobApplications] = useState<JobApplication[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchJobApplications = async () => {
       try {
-        const response = await axios.get(
+        const response = await axios.get<ApiResponse<JobApplication[]>>(
           `${JOB_APPLICATION_API_END_POINT}/get-job-applications`
         );
-        const data = response.data;
 
-        setTimeout(() => {
-          const approvedJobs = data.jobapplications.filter(
-            (job) => job.isApproved === true
-          );
-          setJobApplications(approvedJobs);
-          setLoading(false);
-        }, 500);
+        setJobApplications(response.data.data);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching job applications:", error);
+        setLoading(false);
       }
     };
+
     fetchJobApplications();
   }, []);
 
-  const isSalaryInRange = (salary, range) => {
+  const isSalaryInRange = (salary: number, range?: string): boolean => {
     if (!range) return true;
     if (range === "1200000+") return salary >= 1200000;
 
@@ -50,17 +55,16 @@ const JobApplications = ({ filters }) => {
     return salary >= min && salary <= max;
   };
 
-  const checkLocationMatch = (jobLocation, selectedLocations) => {
+  const checkLocationMatch = (
+    jobLocation: string,
+    selectedLocations?: string[]
+  ): boolean => {
     if (!selectedLocations || selectedLocations.length === 0) return true;
-    
-    // Convert job location to lowercase for case-insensitive comparison
+
     const jobLocationLower = jobLocation.toLowerCase();
-    
-    // Check if any of the selected locations match the job location
-    return selectedLocations.some(selectedLocation => {
-      const selectedLocationLower = selectedLocation.toLowerCase();
-      return jobLocationLower.includes(selectedLocationLower);
-    });
+    return selectedLocations.some((loc) =>
+      jobLocationLower.includes(loc.toLowerCase())
+    );
   };
 
   const filteredJobApplications = jobApplications.filter((job) => {
@@ -73,15 +77,15 @@ const JobApplications = ({ filters }) => {
     return matchesSalary && matchesLocation && matchesCompany;
   });
 
-  const handleSaveJob = async (jobId) => {
+  const handleSaveJob = async (jobId: string) => {
     try {
-      const res = await axios.post(
+      const res = await axios.post<ApiResponse<JobApplication>>(
         `${USER_API_END_POINT}/saved-job/${jobId}`,
         {},
         { withCredentials: true }
       );
       if (res.data.success) {
-        alert("Job saved successfully!");
+        toast.success("Job saved successfully!",{position:"bottom-right"});
       }
     } catch (error) {
       console.error("Failed to save job:", error);
@@ -125,7 +129,9 @@ const JobApplications = ({ filters }) => {
                     src={job.image}
                     alt={job.companyName}
                     className="w-12 h-12 object-contain rounded-lg"
-                    onError={(e) => (e.target.src = "./images/placeholder.jpg")}
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = "/images/placeholder.jpg";
+                    }}
                   />
                   <span className="text-xs px-3 py-1 border border-blue-500 text-blue-600 rounded-full font-medium">
                     {job.jobType}
@@ -150,14 +156,12 @@ const JobApplications = ({ filters }) => {
                 </div>
 
                 {/* Skills */}
-                {typeof job.skills === "string" && (
+                {Array.isArray(job.skills) && (
                   <div className="flex gap-2 flex-wrap mb-6">
                     {job.skills
-                      .split(",")
-                      .map((skill) => skill.trim())
-                      .filter((skill) => skill.length > 0)
+                      .filter((skill:string) => skill.length > 0)
                       .slice(0, 3)
-                      .map((skill, idx) => (
+                      .map((skill:string, idx:number) => (
                         <span
                           key={idx}
                           className={`text-xs px-3 py-1 rounded-full font-medium ${

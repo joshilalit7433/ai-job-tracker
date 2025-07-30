@@ -1,9 +1,8 @@
+import { io, Socket } from "socket.io-client";
 
-import { io } from "socket.io-client";
+let socket: Socket | null = null;
 
-let socket = null;
-
-export const connectSocket = () => {
+export const connectSocket = (): void => {
   const token = localStorage.getItem("token");
 
   if (!token) {
@@ -19,12 +18,14 @@ export const connectSocket = () => {
   });
 
   socket.on("connect", () => {
-    console.log(" Socket connected:", socket.id);
+    console.log("🔌 Socket connected:", socket?.id);
   });
 
   socket.on("disconnect", () => {
-    console.log(" Socket disconnected");
+    console.log("🔌 Socket disconnected");
   });
 };
 
-export const getSocket = () => socket;
+export const getSocket = (): Socket | null => {
+  return socket;
+};

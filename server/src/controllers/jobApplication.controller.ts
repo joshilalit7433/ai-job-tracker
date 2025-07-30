@@ -126,7 +126,7 @@ export const UpdateJobApplication = async (req:AuthRequest, res:Response) => {
 
 export const GetJobApplication = async (req: Request, res: Response) => {
   try {
-    const jobapplications = await JobApplication.find();
+    const jobapplications = await JobApplication.find({isApproved:true});
     return res.status(200).json({ data:jobapplications, success: true });
   } catch (error) {
     console.error("GetJobApplication Error:", error);

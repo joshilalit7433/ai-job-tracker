@@ -34,8 +34,8 @@ export const register = async (req: Request, res: Response) => {
 
 export const login = async (req: Request, res: Response) => {
   try {
-    const { email, password, role } = req.body;
-    if (!email || !password || !role) {
+    const { email, password } = req.body;
+    if (!email || !password ) {
       return res.status(400).json({ message: "All fields are required", success: false });
     }
 
@@ -44,10 +44,7 @@ export const login = async (req: Request, res: Response) => {
       return res.status(401).json({ message: "Incorrect email or password", success: false });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch || user.role !== role) {
-      return res.status(401).json({ message: "Invalid credentials or role mismatch", success: false });
-    }
+  
 
     const token = jwt.sign(
       { userid: user._id, role: user.role },
@@ -72,7 +69,7 @@ export const login = async (req: Request, res: Response) => {
         sameSite: "lax",
         secure: false,
       })
-      .json({ message: `Welcome back ${user.fullName}`, user: userData, token, success: true });
+      .json({ message: `Welcome back ${user.fullName}`,data: userData, token, success: true });
   } catch (error) {
     console.error("Login Error:", error);
     return res.status(500).json({ message: "Server error", success: false });

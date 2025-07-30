@@ -11,6 +11,7 @@ export interface User {
   savedJobs: JobApplication[];
   totalJobsPosted: number;
   createdAt: Date;
+  token:string;
 }
 
 
