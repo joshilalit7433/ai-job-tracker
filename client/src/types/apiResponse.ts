@@ -3,5 +3,6 @@ export interface ApiResponse<T> {
   success: boolean;
   message: string;
   data: T;
-  token?:string
+  token?:string;
+  totalPages:number;
 }

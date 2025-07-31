@@ -7,13 +7,14 @@ import {
   BookMarked,
   MoveRight,
 } from "lucide-react";
+import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 
 import {
   JOB_APPLICATION_API_END_POINT,
   USER_API_END_POINT,
 } from "../utils/constant";
 
-import { ApiResponse } from "../types/apiResponse"; 
+import { ApiResponse } from "../types/apiResponse";
 import { JobApplication } from "../types/models";
 import { toast } from "react-toastify";
 
@@ -28,15 +29,20 @@ interface JobApplicationsProps {
 const JobApplications: React.FC<JobApplicationsProps> = ({ filters }) => {
   const [jobApplications, setJobApplications] = useState<JobApplication[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const limit = 12;
 
   useEffect(() => {
     const fetchJobApplications = async () => {
+      setLoading(true);
       try {
         const response = await axios.get<ApiResponse<JobApplication[]>>(
-          `${JOB_APPLICATION_API_END_POINT}/get-job-applications`
+          `${JOB_APPLICATION_API_END_POINT}/get-job-applications?page=${currentPage}&limit=${limit}`
         );
 
         setJobApplications(response.data.data);
+        setTotalPages(response.data.totalPages || 1);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching job applications:", error);
@@ -45,7 +51,7 @@ const JobApplications: React.FC<JobApplicationsProps> = ({ filters }) => {
     };
 
     fetchJobApplications();
-  }, []);
+  }, [currentPage]);
 
   const isSalaryInRange = (salary: number, range?: string): boolean => {
     if (!range) return true;
@@ -85,7 +91,7 @@ const JobApplications: React.FC<JobApplicationsProps> = ({ filters }) => {
         { withCredentials: true }
       );
       if (res.data.success) {
-        toast.success("Job saved successfully!",{position:"bottom-right"});
+        toast.success("Job saved successfully!", { position: "bottom-right" });
       }
     } catch (error) {
       console.error("Failed to save job:", error);
@@ -103,7 +109,9 @@ const JobApplications: React.FC<JobApplicationsProps> = ({ filters }) => {
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-              <p className="text-lg text-gray-600">Loading job applications...</p>
+              <p className="text-lg text-gray-600">
+                Loading job applications...
+              </p>
             </div>
           </div>
         ) : filteredJobApplications.length === 0 ? (
@@ -113,7 +121,9 @@ const JobApplications: React.FC<JobApplicationsProps> = ({ filters }) => {
                 <BriefcaseBusiness className="w-16 h-16 mx-auto" />
               </div>
               <p className="text-lg text-gray-600 mb-2">No jobs found</p>
-              <p className="text-sm text-gray-500">Try adjusting your filters</p>
+              <p className="text-sm text-gray-500">
+                Try adjusting your filters
+              </p>
             </div>
           </div>
         ) : (
@@ -130,7 +140,8 @@ const JobApplications: React.FC<JobApplicationsProps> = ({ filters }) => {
                     alt={job.companyName}
                     className="w-12 h-12 object-contain rounded-lg"
                     onError={(e) => {
-                      (e.target as HTMLImageElement).src = "/images/placeholder.jpg";
+                      (e.target as HTMLImageElement).src =
+                        "/images/placeholder.jpg";
                     }}
                   />
                   <span className="text-xs px-3 py-1 border border-blue-500 text-blue-600 rounded-full font-medium">
@@ -159,9 +170,9 @@ const JobApplications: React.FC<JobApplicationsProps> = ({ filters }) => {
                 {Array.isArray(job.skills) && (
                   <div className="flex gap-2 flex-wrap mb-6">
                     {job.skills
-                      .filter((skill:string) => skill.length > 0)
+                      .filter((skill: string) => skill.length > 0)
                       .slice(0, 3)
-                      .map((skill:string, idx:number) => (
+                      .map((skill: string, idx: number) => (
                         <span
                           key={idx}
                           className={`text-xs px-3 py-1 rounded-full font-medium ${
@@ -199,6 +210,33 @@ const JobApplications: React.FC<JobApplicationsProps> = ({ filters }) => {
           </div>
         )}
       </div>
+      {totalPages > 1 && (
+        <div className="mt-8 flex justify-center gap-4 items-center">
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className="p-2 rounded-full bg-white border text-[#131D4F] disabled:opacity-40 hover:bg-[#131D4F] hover:text-white transition-all"
+            title="Previous Page"
+          >
+            <FiChevronLeft size={20} />
+          </button>
+
+          <span className="px-4 py-1 text-[#131D4F] font-semibold">
+            Page {currentPage} of {totalPages}
+          </span>
+
+          <button
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
+            disabled={currentPage === totalPages}
+            className="p-2 rounded-full bg-white border text-[#131D4F] disabled:opacity-40 hover:bg-[#131D4F] hover:text-white transition-all"
+            title="Next Page"
+          >
+            <FiChevronRight size={20} />
+          </button>
+        </div>
+      )}
     </div>
   );
 };

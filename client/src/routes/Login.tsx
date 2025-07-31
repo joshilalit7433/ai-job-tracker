@@ -14,7 +14,6 @@ import { signInWithGoogle, auth } from "../firebase";
 import { GoogleAuthProvider } from "firebase/auth";
 import { BACKEND_BASE_URL } from "../utils/constant";
 
-
 interface LoginForm {
   email: string;
   password: string;
@@ -43,9 +42,7 @@ const Login = () => {
   const [formerrors, setFormerrors] = useState<Partial<LoginForm>>({});
   const [submit, setSubmit] = useState(false);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ): void => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
     setFormvalues({ ...formvalues, [name]: value });
   };
@@ -68,7 +65,7 @@ const Login = () => {
         }
       );
 
-      if (response.data.success  && response.data.data && response.data.token) {
+      if (response.data.success && response.data.data && response.data.token) {
         const user = response.data.data;
         dispatch(setUser(user));
         localStorage.setItem("token", response.data.token);
@@ -113,8 +110,7 @@ const Login = () => {
 
   const validate = (values: LoginForm): Partial<LoginForm> => {
     const errors: Partial<LoginForm> = {};
-    const emailRegex =
-      /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+    const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
 
     if (!values.email) errors.email = "Email is required";
     else if (!emailRegex.test(values.email))
@@ -127,18 +123,20 @@ const Login = () => {
     return errors;
   };
 
-
   const handleGoogleSignIn = async () => {
     try {
       const result = await signInWithGoogle();
       const idToken = await result.user.getIdToken();
 
       // Send token to your backend
-      const response = await axios.post<ApiResponse<User>>(`${USER_API_END_POINT}/google`, {
-        idToken,
-      });
+      const response = await axios.post<ApiResponse<User>>(
+        `${USER_API_END_POINT}/google`,
+        {
+          idToken,
+        }
+      );
 
-      if (response.data.success  && response.data.data && response.data.token) {
+      if (response.data.success && response.data.data && response.data.token) {
         const user = response.data.data;
         dispatch(setUser(user));
         localStorage.setItem("token", response.data.token);
@@ -159,8 +157,6 @@ const Login = () => {
           navigate(redirectPath);
         }
       }
-
-
     } catch (err) {
       console.error("Google Sign-in failed", err);
     }
@@ -170,69 +166,77 @@ const Login = () => {
     <div className="flex justify-center items-center min-h-screen bg-[#f7e9d6] px-4">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-md bg-[#FAF6E9] p-6 rounded-lg shadow-lg"
+        className="w-full max-w-sm sm:max-w-md bg-[#FAF6E9] p-6 sm:p-8 rounded-xl shadow-xl border border-[#ccc] backdrop-blur-sm"
       >
         <div className="text-center mb-6">
-          <p className="text-2xl font-bold text-[#131D4F]">Login</p>
+          <p className="text-2xl sm:text-3xl font-bold text-[#131D4F]">LOGIN</p>
         </div>
 
         {/* Email */}
         <div className="mb-4">
-          <label className="text-sm text-[#131D4F]">Email ID:</label>
-          <div className="flex items-center border-b-2 border-[#131D4F] py-2 mt-2">
-            <Mail className="text-[#131D4F] mr-2" />
+          <div className="flex items-center bg-[#d9ded5] rounded-md px-3 py-2">
+            <Mail className="text-[#131D4F] mr-2" size={18} />
             <input
               type="email"
               name="email"
-              placeholder="Email"
+              placeholder="Email ID"
               value={formvalues.email}
               onChange={handleChange}
-              className="bg-transparent w-full text-[#131D4F] focus:outline-none"
+              className="bg-transparent w-full text-[#131D4F] placeholder:text-[#131D4F]/60 focus:outline-none"
             />
           </div>
-          <p className="text-black text-sm">{formerrors.email}</p>
+          {formerrors.email && (
+            <p className="text-xs text-red-600 mt-1">{formerrors.email}</p>
+          )}
         </div>
 
         {/* Password */}
-        <div className="mb-4">
-          <label className="text-sm text-[#131D4F]">Password:</label>
-          <div className="flex items-center border-b-2 border-[#131D4F] py-2 mt-2">
-            <Lock className="text-[#131D4F] mr-2" />
+        <div className="mb-6">
+          <div className="flex items-center bg-[#d9ded5] rounded-md px-3 py-2">
+            <Lock className="text-[#131D4F] mr-2" size={18} />
             <input
               type="password"
               name="password"
               placeholder="Password"
               value={formvalues.password}
               onChange={handleChange}
-              className="bg-transparent w-full text-[#131D4F] focus:outline-none"
+              className="bg-transparent w-full text-[#131D4F] placeholder:text-[#131D4F]/60 focus:outline-none"
             />
           </div>
-          <p className="text-[#131D4F] text-sm">{formerrors.password}</p>
+          {formerrors.password && (
+            <p className="text-xs text-red-600 mt-1">{formerrors.password}</p>
+          )}
         </div>
 
+        {/* Login Button */}
+        <button
+          type="submit"
+          className=" cursor-pointer w-full bg-[#131D4F] text-white py-2 rounded-md font-semibold hover:bg-[#0f1840] transition"
+        >
+          Login
+        </button>
 
-
-        {/* Submit */}
-        <div className="flex justify-center">
-          <button className="w-full py-2 text-white bg-blue-600 rounded-lg font-bold hover:bg-blue-700 transition">
-            LOGIN
+        {/* Google Login */}
+        <div className="mt-4 flex justify-center">
+          <button
+            type="button"
+            onClick={handleGoogleSignIn}
+            className=" cursor-pointer w-full flex items-center justify-center gap-2 py-2 bg-[#d9ded5] rounded-md text-[#131D4F] font-medium hover:bg-[#c9cfc4] transition"
+          >
+            <img
+              src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+              alt="Google"
+              className="w-5 h-5"
+            />
+            Google
           </button>
         </div>
 
-         <div className="flex justify-center">
-          <button onClick={handleGoogleSignIn} className="text-[#131D4F] underline cursor-pointer">
-            Continue with Google
-          </button>
-        </div>
-
-        
-
-
-
-        {/* Signup */}
-        <div className="text-center mt-4">
-          <Link to="/signup" className="text-[#131D4F] underline">
-            Don't have an account?
+        {/* Sign Up Link */}
+        <div className="text-center mt-4 text-sm">
+          <span className="text-[#131D4F]">Don't have an account? </span>
+          <Link to="/signup" className="text-blue-600 hover:underline">
+            Signup
           </Link>
         </div>
       </form>

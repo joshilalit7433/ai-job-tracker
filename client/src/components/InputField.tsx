@@ -22,6 +22,6 @@ export const InputField = ({ label, name, type, icon, value, onChange, error }: 
         className="bg-transparent w-full text-[#131D4F] focus:outline-none text-sm sm:text-base"
       />
     </div>
-    {error && <p className="text-[#131D4F] text-xs sm:text-sm mt-1">{error}</p>}
+    {error && <p className="text-red-600 text-xs sm:text-sm mt-1">{error}</p>}
   </div>
 );

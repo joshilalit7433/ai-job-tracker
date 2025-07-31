@@ -126,8 +126,27 @@ export const UpdateJobApplication = async (req:AuthRequest, res:Response) => {
 
 export const GetJobApplication = async (req: Request, res: Response) => {
   try {
-    const jobapplications = await JobApplication.find({isApproved:true});
-    return res.status(200).json({ data:jobapplications, success: true });
+    
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+
+    const skip = (page - 1) * limit;
+
+    
+    const jobapplications = await JobApplication.find({ isApproved: true })
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 }); 
+
+    
+    const total = await JobApplication.countDocuments({ isApproved: true });
+
+    return res.status(200).json({
+      data: jobapplications,
+      currentPage: page,
+      totalPages: Math.ceil(total / limit),
+      success: true,
+    });
   } catch (error) {
     console.error("GetJobApplication Error:", error);
     return res.status(500).json({
@@ -137,27 +156,52 @@ export const GetJobApplication = async (req: Request, res: Response) => {
   }
 };
 
+
 export const getJobApplicationByCategory = async (req: Request, res: Response) => {
   try {
     const { categoryName } = req.params;
+    const { page = "1", limit = "6" } = req.query;
+
+    const normalize = (str: string) => str.trim().replace(/\s+/g, " ");
+    const escapeRegExp = (str: string) => str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+    const decodedCategory = normalize(decodeURIComponent(categoryName));
+    const escapedCategory = escapeRegExp(decodedCategory);
+    const pageNumber = parseInt(page as string, 10);
+    const limitNumber = parseInt(limit as string, 10);
+    const skip = (pageNumber - 1) * limitNumber;
+
+    console.log("Decoded:", decodedCategory);
+    console.log("Escaped:", escapedCategory);
+
+    const totalCount = await JobApplication.countDocuments({
+      isApproved: true,
+      jobCategory: { $regex: new RegExp(`^${escapedCategory}$`, "i") },
+    });
 
     const jobs = await JobApplication.find({
-      jobCategory: categoryName,
       isApproved: true,
-    });
+      jobCategory: { $regex: new RegExp(`^${escapedCategory}$`, "i") },
+    })
+      .skip(skip)
+      .limit(limitNumber)
+      .sort({ createdAt: -1 });
 
     return res.status(200).json({
       success: true,
       data: jobs,
+      totalPages: Math.ceil(totalCount / limitNumber),
     });
   } catch (error) {
     console.error("getJobsByCategory Error:", error);
     return res.status(500).json({
-      message: "Server error while fetching jobs by category",
       success: false,
+      message: "Server error while fetching jobs by category",
     });
   }
 };
+
+
 
 
 export const GetJobApplicationById = async (req: Request, res: Response) => {

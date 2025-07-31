@@ -103,13 +103,13 @@ const Signup = () => {
 
   return (
     <>
-      <div className="flex bg-[#f7e9d6] justify-center items-center px-4 py-6 sm:py-8 md:py-10 lg:py-12">
+      <div className="min-h-screen w-full bg-[#f7e9d6] flex justify-center items-center px-4 py-10 sm:py-12 md:py-16 lg:py-20 overflow-y-auto">
         <form
           onSubmit={handleSubmit}
-          className="w-full mt-[50px] max-w-md bg-[#FAF6E9] p-4 sm:p-6 md:p-8 rounded-lg shadow-lg"
+          className="w-full max-w-sm sm:max-w-md bg-[#FAF6E9] p-6 sm:p-8 rounded-xl shadow-lg border border-gray-200"
         >
-          <div className="text-center mb-4 sm:mb-6">
-            <p className="text-xl sm:text-2xl font-bold text-[#131D4F]">
+          <div className="text-center mb-6">
+            <p className="text-2xl sm:text-3xl font-bold text-[#131D4F]">
               Sign Up
             </p>
           </div>
@@ -158,47 +158,45 @@ const Signup = () => {
             error={formerrors.mobileNumber}
           />
 
-          {/* Role Selection */}
+          {/* Role */}
           <div className="mb-4">
-            <label className="text-base sm:text-lg text-[#131D4F]">Role:</label>
-            <div className="flex items-center space-x-4 border-b-2 border-[#131D4F] py-2 mt-1">
+            <label className="text-sm sm:text-base text-[#131D4F]">Role:</label>
+            <div className="flex gap-4  rounded-md px-4 py-2 mt-1">
               {["user", "recruiter"].map((role) => (
-                <div key={role} className="flex items-center">
+                <label
+                  key={role}
+                  className="flex items-center text-[#131D4F] text-sm capitalize"
+                >
                   <input
                     type="radio"
-                    id={role}
                     name="role"
                     value={role}
+                    checked={formvalues.role === role}
                     onChange={handleChange}
                     className="mr-2"
                   />
-                  <label
-                    htmlFor={role}
-                    className="text-[#131D4F] text-sm sm:text-base capitalize"
-                  >
-                    {role}
-                  </label>
-                </div>
+                  {role}
+                </label>
               ))}
             </div>
-            <p className="text-[#131D4F] text-xs sm:text-sm mt-1">
-              {formerrors.role}
-            </p>
+            {formerrors.role && (
+              <p className="text-xs sm:text-sm text-red-600 mt-1">{formerrors.role}</p>
+            )}
           </div>
 
-          {/* Submit Button */}
-          <div className="flex justify-center mt-6">
-            <button className="text-base sm:text-lg w-full py-2 text-white bg-blue-600 rounded-lg font-bold transition-colors hover:bg-blue-700">
-              SIGN UP
-            </button>
-          </div>
+          {/* Submit */}
+          <button
+            type="submit"
+            className=" cursor-pointer w-full py-2 bg-[#131D4F] text-white rounded-md font-semibold hover:bg-[#0f1840] transition"
+          >
+            Sign Up
+          </button>
 
-          <div className="text-center mt-4">
-            <Link
-              to="/login"
-              className="text-[#131D4F] text-sm sm:text-base underline "
-            >
-              Already have an account?
+          {/* Redirect to Login */}
+          <div className="text-center mt-4 text-sm">
+            <span className="text-[#131D4F]">Already have an account? </span>
+            <Link to="/login" className="text-blue-600 hover:underline">
+              Login
             </Link>
           </div>
         </form>
