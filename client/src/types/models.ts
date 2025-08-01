@@ -96,3 +96,21 @@ export interface AppliedStatus {
 }
 
 
+export interface ResumeAnalysisData {
+  name: string;
+  resumeScore: number;
+  keyQualificationsMatched: string[];
+  skillsNotBackedByExperience: string[];
+  suitableJobRoles: string[];
+  recommendations: {
+    strengthenTechnicalAlignment: string[];
+    highlightEngineeringPrinciples: string[];
+    improveResumeStructure: string[];
+    tailorSummary: string[];
+    addMetricsToProjects: string[];
+    [key: string]: string[]; 
+  };
+  finalNotes: string;
+  education: string[];
+  projects: string[];
+}

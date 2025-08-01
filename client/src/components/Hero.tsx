@@ -11,7 +11,6 @@ const HeroSection = () => {
             Discover <br /> more than <br />
             <span className="text-[#4a6cf7] inline-block relative">
               5000+ Jobs
-              
               <svg
                 className="absolute -bottom-2 left-0 w-full"
                 viewBox="0 0 200 10"
@@ -30,14 +29,12 @@ const HeroSection = () => {
           </h1>
 
           <p className="text-gray-700 text-md">
-            Great platform for the job seeker that’s searching for new career
-            heights and passionate about startups.
+            Our platform generates a personalized cover letter based on your resume
+            and the job description you're applying to.
           </p>
-
-        
         </div>
 
-        <div className="mt-20 lg:mt-20 ">
+        <div className="mt-20 lg:mt-20">
           <img
             src="/images/job-seeker.png"
             alt="Job Seeker"
@@ -45,10 +42,6 @@ const HeroSection = () => {
           />
         </div>
       </div>
-
-     
-
-    
     </div>
   );
 };
