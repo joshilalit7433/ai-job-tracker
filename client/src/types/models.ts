@@ -7,7 +7,6 @@ export interface User {
   role: 'user' | 'recruiter' | 'admin';
   resume: string;
   coverLetter: string;
-  resumeAnalysis: string;
   savedJobs: JobApplication[];
   totalJobsPosted: number;
   createdAt: Date;
@@ -34,6 +33,25 @@ export interface JobApplication {
   jobCategory: 'Information Technology (IT)' | 'Human Resources (HR)' | 'Finance & Accounting' | 'Marketing & Advertising' | 'Customer Service' | 'Product Management' | 'Design & Creative';
 }
 
+export interface ResumeAnalysis {
+  name: string;
+  education: string[];
+  projects: string[];
+  resumeScore: number;
+  keyQualificationsMatched: string[];
+  skillsNotBackedByExperience: string[];
+  whichJobIsSuitable: string[];
+  recommendations: {
+    strengthenTechnicalAlignment: string[];
+    highlightEngineeringPrinciples: string[];
+    improveResumeStructure: string[];
+    tailorSummary: string[];
+    addMetricsToProjects: string[];
+  };
+  finalNotes: string;
+  analyzedAt: Date;
+}
+
 export interface Applicant {
   _id: string;
   job: JobApplication; 
@@ -44,15 +62,14 @@ export interface Applicant {
   resume: string;
   appliedAt: Date;
   applied: boolean;
-  message:string;
+  message: string;
   status: 'pending' | 'interview' | 'rejected' | 'shortlisted' | 'hired';
   coverLetter: string;
   recruiterResponse: string;
   matchedSkills: string[];
   missingSkills: string[];
   respondedAt?: Date;
-
-
+  resumeAnalysis?: ResumeAnalysis;
 }
 
 
@@ -93,6 +110,7 @@ export interface AppliedStatus {
   status?: Applicant["status"];
   recruiterResponse?: string;
   appliedAt?: Date;
+  resumeAnalysis?: ResumeAnalysisData | null;
 }
 
 

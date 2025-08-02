@@ -6,9 +6,7 @@ import { Notification } from "../models/notification.model";
 import { User } from "../models/user.model";
 import { sendEmail } from "../utils/sendEmail";
 import { AuthRequest } from "../types/express/AuthRequest";
-import { analyzeResumeJobFit } from "utils/jobAnalyzer";
-import { extractResumeText } from "utils/extractResumeText";
-import fs from "fs";
+
 
 
 export const PostJobApplication = async (req:AuthRequest, res:Response) => {
@@ -365,31 +363,3 @@ export const JobCategoryCount = async (req: Request, res: Response) => {
 
 
 
-export const AnalyzeResumeController = async (req: Request, res: Response) => {
-  const { jobId } = req.params;
-  const file = req.file;
-
-  if (!file) {
-    return res.status(400).json({ success: false, message: "Resume file not provided" });
-  }
-
-  try {
-    const resumeText = await extractResumeText(file.path);
-
-    // Delete temp file after processing
-    fs.unlink(file.path, (err) => {
-      if (err) console.warn("Failed to delete temp file:", err);
-    });
-
-    const job = await JobApplication.findById(jobId);
-    if (!job || !job.responsibilities) {
-      return res.status(404).json({ success: false, message: "Job not found or missing responsibilities" });
-    }
-
-    const analysis = await analyzeResumeJobFit(job.responsibilities, resumeText);
-    return res.status(200).json({ success: true, data: analysis });
-  } catch (error) {
-    console.error("AnalyzeResumeController Error:", error);
-    return res.status(500).json({ success: false, message: "Failed to analyze resume" });
-  }
-};

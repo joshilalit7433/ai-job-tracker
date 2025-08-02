@@ -11,6 +11,8 @@ import { sendEmail } from "../utils/sendEmail";
 import { extractResumeText } from "../utils/extractResumeText";
 import { AuthRequest } from "../types/express/AuthRequest";
 import { Response } from "express";
+import { analyzeResumeJobFit } from "utils/jobAnalyzer";
+import { ResumeAnalysis } from "../types/applicant.types";
 
 dotenv.config();
 
@@ -55,91 +57,123 @@ const extractSkillsFromAnalysis = (text: string): string[] => {
 export const ApplyJobApplication = async (req: AuthRequest, res: Response) => {
   try {
     const user = await User.findById(req.user!._id);
-    if (!user)
-      return res
-        .status(404)
-        .json({ message: "User not found", success: false });
+    if (!user) {
+      return res.status(404).json({ message: "User not found", success: false });
+    }
 
     const jobId = req.params.id;
     if (!mongoose.Types.ObjectId.isValid(jobId)) {
-      return res
-        .status(400)
-        .json({ message: "Invalid job ID", success: false });
+      return res.status(400).json({ message: "Invalid job ID", success: false });
     }
 
     const job = await JobApplication.findById(jobId);
-    if (!job)
+    if (!job) {
       return res.status(404).json({ message: "Job not found", success: false });
+    }
 
     const alreadyApplied = await Applicant.findOne({
       job: jobId,
       user: user._id,
     });
+
     if (alreadyApplied) {
       return res
         .status(400)
         .json({ message: "You already applied for this job", success: false });
     }
 
-    const resume = req.file
-      ? `uploads/resumes/${req.file.filename}`
-      : user.resume;
-
+    const resume = req.file ? `uploads/resumes/${req.file.filename}` : user.resume;
     if (!resume) {
-      return res
-        .status(400)
-        .json({ message: "Please upload your resume first.", success: false });
+      return res.status(400).json({ message: "Please upload your resume first.", success: false });
     }
 
-    const coverLetter = req.body.coverLetter;
+    const { coverLetter } = req.body;
     if (!coverLetter) {
-      return res
-        .status(400)
-        .json({ message: "Cover letter is required.", success: false });
+      return res.status(400).json({ message: "Cover letter is required.", success: false });
     }
 
     const resumePath = path.join(process.cwd(), resume);
-    const analysisText = await extractResumeText(resumePath);
+    const resumeText = await extractResumeText(resumePath);
 
-    const userSkills = extractSkillsFromAnalysis(analysisText);
+    if (req.file) {
+      fs.unlink(resumePath, (err) => {
+        if (err) console.warn("Failed to delete temp resume file:", err);
+      });
+    }
+    
 
+
+    const analysis = await analyzeResumeJobFit(job.responsibilities, resumeText);
+    if ("error" in analysis) {
+      return res.status(400).json({
+        success: false,
+        message: "Resume analysis failed",
+        error: analysis.error,
+      });
+    }
+
+    const {
+      name,
+      education,
+      projects,
+      resumeScore,
+      keyQualificationsMatched,
+      skillsNotBackedByExperience,
+      suitableJobRoles,
+      recommendations,
+      finalNotes,
+    } = analysis;
+
+    const fixedAnalysis: ResumeAnalysis = {
+      name,
+      education,
+      projects,
+      resumeScore,
+      keyQualificationsMatched,
+      skillsNotBackedByExperience,
+      suitableJobRoles,
+      recommendations,
+      finalNotes,
+      analyzedAt: new Date(),
+    };
+
+
+    const userSkills = extractSkillsFromAnalysis(resumeText);
     const jobSkills = (
       Array.isArray(job.skills)
         ? job.skills.flatMap((s) => s.split(/[\s,]+/))
         : (job.skills || "").split(/[\s,]+/)
     ).map((s: string) => normalizeSkill(s.trim()));
 
-    const matchedSkills = jobSkills.filter((skill: string) =>
-      userSkills.includes(skill)
-    );
-    const missingSkills = jobSkills.filter(
-      (skill: string) => !userSkills.includes(skill)
-    );
+    const matchedSkills = jobSkills.filter((skill: string) => userSkills.includes(skill));
+    const missingSkills = jobSkills.filter((skill: string) => !userSkills.includes(skill));
 
-    const newApplicant = await Applicant.create({
+
+    const applicant = await Applicant.create({
       job: jobId,
       user: user._id,
-      resume,
-      coverLetter,
       fullName: user.fullName,
       email: user.email,
       mobileNumber: user.mobileNumber,
+      resume,
+      coverLetter,
       matchedSkills,
       missingSkills,
+      resumeAnalysis: fixedAnalysis,
     });
 
     return res.status(200).json({
       message: "Successfully applied to the job",
+      success: true,
       data: {
         matchedSkills,
         missingSkills,
-        coverLetter: coverLetter,
+        coverLetter,
+        resumeAnalysis: fixedAnalysis,
       },
-
-      success: true,
     });
   } catch (error) {
-    console.error("Error applying:", error);
+    console.error("ApplyJobApplication Error:", error);
     return res.status(500).json({ message: "Server error", success: false });
   }
 };
@@ -177,6 +211,10 @@ export const checkIfApplied = async (req: AuthRequest, res: Response) => {
         status: applicant.status,
         recruiterResponse: applicant.recruiterResponse || "",
         appliedAt: applicant.appliedAt,
+        matchedSkills:applicant.matchedSkills || [],
+        missingSkills:applicant.missingSkills || [],
+        resumeAnalysis:applicant.resumeAnalysis || null,
+        
       },
     });
   } catch (error) {

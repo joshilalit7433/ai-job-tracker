@@ -1,25 +1,10 @@
 import { callGroqLLM } from "../../src/groqClient";
+import { ResumeAnalysis } from "types/applicant.types";
 
 /**
  * Type definition for the response structure from the LLM.
  */
-export interface ResumeAnalysis {
-  name: string;
-  education: string[];
-  projects: string[];
-  resumeScore: number; // out of 5
-  keyQualificationsMatched: string[];
-  skillsNotBackedByExperience: string[];
-  whichJobisSuitable: string[];
-  recommendations: {
-    strengthenTechnicalAlignment: string[];
-    highlightEngineeringPrinciples: string[];
-    improveResumeStructure: string[];
-    tailorSummary: string[];
-    addMetricsToProjects: string[];
-  };
-  finalNotes: string;
-}
+
 
 /**
  * @param rawText Raw string from LLM
@@ -72,7 +57,7 @@ Respond ONLY in this exact JSON format:
   "resumeScore": number, // Out of 5
   "keyQualificationsMatched": [string],
   "skillsNotBackedByExperience": [string],
-  "whichJobisSuitable": [string],
+  "suitableJobRoles": [string],
   "recommendations": {
     "strengthenTechnicalAlignment": [string],
     "highlightEngineeringPrinciples": [string],

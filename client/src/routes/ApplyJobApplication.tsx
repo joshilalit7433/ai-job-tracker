@@ -11,6 +11,8 @@ import { useParams } from "react-router-dom";
 import { RootState } from "../redux/store";
 import { Applicant, User, AppliedStatus } from "../types/models";
 import { ApiResponse } from "../types/apiResponse";
+import { FaChartLine } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 interface SkillAnalysis {
   matched: string[];
@@ -182,7 +184,7 @@ const ApplyJobForm = () => {
       );
 
       if (res.data.success && res.data.data) {
-        const { matchedSkills, missingSkills, coverLetter } = res.data.data;
+        const { matchedSkills, missingSkills } = res.data.data;
 
         toast.success("Application submitted!", {
           position: "bottom-right",
@@ -287,7 +289,7 @@ const ApplyJobForm = () => {
             type="button"
             onClick={handleGenerateCoverLetter}
             disabled={generating || !uploadedResumeURL}
-            className="mt-2 text-white bg-green-600 hover:bg-green-700 px-4 py-1 rounded text-sm disabled:bg-gray-400"
+            className=" cursor-pointer mt-2 text-white bg-green-600 hover:bg-green-700 px-4 py-1 rounded text-sm disabled:bg-gray-400"
           >
             {generating ? "Generating..." : "Generate Cover Letter"}
           </button>
@@ -302,7 +304,7 @@ const ApplyJobForm = () => {
               isSubmitted
                 ? "bg-blue-400 cursor-not-allowed"
                 : "bg-blue-600 hover:bg-blue-700"
-            } text-white font-semibold py-2 px-6 rounded-md transition w-full sm:w-auto`}
+            } text-white font-semibold py-2 px-6 rounded-md transition w-full sm:w-auto cursor-pointer`}
           >
             {isSubmitted
               ? "Already Submitted"
@@ -360,6 +362,18 @@ const ApplyJobForm = () => {
                 )}
               </div>
             </div>
+          </div>
+        )}
+
+        {isSubmitted && (
+          <div className="text-center mt-6">
+            <Link
+              to={`/resume-analysis/${id}`}
+              className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300"
+            >
+              <FaChartLine className="text-lg" />
+              View Your Chances of Getting Selected
+            </Link>
           </div>
         )}
       </form>

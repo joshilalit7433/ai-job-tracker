@@ -9,7 +9,6 @@ export interface IUser extends Document {
   role: "user" | "recruiter" | "admin";
   resume?: string;
   coverLetter?: string;
-  resumeAnalysis?: string;
   savedJobs: string[]; 
   totalJobsPosted: number;
   createdAt?: Date;

@@ -10,7 +10,6 @@ const UserSchema = new Schema<IUser>(
     role: { type: String, enum: ["user", "recruiter", "admin"], required: true },
     resume: { type: String },
     coverLetter: { type: String },
-    resumeAnalysis: { type: String, default: "" },
     savedJobs: [{ type:Schema.Types.ObjectId, ref: "JobApplication" }],
     totalJobsPosted: { type: Number, default: 0 },
   },
