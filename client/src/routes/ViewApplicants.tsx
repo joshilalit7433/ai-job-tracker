@@ -2,10 +2,14 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, Link } from "react-router-dom";
 import { FileText } from "lucide-react";
-import { JOB_APPLICANT_API_END_POINT, BACKEND_BASE_URL } from "../utils/constant";
+import {
+  JOB_APPLICANT_API_END_POINT,
+  BACKEND_BASE_URL,
+} from "../utils/constant";
 import { ApiResponse } from "../types/apiResponse";
 import { Applicant } from "../types/models";
 import { toast } from "react-toastify";
+import { FaChartLine } from "react-icons/fa6";
 
 const ViewApplicants = () => {
   const [applicantDetails, setApplicantDetails] = useState<Applicant[]>([]);
@@ -85,25 +89,53 @@ const ViewApplicants = () => {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-[#FAF6E9]">
                 <tr>
-                  <th className="px-6 py-3 text-left text-lg font-bold text-gray-800">Name</th>
-                  <th className="px-6 py-3 text-left text-base font-medium text-gray-600">Email</th>
-                  <th className="px-6 py-3 text-left text-base font-medium text-gray-600">Mobile</th>
-                  <th className="px-6 py-3 text-left text-base font-medium text-gray-600">Resume</th>
-                  <th className="px-6 py-3 text-left text-base font-medium text-gray-600">Cover Letter</th>
-                  <th className="px-6 py-3 text-left text-base font-medium text-gray-600">Matched Skills</th>
-                  <th className="px-6 py-3 text-left text-base font-medium text-gray-600">Missing Skills</th>
-                  <th className="px-6 py-3 text-left text-base font-semibold text-gray-800">Action</th>
-                  <th className="px-6 py-3 text-left text-base font-semibold text-gray-800">Status</th>
+                  <th className="px-6 py-3 text-left text-lg font-bold text-gray-800">
+                    Name
+                  </th>
+                  <th className="px-6 py-3 text-left text-base font-medium text-gray-600">
+                    Email
+                  </th>
+                  <th className="px-6 py-3 text-left text-base font-medium text-gray-600">
+                    Mobile
+                  </th>
+                  <th className="px-6 py-3 text-left text-base font-medium text-gray-600">
+                    Resume
+                  </th>
+                  <th className="px-6 py-3 text-left text-base font-medium text-gray-600">
+                    Cover Letter
+                  </th>
+                  <th className="px-6 py-3 text-left text-base font-medium text-gray-600">
+                    Matched Skills
+                  </th>
+                  <th className="px-6 py-3 text-left text-base font-medium text-gray-600">
+                    Missing Skills
+                  </th>
+                  <th className="px-6 py-3 text-left text-base font-semibold text-gray-800">
+                    Action
+                  </th>
+                  <th className="px-6 py-3 text-left text-base font-semibold text-gray-800">
+                    Status
+                  </th>
+                  <th className="px-6 py-3 text-left text-base font-semibold text-gray-800">
+                    Resume Summary
+                  </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-100">
                 {applicantDetails.map((applicant) => (
-                  <tr key={applicant._id} className="hover:bg-gray-50 transition">
+                  <tr
+                    key={applicant._id}
+                    className="hover:bg-gray-50 transition"
+                  >
                     <td className="px-6 py-4 text-gray-800 font-medium capitalize">
                       {applicant.fullName}
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-700">{applicant.email}</td>
-                    <td className="px-6 py-4 text-sm text-gray-700">{applicant.mobileNumber}</td>
+                    <td className="px-6 py-4 text-sm text-gray-700">
+                      {applicant.email}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-700">
+                      {applicant.mobileNumber}
+                    </td>
                     <td className="px-6 py-4 text-sm">
                       <a
                         href={`${BACKEND_BASE_URL}/${applicant.resume}`}
@@ -130,13 +162,24 @@ const ViewApplicants = () => {
                     </td>
                     <td className="px-6 py-4">
                       <Link
-                        to={`/recruiter-response/${applicant._id}`}
+                        to={`/recruiter-response/${applicant.job}`}
                         className="inline-block bg-blue-600 text-white px-4 py-1.5 rounded-md text-sm font-medium hover:bg-blue-700"
                       >
                         Respond
                       </Link>
                     </td>
-                    <td className="px-6 py-4">{renderStatusBadge(applicant.status)}</td>
+                    <td className="px-6 py-4">
+                      {renderStatusBadge(applicant.status)}
+                    </td>
+                    <td>
+                      <Link
+                        to={`/recruiter-resume-analysis/${applicant._id}`}
+                        className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300"
+                      >
+                        <FaChartLine className="text-lg" />
+                        View
+                      </Link>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -150,9 +193,15 @@ const ViewApplicants = () => {
                 key={applicant._id}
                 className="bg-white rounded-xl shadow-md p-4 space-y-2"
               >
-                <div><strong>Name:</strong> {applicant.fullName}</div>
-                <div><strong>Email:</strong> {applicant.email}</div>
-                <div><strong>Mobile:</strong> {applicant.mobileNumber}</div>
+                <div>
+                  <strong>Name:</strong> {applicant.fullName}
+                </div>
+                <div>
+                  <strong>Email:</strong> {applicant.email}
+                </div>
+                <div>
+                  <strong>Mobile:</strong> {applicant.mobileNumber}
+                </div>
                 <div>
                   <strong>Resume:</strong>{" "}
                   <a

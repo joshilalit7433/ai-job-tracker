@@ -388,23 +388,11 @@ export default function SidebarDashboard() {
                   <Line
                     type="monotone"
                     dataKey="applications"
-                    stroke="url(#lineGradient)"
-                    strokeWidth={3}
-                    dot={{ r: 4, fill: "#10b981" }}
-                    activeDot={{ r: 6, fill: "#10b981" }}
+                    stroke="#3b82f6"
+                    strokeWidth={2}
+                    dot={{ r: 3, fill: "#3b82f6" }}
+                    activeDot={{ r: 5, fill: "#1e3a8a" }}
                   />
-                  <defs>
-                    <linearGradient
-                      id="lineGradient"
-                      x1="0"
-                      y1="0"
-                      x2="1"
-                      y2="0"
-                    >
-                      <stop offset="0%" stopColor="#10b981" />
-                      <stop offset="100%" stopColor="#059669" />
-                    </linearGradient>
-                  </defs>
                 </LineChart>
               </ResponsiveContainer>
             </div>

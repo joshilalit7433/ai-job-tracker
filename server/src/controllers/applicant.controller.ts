@@ -1,4 +1,5 @@
-import mongoose from "mongoose";
+
+import mongoose, { Types } from "mongoose";
 import fs from "fs";
 import path from "path";
 import dotenv from "dotenv";
@@ -58,12 +59,16 @@ export const ApplyJobApplication = async (req: AuthRequest, res: Response) => {
   try {
     const user = await User.findById(req.user!._id);
     if (!user) {
-      return res.status(404).json({ message: "User not found", success: false });
+      return res
+        .status(404)
+        .json({ message: "User not found", success: false });
     }
 
     const jobId = req.params.id;
     if (!mongoose.Types.ObjectId.isValid(jobId)) {
-      return res.status(400).json({ message: "Invalid job ID", success: false });
+      return res
+        .status(400)
+        .json({ message: "Invalid job ID", success: false });
     }
 
     const job = await JobApplication.findById(jobId);
@@ -82,14 +87,20 @@ export const ApplyJobApplication = async (req: AuthRequest, res: Response) => {
         .json({ message: "You already applied for this job", success: false });
     }
 
-    const resume = req.file ? `uploads/resumes/${req.file.filename}` : user.resume;
+    const resume = req.file
+      ? `uploads/resumes/${req.file.filename}`
+      : user.resume;
     if (!resume) {
-      return res.status(400).json({ message: "Please upload your resume first.", success: false });
+      return res
+        .status(400)
+        .json({ message: "Please upload your resume first.", success: false });
     }
 
     const { coverLetter } = req.body;
     if (!coverLetter) {
-      return res.status(400).json({ message: "Cover letter is required.", success: false });
+      return res
+        .status(400)
+        .json({ message: "Cover letter is required.", success: false });
     }
 
     const resumePath = path.join(process.cwd(), resume);
@@ -100,10 +111,11 @@ export const ApplyJobApplication = async (req: AuthRequest, res: Response) => {
         if (err) console.warn("Failed to delete temp resume file:", err);
       });
     }
-    
 
-
-    const analysis = await analyzeResumeJobFit(job.responsibilities, resumeText);
+    const analysis = await analyzeResumeJobFit(
+      job.responsibilities,
+      resumeText
+    );
     if ("error" in analysis) {
       return res.status(400).json({
         success: false,
@@ -137,7 +149,6 @@ export const ApplyJobApplication = async (req: AuthRequest, res: Response) => {
       analyzedAt: new Date(),
     };
 
-
     const userSkills = extractSkillsFromAnalysis(resumeText);
     const jobSkills = (
       Array.isArray(job.skills)
@@ -145,11 +156,14 @@ export const ApplyJobApplication = async (req: AuthRequest, res: Response) => {
         : (job.skills || "").split(/[\s,]+/)
     ).map((s: string) => normalizeSkill(s.trim()));
 
-    const matchedSkills = jobSkills.filter((skill: string) => userSkills.includes(skill));
-    const missingSkills = jobSkills.filter((skill: string) => !userSkills.includes(skill));
+    const matchedSkills = jobSkills.filter((skill: string) =>
+      userSkills.includes(skill)
+    );
+    const missingSkills = jobSkills.filter(
+      (skill: string) => !userSkills.includes(skill)
+    );
 
-
-    const applicant = await Applicant.create({
+    await Applicant.create({
       job: jobId,
       user: user._id,
       fullName: user.fullName,
@@ -190,31 +204,64 @@ export const checkIfApplied = async (req: AuthRequest, res: Response) => {
         .json({ success: false, message: "Invalid job ID" });
     }
 
-    const applicant = await Applicant.findOne({
-      job: jobId,
-      user: req.user!._id,
-    });
+    let applicant;
 
-    if (!applicant) {
-      return res.status(200).json({
-        success: true,
-        applied: false,
-        message: "You can apply for this job.",
+    if (req.user!.role === "recruiter") {
+      // Make sure the job belongs to the recruiter
+      const job = await JobApplication.findOne({
+        _id: jobId,
+        user: req.user!._id,
       });
+
+      if (!job) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Job not found or access denied" });
+      }
+
+      // Get any applicant for this job
+      applicant = await Applicant.findOne({ job: jobId }).populate(
+        "user",
+        "fullName email"
+      );
+
+      if (!applicant) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Applicant not found" });
+      }
+    } else if (req.user!.role === "user") {
+      //  For users, check if they applied to this job
+      applicant = await Applicant.findOne({
+        job: jobId,
+        user: req.user!._id,
+      });
+
+      if (!applicant) {
+        return res.status(200).json({
+          success: true,
+          applied: false,
+          message: "Application not found for this job.",
+        });
+      }
+    } else {
+      return res
+        .status(403)
+        .json({ success: false, message: "Unauthorized access" });
     }
 
+    //  If applicant found and user is authorized, return their info
     return res.status(200).json({
       success: true,
-      message: "You have already applied for this job.",
+      message: "Application found.",
       data: {
         applied: true,
         status: applicant.status,
         recruiterResponse: applicant.recruiterResponse || "",
         appliedAt: applicant.appliedAt,
-        matchedSkills:applicant.matchedSkills || [],
-        missingSkills:applicant.missingSkills || [],
-        resumeAnalysis:applicant.resumeAnalysis || null,
-        
+        matchedSkills: applicant.matchedSkills || [],
+        missingSkills: applicant.missingSkills || [],
+        resumeAnalysis: applicant.resumeAnalysis || null,
       },
     });
   } catch (error) {
@@ -222,6 +269,7 @@ export const checkIfApplied = async (req: AuthRequest, res: Response) => {
     return res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
 
 // Get all applicants for a specific job
 
@@ -232,7 +280,7 @@ export const GetApplicantsForSpecificJob = async (
   try {
     const { jobId } = req.params;
     const applicants = await Applicant.find({ job: jobId });
-    return res.status(200).json({ data:applicants, success: true });
+    return res.status(200).json({ data: applicants, success: true });
   } catch (error) {
     console.error(
       "Error in GetApplicants For SpecificJob:",
@@ -252,7 +300,10 @@ export const respondToApplicant = async (req: AuthRequest, res: Response) => {
     const applicantId = req.params.id;
     const { recruiterResponse, status } = req.body;
 
-    const applicant = await Applicant.findById(applicantId).populate("job");
+    const applicant = await Applicant.findById(applicantId).populate({
+      path: "job",
+      populate: { path: "user", model: "User" },
+    });
     if (!applicant) {
       return res
         .status(404)
@@ -260,7 +311,12 @@ export const respondToApplicant = async (req: AuthRequest, res: Response) => {
     }
 
     const job = applicant.job;
-    if (!job || job.user.toString() !== req.user!._id.toString()) {
+    if (
+      applicant.job &&
+      "user" in applicant.job &&
+      (applicant.job.user as Types.ObjectId).toString() !==
+        req.user!._id.toString()
+    ) {
       return res.status(403).json({ message: "Unauthorized", success: false });
     }
 
@@ -307,12 +363,10 @@ export const GenerateCoverLetter = async (req: AuthRequest, res: Response) => {
   try {
     const user = await User.findById(req.user!._id);
     if (!user || !user.resume) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Resume not found. Please upload it first.",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Resume not found. Please upload it first.",
+      });
     }
 
     const jobId = req.params.id;
@@ -363,12 +417,10 @@ Match the applicant's strengths to the responsibilities and skills. Use a confid
     });
 
     if (!response.generations?.length) {
-      return res
-        .status(500)
-        .json({
-          success: false,
-          message: "AI failed to generate cover letter.",
-        });
+      return res.status(500).json({
+        success: false,
+        message: "AI failed to generate cover letter.",
+      });
     }
 
     return res
@@ -382,3 +434,36 @@ Match the applicant's strengths to the responsibilities and skills. Use a confid
     });
   }
 };
+
+
+
+export const getResumeAnalysisForRecruiter = async (req:AuthRequest,res:Response)=>{
+    try {
+    const applicantId = req.params.applicantId;
+
+    if (!mongoose.Types.ObjectId.isValid(applicantId)) {
+      return res.status(400).json({ success: false, message: "Invalid applicant ID" });
+    }
+
+    const applicant = await Applicant.findById(applicantId).populate("job", "user");
+
+    if (!applicant) {
+      return res.status(404).json({ success: false, message: "Applicant not found" });
+    }
+
+    // Check access: only the recruiter who created the job can access
+    const jobOwnerId = (applicant.job as any).user?.toString();
+    if (req.user!.role !== "recruiter" || jobOwnerId !== req.user!._id.toString()) {
+      return res.status(403).json({ success: false, message: "Access denied" });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: applicant.resumeAnalysis,
+    });
+  } catch (error) {
+    console.error("Error fetching resume analysis:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+
+}

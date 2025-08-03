@@ -25,6 +25,7 @@ import SpecifiJobs from "./components/SpecifiJobs";
 import { useAppSelector } from "./redux/hooks";
 import useAuth from "./useAuth";
 import ResumeAnalyze from "./components/ResumeAnalyze";
+import RecruiterResumeAnalysis from "./components/RecruiterResumeAnalysis";
 
 function App() {
   useAuth(); 
@@ -119,7 +120,7 @@ function App() {
             <Route
               path="/resume-analysis/:id"
               element={
-                <ProtectedRoute allowedRoles={["user"]}>
+                <ProtectedRoute allowedRoles={["user","recruiter"]}>
                   <ResumeAnalyze />
                 </ProtectedRoute>
               }
@@ -182,6 +183,19 @@ function App() {
                 </ProtectedRoute>
               }
             />
+
+
+             <Route
+              path="/recruiter-resume-analysis/:applicantId"
+              element={
+                <ProtectedRoute allowedRoles={["recruiter"]}>
+                  <RecruiterResumeAnalysis />
+                </ProtectedRoute>
+              }
+            />
+
+
+
           </Routes>
         </div>
       </BrowserRouter>

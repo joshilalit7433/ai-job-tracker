@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import axios from "axios";
 import {
   FaCheckCircle,
   FaExclamationTriangle,
@@ -10,32 +11,27 @@ import {
 } from "react-icons/fa";
 import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-import axios from "axios";
 import { ApiResponse } from "../types/apiResponse";
+import { ResumeAnalysisData } from "../types/models";
 import { JOB_APPLICANT_API_END_POINT } from "../utils/constant";
-import { ResumeAnalysisData, AppliedStatus } from "../types/models";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const ResumeAnalyze = () => {
-  const { id: jobId } = useParams();
+const RecruiterResumeAnalysis = () => {
+  const {  applicantId } = useParams();
   const [loading, setLoading] = useState(true);
   const [analysis, setAnalysis] = useState<ResumeAnalysisData | null>(null);
 
   useEffect(() => {
     const fetchAnalysis = async () => {
       try {
-        const res = await axios.get<ApiResponse<AppliedStatus>>(
-          `${JOB_APPLICANT_API_END_POINT}/is-applied/${jobId}`,
+        const res = await axios.get<ApiResponse<ResumeAnalysisData>>(
+          `${JOB_APPLICANT_API_END_POINT}/recruiter-resume-analysis/${applicantId}`,
           { withCredentials: true }
         );
 
-        if (
-          res.data.success &&
-          res.data.data.applied &&
-          res.data.data.resumeAnalysis
-        ) {
-          setAnalysis(res.data.data.resumeAnalysis);
+        if (res.data.success && res.data.data) {
+          setAnalysis(res.data.data);
         }
       } catch (err) {
         console.error("Failed to load resume analysis", err);
@@ -45,7 +41,7 @@ const ResumeAnalyze = () => {
     };
 
     fetchAnalysis();
-  }, [jobId]);
+  }, [applicantId]);
 
   if (loading) {
     return (
@@ -64,7 +60,6 @@ const ResumeAnalyze = () => {
   }
 
   const MAX_SCORE = 5;
-
   const doughnutData = {
     labels: ["Score", "Remaining"],
     datasets: [
@@ -117,15 +112,13 @@ const ResumeAnalyze = () => {
           )}
         </div>
 
-        {/* Score Section */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-gray-100 p-5 rounded-xl border border-gray-200">
           <div className="md:col-span-2 space-y-2">
             <h2 className="text-lg font-semibold text-gray-800">
               Employability Score
             </h2>
             <p className="text-sm text-gray-600">
-              This is an AI-generated score based on your resume and job
-              requirements.
+              This is an AI-generated score based on the applicant's resume and job requirements.
             </p>
           </div>
           <div className="relative flex justify-center items-center w-40 h-40 mx-auto">
@@ -139,39 +132,13 @@ const ResumeAnalyze = () => {
           </div>
         </div>
 
-        {/* Lists & Recommendations */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           <div>
-            {renderList(
-              "Key Qualifications Matched",
-              analysis.keyQualificationsMatched,
-              <FaCheckCircle className="text-emerald-600" />,
-              "text-emerald-700"
-            )}
-            {renderList(
-              "Skills Not Backed by Experience",
-              analysis.skillsNotBackedByExperience,
-              <FaExclamationTriangle className="text-orange-500" />,
-              "text-orange-700"
-            )}
-            {renderList(
-              "Suitable Job Roles",
-              analysis.suitableJobRoles,
-              <FaBriefcase className="text-blue-600" />,
-              "text-blue-800"
-            )}
-            {renderList(
-              "Education",
-              analysis.education,
-              <FaGraduationCap className="text-purple-600" />,
-              "text-purple-800"
-            )}
-            {renderList(
-              "Projects",
-              analysis.projects,
-              <FaCode className="text-teal-600" />,
-              "text-teal-800"
-            )}
+            {renderList("Key Qualifications Matched", analysis.keyQualificationsMatched, <FaCheckCircle className="text-emerald-600" />, "text-emerald-700")}
+            {renderList("Skills Not Backed by Experience", analysis.skillsNotBackedByExperience, <FaExclamationTriangle className="text-orange-500" />, "text-orange-700")}
+            {renderList("Suitable Job Roles", analysis.suitableJobRoles, <FaBriefcase className="text-blue-600" />, "text-blue-800")}
+            {renderList("Education", analysis.education, <FaGraduationCap className="text-purple-600" />, "text-purple-800")}
+            {renderList("Projects", analysis.projects, <FaCode className="text-teal-600" />, "text-teal-800")}
           </div>
 
           <div>
@@ -180,30 +147,24 @@ const ResumeAnalyze = () => {
               Actionable Recommendations
             </h3>
             {Object.entries(analysis.recommendations).map(([key, list]) => (
-              <div
-                key={key}
-                className="mb-4 p-4 bg-yellow-50 rounded-lg border border-yellow-100"
-              >
+              <div key={key} className="mb-4 p-4 bg-yellow-50 rounded-lg border border-yellow-100">
                 <h4 className="text-sm font-bold text-yellow-900 mb-1 capitalize">
                   {key.replace(/([A-Z])/g, " $1")}
                 </h4>
                 {list.length ? (
                   <ul className="list-disc list-inside text-xs text-gray-700 space-y-1">
-                    {list.map((tip: string, i: number) => (
+                    {list.map((tip, i) => (
                       <li key={i}>{tip}</li>
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-xs italic text-gray-400">
-                    No suggestions available.
-                  </p>
+                  <p className="text-xs italic text-gray-400">No suggestions available.</p>
                 )}
               </div>
             ))}
           </div>
         </div>
 
-        {/* Final Summary */}
         <div>
           <h3 className="text-lg font-semibold text-gray-800 mb-2">
             📝 Final Summary
@@ -217,4 +178,4 @@ const ResumeAnalyze = () => {
   );
 };
 
-export default ResumeAnalyze;
+export default RecruiterResumeAnalysis;
