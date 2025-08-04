@@ -212,6 +212,7 @@ const JobApplications: React.FC<JobApplicationsProps> = ({ filters }) => {
       </div>
       {totalPages > 1 && (
         <div className="mt-8 flex justify-center gap-4 items-center">
+          {/* left button */}
           <button
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
@@ -221,10 +222,12 @@ const JobApplications: React.FC<JobApplicationsProps> = ({ filters }) => {
             <FiChevronLeft size={20} />
           </button>
 
+          {/* text part */}
           <span className="px-4 py-1 text-[#131D4F] font-semibold">
             Page {currentPage} of {totalPages}
           </span>
 
+          {/* right button */}
           <button
             onClick={() =>
               setCurrentPage((prev) => Math.min(prev + 1, totalPages))

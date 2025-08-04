@@ -26,6 +26,8 @@ import { useAppSelector } from "./redux/hooks";
 import useAuth from "./useAuth";
 import ResumeAnalyze from "./components/ResumeAnalyze";
 import RecruiterResumeAnalysis from "./components/RecruiterResumeAnalysis";
+import '@fontsource/patrick-hand'; 
+
 
 function App() {
   useAuth(); 
