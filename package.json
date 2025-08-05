@@ -2,5 +2,14 @@
   "dependencies": {
     "pdf-parse": "^1.1.0",
     "react-icons": "^5.5.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.2.0",
+    "@types/supertest": "^6.0.3",
+    "jest": "^30.0.5",
+    "mongodb-memory-server": "^10.2.0",
+    "supertest": "^7.1.4",
+    "ts-jest": "^29.4.1"
   }
 }

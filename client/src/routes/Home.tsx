@@ -4,13 +4,15 @@ import Footer from '../components/Footer'
 import JobsCategory from '../components/JobsCategory'
 import Companies from '../components/Companies'
 import DashboardHome from '../components/DashboardHome'
+import Working from '../components/Working'
 
 export const  Home = () => {
   return (
     <>
     <Hero/>
-    <DashboardHome/>
+    <Working/>
     <JobsCategory/>
+    <DashboardHome/>
     <Companies/>
     <Footer/>
     </>
