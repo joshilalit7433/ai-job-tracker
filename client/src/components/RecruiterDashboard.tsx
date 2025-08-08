@@ -22,7 +22,7 @@ import {
   X,
   UserRound,
 } from "lucide-react";
-import { RECRUITER_DASHBOARD_API_END_POINT } from "../utils/constant";
+import { RECRUITER_DASHBOARD_API_END_POINT, USER_API_END_POINT } from "../utils/constant";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -83,15 +83,36 @@ export default function SidebarDashboard() {
     fetchDashboardData();
   }, []);
 
-  const handleLogout = (): void => {
-    localStorage.removeItem("token");
-    dispatch(logout());
-    navigate("/");
-    toast.success("You have successfully Logged Out.", {
-      position: "bottom-right",
-      autoClose: 3000,
-      theme: "dark",
-    });
+  const handleLogout = async (): Promise<void> => {
+    try {
+      const res = await axios.get(`${USER_API_END_POINT}/logout`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      
+      localStorage.removeItem("token");
+      dispatch(logout());
+      navigate("/");
+
+      
+      toast.success(res.data.message, {
+        position: "bottom-right",
+        autoClose: 3000,
+        theme: "dark",
+      });
+    } catch (error: any) {
+      localStorage.removeItem("token");
+      dispatch(logout());
+      navigate("/");
+
+      toast.error(error.response?.data?.message || "Logout failed", {
+        position: "bottom-right",
+        autoClose: 3000,
+        theme: "dark",
+      });
+    }
   };
 
   const navLinks: NavLink[] = [

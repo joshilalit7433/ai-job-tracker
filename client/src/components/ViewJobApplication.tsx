@@ -85,7 +85,7 @@ const ViewJobApplication = () => {
         {},
         { withCredentials: true }
       );
-      toast.success("Job approved successfully!", {
+      toast.success( "Job approved successfully!", {
         position: "bottom-right",
         theme: "dark",
       });

@@ -104,7 +104,7 @@ const SpecifiJobs = () => {
         { withCredentials: true }
       );
       if (res.data.success) {
-        toast.success("Job saved successfully!", { position: "bottom-right" });
+        toast.success( res.data.message || "Job saved successfully!", { position: "bottom-right" });
       } else {
         toast.error("Failed to save job.", { position: "bottom-right" });
       }

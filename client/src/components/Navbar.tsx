@@ -9,6 +9,8 @@ import {
   LogOut,
   Briefcase,
 } from "lucide-react";
+import axios from "axios";
+import { USER_API_END_POINT } from "../utils/constant";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../redux/authSlice";
 import {
@@ -39,15 +41,38 @@ const Navbar = () => {
   const isLoginOrSignup = ["/login", "/signup"].includes(location.pathname);
   const isRecruiter = user?.role === "recruiter";
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    dispatch(logout());
-    navigate("/");
-    toast.success("You have successfully Logged Out.", {
-      position: "bottom-right",
-      autoClose: 3000,
-      theme: "dark",
-    });
+  const handleLogout = async (): Promise<void> => {
+    try {
+     
+      const res = await axios.get(`${USER_API_END_POINT}/logout`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      
+      localStorage.removeItem("token");
+      dispatch(logout());
+
+     
+      navigate("/");
+
+     
+      toast.success(res.data.message || "You have successfully logged out.", {
+        position: "bottom-right",
+        autoClose: 3000,
+        theme: "dark",
+      });
+    } catch (error: any) {
+      toast.error(
+        error.response?.data?.message || "Logout failed. Please try again.",
+        {
+          position: "bottom-right",
+          autoClose: 3000,
+          theme: "dark",
+        }
+      );
+    }
   };
 
   useEffect(() => {

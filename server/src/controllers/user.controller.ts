@@ -214,7 +214,7 @@ export const saveJob = async (req: AuthRequest, res: Response) => {
     const job = await JobApplication.findById(jobId);
     if (!job) return res.status(404).json({ message: "Job not found", success: false });
 
-    return res.status(200).json({ message: "Job saved!", data:job, success: true });
+    return res.status(200).json({ message: "Job saved! ", data:job, success: true });
   } catch (error) {
     console.error("Save Job Error:", error);
     return res.status(500).json({ message: "Server error", success: false });

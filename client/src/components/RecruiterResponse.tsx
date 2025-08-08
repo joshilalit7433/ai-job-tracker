@@ -27,7 +27,7 @@ const RecruiterResponse = () => {
 
       const data = response.data;
       if (data.success) {
-        toast.success("Response sent successfully!", {position: "bottom-right"});
+        toast.success( data.data.message || "Response sent successfully!", {position: "bottom-right"});
         setStatus("");
         setRecruiterResponse("");
 

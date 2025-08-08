@@ -91,7 +91,7 @@ const JobApplications: React.FC<JobApplicationsProps> = ({ filters }) => {
         { withCredentials: true }
       );
       if (res.data.success) {
-        toast.success("Job saved successfully!", { position: "bottom-right" });
+        toast.success( res.data.message || "Job saved successfully!", { position: "bottom-right" });
       }
     } catch (error) {
       console.error("Failed to save job:", error);

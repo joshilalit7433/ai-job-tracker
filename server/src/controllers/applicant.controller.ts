@@ -425,7 +425,7 @@ Match the applicant's strengths to the responsibilities and skills. Use a confid
 
     return res
       .status(200)
-      .json({ success: true, data: response.generations[0].text });
+      .json({message:" Cover letter generated!", success: true, data: response.generations[0].text });
   } catch (error) {
     console.error("Error generating cover letter:", error);
     return res.status(500).json({

@@ -70,10 +70,10 @@ const ProfileEditForm: React.FC<Props> = ({ onClose }) => {
         console.log(response.data);
         dispatch(setUser(data));
         await new Promise((resolve) => setTimeout(resolve, 200)); // wait for persist to save
-        toast.success("Profile updated successfully!", { position: "bottom-right" });
+        toast.success( response.data.message || "Profile updated successfully!", { position: "bottom-right" });
         if (onClose) onClose();
       } else {
-        toast.error(message || "Update failed", { position: "bottom-right" });
+        toast.error(response.data.message || "Update failed", { position: "bottom-right" });
       }
     } catch (error) {
       console.error(error);

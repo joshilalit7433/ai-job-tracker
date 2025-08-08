@@ -60,7 +60,7 @@ const UserSavedJobApplication = () => {
       );
 
       if (res.data.success) {
-        toast.success("Job removed from saved list!", {
+        toast.success( "Job removed from saved list!", {
           position: "bottom-right",
         });
         setSavedJobs((prev) => prev.filter((job) => job._id !== jobId));

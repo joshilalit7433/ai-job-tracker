@@ -58,7 +58,7 @@ const Signup = () => {
 
       if (response.data.success) {
         navigate("/login");
-        toast.success("Registered successfully", {
+        toast.success( response.data.message  || "Registered successfully", {
           position: "bottom-right",
           autoClose: 5000,
           theme: "dark",
