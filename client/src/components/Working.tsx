@@ -51,7 +51,7 @@ const Working = () => {
 
             <div className="relative">
               <img
-                src="public/images/step1.png"
+                src="/images/step1.png"
                 alt="Step 1 - Login Process"
                 className="w-64 h-64 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl shadow-xl group-hover:shadow-2xl transition-all duration-500 "
               />
@@ -75,7 +75,7 @@ const Working = () => {
           <div className="flex flex-col items-center group relative">
             <div className="relative">
               <img
-                src="public/images/step2.png"
+                src="/images/step2.png"
                 alt="Step 2 - Apply Process"
                 className="w-64 h-64 md:w-72 md:h-72 lg:w-80 lg:h-80 rounded-2xl shadow-xl group-hover:shadow-2xl transition-all duration-500 "
               />

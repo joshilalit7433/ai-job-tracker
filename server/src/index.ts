@@ -18,6 +18,11 @@ import RecruiterDashboardRoute from "./routes/recruiterDashboard.route";
 // Load env variables
 dotenv.config();
 
+if (process.env.NODE_ENV === "production") {
+  console.log = function () {};  
+  console.debug = function () {}; 
+}
+
 // Validate required env variables
 const SECRET_KEY = process.env.SECRET_KEY;
 if (!SECRET_KEY) {
