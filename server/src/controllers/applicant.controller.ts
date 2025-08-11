@@ -1,4 +1,3 @@
-
 import mongoose, { Types } from "mongoose";
 import fs from "fs";
 import path from "path";
@@ -152,9 +151,11 @@ export const ApplyJobApplication = async (req: AuthRequest, res: Response) => {
     const userSkills = extractSkillsFromAnalysis(resumeText);
     const jobSkills = (
       Array.isArray(job.skills)
-        ? job.skills.flatMap((s) => s.split(/[\s,]+/))
-        : (job.skills || "").split(/[\s,]+/)
-    ).map((s: string) => normalizeSkill(s.trim()));
+        ? job.skills.flatMap((s) => String(s).split(/[\s,]+/))
+        : String(job.skills || "").split(/[\s,]+/)
+    )
+      .map((s) => normalizeSkill(s.trim()))
+      .filter(Boolean);
 
     const matchedSkills = jobSkills.filter((skill: string) =>
       userSkills.includes(skill)
@@ -269,7 +270,6 @@ export const checkIfApplied = async (req: AuthRequest, res: Response) => {
     return res.status(500).json({ success: false, message: "Server error" });
   }
 };
-
 
 // Get all applicants for a specific job
 
@@ -425,7 +425,11 @@ Match the applicant's strengths to the responsibilities and skills. Use a confid
 
     return res
       .status(200)
-      .json({message:" Cover letter generated!", success: true, data: response.generations[0].text });
+      .json({
+        message: " Cover letter generated!",
+        success: true,
+        data: response.generations[0].text,
+      });
   } catch (error) {
     console.error("Error generating cover letter:", error);
     return res.status(500).json({
@@ -435,25 +439,36 @@ Match the applicant's strengths to the responsibilities and skills. Use a confid
   }
 };
 
-
-
-export const getResumeAnalysisForRecruiter = async (req:AuthRequest,res:Response)=>{
-    try {
+export const getResumeAnalysisForRecruiter = async (
+  req: AuthRequest,
+  res: Response
+) => {
+  try {
     const applicantId = req.params.applicantId;
 
     if (!mongoose.Types.ObjectId.isValid(applicantId)) {
-      return res.status(400).json({ success: false, message: "Invalid applicant ID" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid applicant ID" });
     }
 
-    const applicant = await Applicant.findById(applicantId).populate("job", "user");
+    const applicant = await Applicant.findById(applicantId).populate(
+      "job",
+      "user"
+    );
 
     if (!applicant) {
-      return res.status(404).json({ success: false, message: "Applicant not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Applicant not found" });
     }
 
     // Check access: only the recruiter who created the job can access
     const jobOwnerId = (applicant.job as any).user?.toString();
-    if (req.user!.role !== "recruiter" || jobOwnerId !== req.user!._id.toString()) {
+    if (
+      req.user!.role !== "recruiter" ||
+      jobOwnerId !== req.user!._id.toString()
+    ) {
       return res.status(403).json({ success: false, message: "Access denied" });
     }
 
@@ -465,5 +480,4 @@ export const getResumeAnalysisForRecruiter = async (req:AuthRequest,res:Response
     console.error("Error fetching resume analysis:", error);
     return res.status(500).json({ success: false, message: "Server error" });
   }
-
-}
+};
