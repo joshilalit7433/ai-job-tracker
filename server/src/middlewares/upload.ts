@@ -1,29 +1,52 @@
-import multer from 'multer';
-import path from 'path';
+import multer from "multer";
+import { v2 as cloudinary } from "cloudinary";
+import streamifier from "streamifier";
+import { Request, Response, NextFunction } from "express";
 
-const storage = multer.diskStorage({
-    destination:function(req,file,cb){
-        cb(null,"uploads/resumes");
-        
-    },
 
-    filename:function(req,file,cb){
-        const ext =path.extname(file.originalname);
-        cb(null,Date.now() +ext )
-    },
+
+// Extend Multer file type to include Cloudinary URL
+interface MulterFileWithCloudinary extends Express.Multer.File {
+  cloudinaryUrl?: string;
+}
+
+// Cloudinary Config
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
+  api_key: process.env.CLOUDINARY_API_KEY!,
+  api_secret: process.env.CLOUDINARY_API_SECRET!,
 });
 
+// Multer setup (memory storage)
+const storage = multer.memoryStorage();
 
-const fileFilter = (req, file, cb) => {
-    const allowedTypes = ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
-    if (allowedTypes.includes(file.mimetype)) {
-      cb(null, true);
-    } else {
-      cb(new Error("Only .pdf, .doc, and .docx formats are allowed"), false);
+const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+  const allowedTypes = [
+    "application/pdf",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  ];
+  if (allowedTypes.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(new Error("Only .pdf, .doc, and .docx formats are allowed"));
+  }
+};
+
+export const upload = multer({ storage, fileFilter });
+
+// Middleware: Upload to Cloudinary
+export const uploadToCloudinary = (req: Request, res: Response, next: NextFunction) => {
+  if (!req.file) return next();
+
+  const stream = cloudinary.uploader.upload_stream(
+    { folder: "resumes" },
+    (error, result) => {
+      if (error) return next(error);
+      (req.file as MulterFileWithCloudinary).cloudinaryUrl = result?.secure_url;
+      next();
     }
-  };
+  );
 
-  export const upload = multer({
-    storage: storage,
-    fileFilter: fileFilter,
-  });
+  streamifier.createReadStream(req.file.buffer).pipe(stream);
+};

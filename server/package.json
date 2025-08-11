@@ -27,6 +27,7 @@
     "nodemailer": "^7.0.3",
     "pdf-parse": "^1.1.1",
     "socket.io": "^4.8.1",
+    "streamifier": "^0.1.1",
     "textract": "^2.5.0"
   },
   "devDependencies": {
@@ -38,6 +39,7 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/multer": "^2.0.0",
     "@types/node": "^20.19.9",
+    "@types/streamifier": "^0.1.2",
     "@types/textract": "^2.4.5",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",

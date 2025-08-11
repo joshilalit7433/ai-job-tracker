@@ -182,10 +182,16 @@ export const updateProfile = async (req: AuthRequest, res: Response) => {
 export const UploadResume = async (req: AuthRequest, res: Response) => {
   try {
     const user = await User.findById(req.user?._id);
-    if (!user) return res.status(404).json({ message: "User not found", success: false });
+    if (!user) {
+      return res.status(404).json({ message: "User not found", success: false });
+    }
 
-    const resumePath = req.file?.path.replace(/\\/g, "/");
-    if (resumePath) user.resume = resumePath;
+    const resumeUrl = (req.file as MulterFileWithCloudinary)?.cloudinaryUrl;
+    if (!resumeUrl) {
+      return res.status(400).json({ message: "No resume uploaded", success: false });
+    }
+
+    user.resume = resumeUrl;
     await user.save();
 
     return res.status(200).json({
@@ -198,6 +204,7 @@ export const UploadResume = async (req: AuthRequest, res: Response) => {
     return res.status(500).json({ message: "Error uploading resume", success: false });
   }
 };
+
 
 export const saveJob = async (req: AuthRequest, res: Response) => {
   try {
