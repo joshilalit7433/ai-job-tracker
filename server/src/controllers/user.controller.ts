@@ -6,6 +6,7 @@ import { User } from "../models/user.model";
 import { JobApplication } from "../models/jobApplication.model";
 import { AuthRequest } from "../types/express/AuthRequest";
 import admin from "utils/firebase";
+import { MulterFileWithCloudinary } from "../middlewares/upload"; 
 
 
 export const googleAuth = async (req: Request, res: Response) => {

@@ -2,22 +2,25 @@ import multer from "multer";
 import { v2 as cloudinary } from "cloudinary";
 import streamifier from "streamifier";
 import { Request, Response, NextFunction } from "express";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 
 
-// Extend Multer file type to include Cloudinary URL
-interface MulterFileWithCloudinary extends Express.Multer.File {
+
+export interface MulterFileWithCloudinary extends Express.Multer.File {
   cloudinaryUrl?: string;
 }
 
-// Cloudinary Config
+
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
-  api_key: process.env.CLOUDINARY_API_KEY!,
-  api_secret: process.env.CLOUDINARY_API_SECRET!,
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// Multer setup (memory storage)
+
 const storage = multer.memoryStorage();
 
 const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
@@ -35,7 +38,7 @@ const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilt
 
 export const upload = multer({ storage, fileFilter });
 
-// Middleware: Upload to Cloudinary
+
 export const uploadToCloudinary = (req: Request, res: Response, next: NextFunction) => {
   if (!req.file) return next();
 
