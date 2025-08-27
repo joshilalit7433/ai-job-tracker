@@ -1,8 +1,8 @@
-import skillReference from "../data/skills_reference.json" assert { type: "json" };
+import skillReference from "../data/skills_reference.json";
 
-export const extractSkills = (resumeText) => {
+export const extractSkills = (resumeText: string) => {
   const lowerText = resumeText.toLowerCase();
-  return skillReference.skills.filter(skill =>
-    lowerText.includes(skill.toLowerCase())
+  return skillReference.skills.filter(skillObj =>
+    skillObj.aliases.some(alias => lowerText.includes(alias.toLowerCase()))
   );
 };

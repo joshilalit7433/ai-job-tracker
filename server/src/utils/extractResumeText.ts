@@ -5,7 +5,7 @@ import * as pdfModule from "pdf-parse";
 
 const pdfParse = pdfModule.default || pdfModule;
 
-export const extractResumeText = async (filePath) => {
+export const extractResumeText = async (filePath:string) => {
   const ext = path.extname(filePath).toLowerCase();
   const buffer = fs.readFileSync(filePath);
 

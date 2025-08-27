@@ -1,6 +1,16 @@
 import admin from "firebase-admin";
 import { ServiceAccount } from "firebase-admin";
-import serviceAccount from "../config/ai-job-tracker-1711d-firebase-adminsdk-fbsvc-6d31df3008.json" assert { type: "json" };
+import dotenv from "dotenv";
+dotenv.config();
+
+const serviceAccount = JSON.parse(
+  Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_BASE64!, "base64").toString()
+);
+
+
+if (serviceAccount.private_key) {
+  serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, "\n");
+}
 
 if (!admin.apps.length) {
   admin.initializeApp({

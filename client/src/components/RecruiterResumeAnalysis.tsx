@@ -101,7 +101,7 @@ const RecruiterResumeAnalysis = () => {
   );
 
   return (
-    <div className="min-h-screen mt-12 px-4 py-10 bg-[#f7e9d6] font-sans">
+    <div className="min-h-screen mt-12 px-4 py-10 bg-[#f7e9d6] font-sans lg:mt-0">
       <div className="max-w-5xl mx-auto bg-white rounded-xl shadow-lg p-6 sm:p-10 space-y-10">
         <div className="text-center">
           <h1 className="text-3xl font-bold text-gray-800">Resume Analysis</h1>
