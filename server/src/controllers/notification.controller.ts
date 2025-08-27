@@ -21,7 +21,7 @@ export const getNotifications = async (req: AuthRequest, res: Response) => {
 
 // delete notifications
 export const removeNotification = async (
-  req: AuthRequest<{ id: string }>, 
+  req: AuthRequest, 
   res: Response
 ) => {
   try {

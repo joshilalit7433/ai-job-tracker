@@ -1,7 +1,8 @@
-
+import { Request } from "express";
 import { Document } from "mongoose";
 
 export interface IUser extends Document {
+  _id: string;
   fullName: string;
   email: string;
   password: string;
@@ -16,6 +17,7 @@ export interface IUser extends Document {
 }
 
 export interface AuthRequest extends Request {
+  params: { id: any; };
   user?: IUser;
   file?: Express.Multer.File;
 }
